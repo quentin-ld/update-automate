@@ -1,4 +1,4 @@
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect, useCallback } from '@wordpress/element';
 import { Notices } from '../components/Notices';
 import { Tabs } from '../components/Tabs';
 import { LogsTable } from '../components/LogsTable';
@@ -7,19 +7,39 @@ import { __ } from '@wordpress/i18n';
 
 const TAB_LOGS = 'logs';
 const TAB_SETTINGS = 'settings';
+const VALID_TABS = [TAB_LOGS, TAB_SETTINGS];
+
+function getTabFromUrl() {
+	const params = new URLSearchParams(window.location.search);
+	const tab = params.get('tab');
+	return VALID_TABS.includes(tab) ? tab : TAB_LOGS;
+}
+
+function setTabInUrl(tabId) {
+	const params = new URLSearchParams(window.location.search);
+	params.set('tab', tabId);
+	const url = `${window.location.pathname}?${params.toString()}`;
+	window.history.replaceState(null, '', url);
+}
 
 /**
  * Main settings page for Updates Control (Zenpress-style interface).
- * Tabs: Logs and Settings.
+ * Tabs: Logs and Settings. Active tab is synced with ?tab= URL param for direct links.
  *
  * @return {JSX.Element} The settings page UI.
  */
 export const SettingsPage = () => {
-	const [selectedTabId, setSelectedTabId] = useState(TAB_LOGS);
+	const [selectedTabId, setSelectedTabId] = useState(getTabFromUrl);
+
+	const handleSelectTab = useCallback((tabId) => {
+		setSelectedTabId(tabId);
+		setTabInUrl(tabId);
+	}, []);
 
 	useEffect(() => {
-		if (!selectedTabId) {
+		if (!selectedTabId || !VALID_TABS.includes(selectedTabId)) {
 			setSelectedTabId(TAB_LOGS);
+			setTabInUrl(TAB_LOGS);
 		}
 	}, [selectedTabId]);
 
@@ -33,7 +53,7 @@ export const SettingsPage = () => {
 					<Tabs
 						orientation="vertical"
 						selectedTabId={selectedTabId}
-						onSelect={setSelectedTabId}
+						onSelect={handleSelectTab}
 					>
 						<Tabs.TabList>
 							<Tabs.Tab

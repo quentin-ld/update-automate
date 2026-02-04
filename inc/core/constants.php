@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin path constants.
+ * Plugin path constants (fallback when not loaded from main plugin file).
  *
  * @package updatescontrol
  */

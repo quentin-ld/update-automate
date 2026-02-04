@@ -18,13 +18,14 @@ final class UpdatesControl_Logger {
      * Insert a log entry.
      *
      * @param string $log_type       One of: core, plugin, theme.
-     * @param string $action_type    One of: update, install, delete, failed.
+     * @param string $action_type    One of: update, install, delete, failed, downgrade.
      * @param string $item_name      Display name of the item.
      * @param string $item_slug      Slug/identifier.
      * @param string $version_before Previous version.
      * @param string $version_after  New version after update.
      * @param string $status         success, error, cancelled.
-     * @param string $message        Optional message (e.g. error details).
+     * @param string $message        Optional message (e.g. process log, error details).
+     * @param string $trace          Optional call stack trace.
      * @return int|false Log ID on success, false on failure.
      */
     public static function log(
@@ -35,7 +36,8 @@ final class UpdatesControl_Logger {
         string $version_before = '',
         string $version_after = '',
         string $status = 'success',
-        string $message = ''
+        string $message = '',
+        string $trace = ''
     ) {
         if (!UpdatesControl_Database::table_exists()) {
             return false;
@@ -49,6 +51,7 @@ final class UpdatesControl_Logger {
         $version_after = UpdatesControl_Security::sanitize_version($version_after);
         $status = UpdatesControl_Security::sanitize_status($status);
         $message = UpdatesControl_Security::sanitize_message($message);
+        $trace = UpdatesControl_Security::sanitize_trace($trace);
 
         $site_id = 1;
         if (function_exists('get_current_blog_id')) {
@@ -77,11 +80,12 @@ final class UpdatesControl_Logger {
                 'version_after' => $version_after,
                 'status' => $status,
                 'message' => $message,
+                'trace' => $trace,
                 'user_id' => $user_id,
                 'performed_by' => $performed_by,
                 'created_at' => current_time('mysql'),
             ],
-            ['%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s']
+            ['%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s']
         );
 
         if ($result === false) {
@@ -98,6 +102,7 @@ final class UpdatesControl_Logger {
             'version_after' => $version_after,
             'status' => $status,
             'message' => $message,
+            'trace' => $trace,
             'created_at' => current_time('mysql'),
         ];
         do_action('updatescontrol_after_log', $log_id, $data);

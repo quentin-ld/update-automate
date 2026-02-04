@@ -240,16 +240,20 @@ final class UpdatesControl_Settings {
             'updatescontrol_notify_on' => 'notify_on',
         ];
         foreach ($options as $option_name => $param) {
-            if ($request->has_param($param)) {
-                $value = $request->get_param($param);
-                if ($param === 'retention_days') {
-                    $value = max(1, min(365, (int) $value));
-                }
-                if ($param === 'notify_on' && is_array($value)) {
-                    $value = array_values(array_intersect($value, ['error', 'core', 'all']));
-                }
-                update_option($option_name, $value);
+            if (!$request->has_param($param)) {
+                continue;
             }
+            $value = $request->get_param($param);
+            if ($param === 'retention_days') {
+                $value = max(1, min(365, (int) $value));
+            }
+            if ($param === 'notify_on' && is_array($value)) {
+                $value = array_values(array_intersect(array_filter($value, 'is_string'), ['error', 'core', 'all'])) ?: ['error'];
+            }
+            if ($param === 'notify_emails' && is_string($value)) {
+                $value = updatescontrol_sanitize_emails($value);
+            }
+            update_option($option_name, $value);
         }
 
         return new WP_REST_Response([

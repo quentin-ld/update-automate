@@ -302,6 +302,44 @@
 	}
 }
 
+/* View logs modal (message + trace) */
+.updatescontrol-notes-modal {
+	.updatescontrol-notes-content {
+		max-height: 70vh;
+		overflow-y: auto;
+	}
+
+	.updatescontrol-notes-section {
+		margin-bottom: 1.5rem;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+
+		h4 {
+			margin: 0 0 0.5rem;
+			font-size: 13px;
+		}
+	}
+
+	.updatescontrol-notes-text,
+	.updatescontrol-notes-trace {
+		margin: 0;
+		padding: 0.75rem;
+		background: #f0f0f1;
+		border-radius: 4px;
+		max-height: 300px;
+		overflow: auto;
+		font-family: monospace;
+		font-size: 12px;
+		line-height: 1.5;
+	}
+
+	.updatescontrol-notes-trace {
+		max-height: 250px;
+	}
+}
+
 /* Settings tab */
 .updatescontrol-settings-form {
 	padding: $spacing-md;

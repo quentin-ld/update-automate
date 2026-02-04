@@ -28,6 +28,7 @@ final class UpdatesControl_ErrorHandler {
 
     /**
      * When an upgrade completes, log failure if the upgrader skin result is WP_Error.
+     * Resolves plugin/theme identity (including upload "destination exists") and appends process messages.
      *
      * @param WP_Upgrader $upgrader Upgrader instance.
      * @param array<string, mixed> $options Options (type, action, plugins, themes, etc.).
@@ -46,42 +47,209 @@ final class UpdatesControl_ErrorHandler {
 
         $message = $result->get_error_message();
         $type = $options['type'] ?? 'plugin';
-        $action = $options['action'] ?? 'update';
         $name = __('Unknown', 'updates-control');
         $slug = '';
+        $version_before = '';
+        $version_after = '';
 
-        if ($type === 'core') {
-            $name = 'WordPress';
-            $slug = 'core';
-        } elseif ($type === 'plugin' && !empty($options['plugins']) && is_array($options['plugins'])) {
-            $plugin_file = $options['plugins'][0] ?? '';
-            if (function_exists('get_plugins')) {
+        $plugin_file = '';
+        $theme_slug = '';
+        if ($type === 'plugin') {
+            $plugin_file = self::get_plugin_file_from_options_or_upgrader($options, $upgrader);
+            if ($plugin_file === '' && $result->get_error_code() === 'folder_exists') {
+                $plugin_file = self::get_plugin_file_from_folder_exists_error($result);
+            }
+            if ($plugin_file !== '' && function_exists('get_plugins')) {
                 $all = get_plugins();
                 $name = $all[$plugin_file]['Name'] ?? $plugin_file;
-            } else {
+                $version_before = $all[$plugin_file]['Version'] ?? '';
+                $slug = dirname($plugin_file);
+                if ($slug === '.') {
+                    $slug = $plugin_file;
+                }
+            } elseif ($plugin_file !== '') {
                 $name = $plugin_file;
+                $slug = dirname($plugin_file) !== '.' ? dirname($plugin_file) : $plugin_file;
             }
-            $slug = dirname($plugin_file);
-            if ($slug === '.') {
-                $slug = $plugin_file;
+        } elseif ($type === 'theme') {
+            $theme_slug = $options['themes'][0] ?? $options['theme'] ?? '';
+            if ($theme_slug === '' && method_exists($upgrader, 'theme_info') && is_object($upgrader->theme_info())) {
+                $theme_slug = $upgrader->theme_info()->get_stylesheet();
             }
-        } elseif ($type === 'theme' && !empty($options['themes']) && is_array($options['themes'])) {
-            $theme_slug = $options['themes'][0] ?? '';
-            $themes = wp_get_themes();
-            $name = isset($themes[$theme_slug]) ? $themes[$theme_slug]->get('Name') : $theme_slug;
-            $slug = $theme_slug;
+            if ($theme_slug !== '') {
+                $themes = wp_get_themes();
+                $name = isset($themes[$theme_slug]) ? $themes[$theme_slug]->get('Name') : $theme_slug;
+                $version_before = isset($themes[$theme_slug]) ? (string) $themes[$theme_slug]->get('Version') : '';
+                $slug = $theme_slug;
+            }
+        } else {
+            $name = 'WordPress';
+            $slug = 'core';
         }
+
+        if ($result->get_error_code() === 'folder_exists') {
+            $message .= "\n\n" . __("Use 'Replace current with uploaded' on the upload screen to complete the update or downgrade.", 'updates-control');
+        }
+
+        $process = self::get_skin_process_message($upgrader);
+        if ($process !== '') {
+            $message .= "\n\n" . __('Process:', 'updates-control') . "\n" . $process;
+        }
+
+        $trace = self::capture_trace();
 
         UpdatesControl_Logger::log(
             $type,
             'failed',
             $name,
             $slug,
-            '',
-            '',
+            $version_before,
+            $version_after,
             'error',
-            $message
+            $message,
+            $trace
         );
+    }
+
+    /**
+     * Resolve plugin file from options or upgrader (e.g. upload flow where hook_extra has no plugin key).
+     *
+     * @param array<string, mixed> $options  hook_extra passed to upgrader_process_complete.
+     * @param WP_Upgrader         $upgrader Upgrader instance.
+     * @return string Plugin file path or empty.
+     */
+    private static function get_plugin_file_from_options_or_upgrader(array $options, WP_Upgrader $upgrader): string {
+        if (!empty($options['plugins']) && is_array($options['plugins'])) {
+            $file = $options['plugins'][0] ?? '';
+            if (is_string($file) && $file !== '') {
+                return $file;
+            }
+        }
+        if (!empty($options['plugin']) && is_string($options['plugin'])) {
+            return $options['plugin'];
+        }
+        if (method_exists($upgrader, 'plugin_info')) {
+            $info = $upgrader->plugin_info();
+            if (is_string($info) && $info !== '') {
+                return $info;
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * Resolve plugin file from folder_exists error data (destination path).
+     *
+     * @param \WP_Error $result Upgrader result.
+     * @return string Plugin file path or empty.
+     */
+    private static function get_plugin_file_from_folder_exists_error(\WP_Error $result): string {
+        $path = $result->get_error_data('folder_exists');
+        if (!is_string($path) || $path === '') {
+            return '';
+        }
+        $path = function_exists('wp_normalize_path') ? wp_normalize_path($path) : str_replace('\\', '/', $path);
+        $path = rtrim($path, '/');
+
+        $plugin_dir = defined('WP_PLUGIN_DIR') ? WP_PLUGIN_DIR : '';
+        if ($plugin_dir !== '') {
+            $plugin_dir = function_exists('wp_normalize_path') ? wp_normalize_path($plugin_dir) : str_replace('\\', '/', $plugin_dir);
+            $plugin_dir = rtrim($plugin_dir, '/');
+            if (strpos($path, $plugin_dir . '/') === 0 || $path === $plugin_dir) {
+                $folder = $path === $plugin_dir ? '' : ltrim(substr($path, strlen($plugin_dir) + 1), '/');
+                $folder = $folder === '' ? '' : explode('/', $folder)[0];
+                if ($folder !== '') {
+                    $plugin_file = self::match_plugin_file_by_folder($folder);
+                    if ($plugin_file !== '') {
+                        return $plugin_file;
+                    }
+                }
+            }
+        }
+
+        $folder = basename($path);
+        if ($folder !== '' && $folder !== '.' && $folder !== '..') {
+            return self::match_plugin_file_by_folder($folder);
+        }
+
+        return '';
+    }
+
+    /**
+     * Find a plugin file whose directory matches the given folder name.
+     *
+     * @param string $folder Plugin directory name (e.g. disable-everything).
+     * @return string Plugin file path or empty.
+     */
+    private static function match_plugin_file_by_folder(string $folder): string {
+        if (!function_exists('get_plugins')) {
+            return '';
+        }
+        $all = get_plugins();
+        foreach (array_keys($all) as $plugin_file) {
+            if (strpos($plugin_file, $folder . '/') === 0 || dirname($plugin_file) === $folder) {
+                return $plugin_file;
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * Get process messages from skin when available (e.g. Automatic_Upgrader_Skin).
+     *
+     * @param WP_Upgrader $upgrader Upgrader instance.
+     * @return string Newline-separated process messages.
+     */
+    public static function get_skin_process_message(WP_Upgrader $upgrader): string {
+        $skin = $upgrader->skin;
+        if (!method_exists($skin, 'get_upgrade_messages')) {
+            return '';
+        }
+        $messages = $skin->get_upgrade_messages();
+        if (!is_array($messages)) {
+            return '';
+        }
+
+        return implode("\n", array_map('strip_tags', $messages));
+    }
+
+    /**
+     * Capture current call stack as a readable trace (EUM-style).
+     *
+     * @return string Lines like "#1 path (line): function(args)".
+     */
+    public static function capture_trace(): string {
+        $bt = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 50);
+        $lines = [];
+        $skip = ['capture_trace', 'log', 'log_upgrader_failure', 'log_plugin_update', 'log_theme_update', 'log_core_update', 'on_upgrader_process_complete'];
+        $i = 0;
+        foreach ($bt as $frame) {
+            $file = isset($frame['file']) ? $frame['file'] : '';
+            $line = isset($frame['line']) ? (int) $frame['line'] : 0;
+            $func = $frame['function'];
+            if (in_array($func, $skip, true)) {
+                continue;
+            }
+            $args = [];
+            $frameArgs = $frame['args'] ?? [];
+            foreach ($frameArgs as $arg) {
+                if (is_object($arg)) {
+                    $args[] = 'Object(' . get_class($arg) . ')';
+                } elseif (is_array($arg)) {
+                    $args[] = 'Array(' . count($arg) . ')';
+                } elseif (is_string($arg)) {
+                    $args[] = strlen($arg) > 80 ? substr($arg, 0, 77) . '...' : $arg;
+                } else {
+                    $args[] = gettype($arg);
+                }
+            }
+            $argsStr = implode(', ', $args);
+            $lines[] = '#' . (++$i) . ' ' . $file . ' (' . $line . '): ' . $func . '(' . $argsStr . ')';
+        }
+
+        return implode("\n", $lines);
     }
 
     /**
@@ -105,7 +273,8 @@ final class UpdatesControl_ErrorHandler {
                     /* translators: %d: HTTP status code */
                     __('Update redirect with status %d', 'updates-control'),
                     $status
-                )
+                ),
+                self::capture_trace()
             );
         }
 
@@ -120,20 +289,20 @@ final class UpdatesControl_ErrorHandler {
      * @param WP_Upgrader   $upgrader Upgrader instance.
      * @return bool|WP_Error
      */
-    public static function capture_download_error($reply, string $package, WP_Upgrader $upgrader) {
-        if (is_wp_error($reply)) {
-            $message = $reply->get_error_message();
-            $type = 'plugin';
-            $name = '';
-            if (isset($upgrader->skin->plugin)) {
-                $type = 'plugin';
-                $name = is_string($upgrader->skin->plugin) ? $upgrader->skin->plugin : '';
-            } elseif (isset($upgrader->skin->theme)) {
-                $type = 'theme';
-                $name = is_string($upgrader->skin->theme) ? $upgrader->skin->theme : '';
-            }
-            UpdatesControl_Logger::log($type, 'failed', $name ?: 'unknown', '', '', '', 'error', $message);
+    public static function capture_download_error(bool|\WP_Error $reply, string $package, WP_Upgrader $upgrader): bool|\WP_Error {
+        if (!is_wp_error($reply)) {
+            return $reply;
         }
+        $skin = $upgrader->skin;
+        $type = 'plugin';
+        $name = '';
+        if (isset($skin->plugin) && is_string($skin->plugin)) {
+            $name = $skin->plugin;
+        } elseif (isset($skin->theme) && is_string($skin->theme)) {
+            $type = 'theme';
+            $name = $skin->theme;
+        }
+        UpdatesControl_Logger::log($type, 'failed', $name ?: 'unknown', '', '', '', 'error', $reply->get_error_message(), self::capture_trace());
 
         return $reply;
     }

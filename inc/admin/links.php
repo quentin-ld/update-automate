@@ -12,7 +12,7 @@ add_filter('plugin_action_links_' . plugin_basename(updatescontrol_PLUGIN_FILE),
  * @return array<int, string> Action links with Settings added.
  */
 function updatescontrol_add_settings_link(array $links): array {
-    $url = admin_url('options-general.php?page=updates-control');
+    $url = add_query_arg('page', 'updates-control', admin_url('tools.php'));
     $links[] = sprintf(
         '<a href="%s" aria-label="%s">%s</a>',
         esc_url($url),

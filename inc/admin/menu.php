@@ -5,13 +5,21 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Adds Updates Control under Settings (Zenpress-style options page).
+ * Adds Updates Control under Tools and a link under Dashboard > Update controls.
  */
 add_action('admin_menu', 'updatescontrol_add_option_page');
 function updatescontrol_add_option_page(): void {
-    add_options_page(
+    add_management_page(
         __('Updates Control options', 'updates-control'),
         __('Updates Control', 'updates-control'),
+        'manage_options',
+        'updates-control',
+        'updatescontrol_options_page'
+    );
+    add_submenu_page(
+        'index.php',
+        __('Updates Control', 'updates-control'),
+        __('Update controls', 'updates-control'),
         'manage_options',
         'updates-control',
         'updatescontrol_options_page'

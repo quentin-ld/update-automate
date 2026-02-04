@@ -26,7 +26,7 @@ final class UpdatesControl_Security {
      *
      * @var array<string>
      */
-    public const ALLOWED_ACTION_TYPES = ['update', 'install', 'delete', 'failed'];
+    public const ALLOWED_ACTION_TYPES = ['update', 'install', 'delete', 'failed', 'downgrade'];
 
     /**
      * Allowed status values.
@@ -102,6 +102,19 @@ final class UpdatesControl_Security {
      */
     public static function sanitize_version(string $value): string {
         return mb_substr(preg_replace('/[^a-zA-Z0-9._-]/', '', $value) ?: '', 0, 64);
+    }
+
+    /**
+     * Sanitize trace (call stack) for DB storage.
+     *
+     * @param string $value Raw trace.
+     * @param int    $max_length Max length (default 65535).
+     * @return string
+     */
+    public static function sanitize_trace(string $value, int $max_length = 65535): string {
+        $value = wp_strip_all_tags($value);
+
+        return mb_substr($value, 0, $max_length);
     }
 
     /**

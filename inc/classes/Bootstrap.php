@@ -39,7 +39,7 @@ final class UpdatesControl_Bootstrap {
      * @return void
      */
     private static function load_classes(): void {
-        $dir = dirname(__FILE__);
+        $dir = __DIR__;
         $classes = [
             'Database.php',
             'Security.php',

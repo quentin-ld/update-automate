@@ -26,7 +26,7 @@ final class UpdatesControl_Database {
      *
      * @var string
      */
-    public const DB_VERSION = '1.1';
+    public const DB_VERSION = '1.2';
 
     /**
      * Table name (without prefix).
@@ -67,7 +67,8 @@ final class UpdatesControl_Database {
             version_before varchar(64) NOT NULL DEFAULT '',
             version_after varchar(64) NOT NULL DEFAULT '',
             status varchar(20) NOT NULL DEFAULT 'success',
-            message text DEFAULT NULL,
+            message longtext DEFAULT NULL,
+            trace longtext DEFAULT NULL,
             user_id bigint(20) unsigned NOT NULL DEFAULT 0,
             performed_by varchar(20) NOT NULL DEFAULT 'system',
             created_at datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -86,13 +87,7 @@ final class UpdatesControl_Database {
         return true;
     }
 
-    /**
-     * Drop the logs table (used on uninstall).
-     *
-     * Uses wpdb::prepare() with %i (identifier) for the table name (WP 6.2+).
-     *
-     * @return void
-     */
+    /** Drop logs table (uninstall). Uses %i for table name (WP 6.2+). */
     public static function drop_table(): void {
         global $wpdb;
 
@@ -102,14 +97,7 @@ final class UpdatesControl_Database {
         delete_option(self::OPTION_DB_VERSION);
     }
 
-    /**
-     * Check if the table exists.
-     *
-     * Uses the option set by create_table() / cleared by drop_table() to avoid
-     * direct information_schema queries. No database read required.
-     *
-     * @return bool
-     */
+    /** Table existence tracked via option (no information_schema query). */
     public static function table_exists(): bool {
         return get_option(self::OPTION_DB_VERSION, false) !== false;
     }

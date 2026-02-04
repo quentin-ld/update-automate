@@ -9,7 +9,8 @@ if (!defined('ABSPATH')) {
  */
 add_action('admin_enqueue_scripts', 'updatescontrol_admin_enqueue_scripts');
 function updatescontrol_admin_enqueue_scripts(string $admin_page): void {
-    if ('settings_page_updates-control' !== $admin_page) {
+    $allowed = ['tools_page_updates-control', 'dashboard_page_updates-control'];
+    if (!in_array($admin_page, $allowed, true)) {
         return;
     }
 
@@ -49,7 +50,8 @@ function updatescontrol_admin_enqueue_scripts(string $admin_page): void {
  */
 add_action('admin_enqueue_scripts', 'updatescontrol_localize_settings');
 function updatescontrol_localize_settings(string $admin_page): void {
-    if ('settings_page_updates-control' !== $admin_page) {
+    $allowed = ['tools_page_updates-control', 'dashboard_page_updates-control'];
+    if (!in_array($admin_page, $allowed, true)) {
         return;
     }
 

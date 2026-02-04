@@ -64,9 +64,6 @@ final class UpdatesControl_Cron {
      * @return void
      */
     public static function unschedule(): void {
-        $timestamp = wp_next_scheduled(self::HOOK_CLEANUP);
-        if ($timestamp) {
-            wp_unschedule_event($timestamp, self::HOOK_CLEANUP);
-        }
+        wp_clear_scheduled_hook(self::HOOK_CLEANUP);
     }
 }

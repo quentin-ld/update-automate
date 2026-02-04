@@ -15,6 +15,7 @@ export const LogsTable = () => {
 		type: null,
 		id: null,
 	});
+	const [notesLog, setNotesLog] = useState(null);
 
 	useEffect(() => {
 		fetchLogs({ per_page: 50, page: 1 });
@@ -32,6 +33,13 @@ export const LogsTable = () => {
 		setConfirmAction({ type: null, id: null });
 	};
 
+	const openNotes = (log) => {
+		setNotesLog(log);
+	};
+	const closeNotes = () => {
+		setNotesLog(null);
+	};
+
 	const handleConfirm = async () => {
 		if (confirmAction.type === 'delete' && confirmAction.id) {
 			await deleteLog(confirmAction.id);
@@ -39,6 +47,17 @@ export const LogsTable = () => {
 			await cleanupLogs();
 		}
 		closeConfirm();
+	};
+
+	const getActionTypeLabel = (actionType) => {
+		const labels = {
+			update: __('Update', 'updatescontrol'),
+			install: __('Install', 'updatescontrol'),
+			delete: __('Delete', 'updatescontrol'),
+			failed: __('Failed', 'updatescontrol'),
+			downgrade: __('Downgrade', 'updatescontrol'),
+		};
+		return labels[actionType] || actionType;
 	};
 
 	const confirmMessage =
@@ -102,6 +121,45 @@ export const LogsTable = () => {
 					</div>
 				</Modal>
 			)}
+			{notesLog && (
+				<Modal
+					title={__('Logs', 'updatescontrol')}
+					onRequestClose={closeNotes}
+					className="updatescontrol-notes-modal"
+				>
+					<div className="updatescontrol-notes-content">
+						{(notesLog.message || notesLog.trace) && (
+							<>
+								{notesLog.message && (
+									<div className="updatescontrol-notes-section">
+										<h4>{__('Message', 'updatescontrol')}</h4>
+										<pre
+											className="updatescontrol-notes-text"
+											style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+										>
+											{notesLog.message}
+										</pre>
+									</div>
+								)}
+								{notesLog.trace && (
+									<div className="updatescontrol-notes-section">
+										<h4>{__('Trace', 'updatescontrol')}</h4>
+										<pre
+											className="updatescontrol-notes-trace"
+											style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-all', fontSize: '12px' }}
+										>
+											{notesLog.trace}
+										</pre>
+									</div>
+								)}
+							</>
+						)}
+						{!notesLog.message && !notesLog.trace && (
+							<p>{__('No message or trace for this entry.', 'updatescontrol')}</p>
+						)}
+					</div>
+				</Modal>
+			)}
 			<div className="updatescontrol-logs-actions">
 				<Button
 					variant="secondary"
@@ -139,7 +197,7 @@ export const LogsTable = () => {
 									<th>{__('Item', 'updatescontrol')}</th>
 									<th>{__('Version', 'updatescontrol')}</th>
 									<th>{__('Status', 'updatescontrol')}</th>
-									<th>{__('Message', 'updatescontrol')}</th>
+									<th>{__('Logs', 'updatescontrol')}</th>
 									<th>{__('Performed by', 'updatescontrol')}</th>
 									<th
 										aria-label={__(
@@ -166,7 +224,7 @@ export const LogsTable = () => {
 												{formatDate(log.created_at)}
 											</td>
 											<td>{log.log_type}</td>
-											<td>{log.action_type}</td>
+											<td>{getActionTypeLabel(log.action_type)}</td>
 											<td>{log.item_name || '—'}</td>
 											<td>
 												{log.version_before &&
@@ -184,12 +242,17 @@ export const LogsTable = () => {
 												</span>
 											</td>
 											<td>
-												{log.message
-													? log.message.substring(
-															0,
-															80
-														)
-													: '—'}
+												{log.message || log.trace ? (
+													<Button
+														variant="link"
+														isSmall
+														onClick={() => openNotes(log)}
+													>
+														{__('View logs', 'updatescontrol')}
+													</Button>
+												) : (
+													'—'
+												)}
 											</td>
 											<td>
 												{log.user_edit_link ? (

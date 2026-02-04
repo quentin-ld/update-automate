@@ -119,7 +119,7 @@ function updatescontrol_sanitize_emails(mixed $value): string {
  */
 function updatescontrol_sanitize_notify_on(mixed $value): array {
     $allowed = ['error', 'core', 'all'];
-    $arr = array_values(array_filter((array) $value, 'is_string'));
+    $arr = array_values(array_intersect(array_filter((array) $value, 'is_string'), $allowed));
 
-    return array_values(array_intersect($arr, $allowed));
+    return $arr !== [] ? $arr : ['error'];
 }
