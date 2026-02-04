@@ -1,0 +1,25 @@
+{
+  "name": "updatescontrol",
+  "description": "The zeniest unbloat, performance and security lightweight plugin for WordPress and WooCommerce",
+  "type": "wordpress-plugin",
+  "main": "assets/build/index.js",
+  "scripts": {
+    "lint": "eslint --config .config/.eslintrc.js assets/src/**/*.js",
+    "format": "prettier --config .config/.prettierrc.js --write assets/src/**/*.js",
+    "start": "wp-scripts start assets/src/index.js --output-path=assets/build",
+    "build": "wp-scripts build assets/src/index.js --output-path=assets/build"
+  },
+  "author": "Quentin Le Duff",
+  "license": "GPL-2.0-or-later",
+  "devDependencies": {
+    "@wordpress/eslint-plugin": "^22.0.0",
+    "@wordpress/scripts": "^30.22.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-react": "^7.37.5",
+    "prettier": "^3.6.2"
+  }
+}

@@ -1,0 +1,128 @@
+<?php
+
+/**
+ * Ensures secure database interactions and sanitization of inputs.
+ *
+ * @package updatescontrol
+ */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+/**
+ * Security helpers for sanitization, escaping, and capability checks.
+ */
+final class UpdatesControl_Security {
+    /**
+     * Allowed log types.
+     *
+     * @var array<string>
+     */
+    public const ALLOWED_LOG_TYPES = ['core', 'plugin', 'theme'];
+
+    /**
+     * Allowed action types.
+     *
+     * @var array<string>
+     */
+    public const ALLOWED_ACTION_TYPES = ['update', 'install', 'delete', 'failed'];
+
+    /**
+     * Allowed status values.
+     *
+     * @var array<string>
+     */
+    public const ALLOWED_STATUSES = ['success', 'error', 'cancelled'];
+
+    /**
+     * Sanitize log type.
+     *
+     * @param string $value Raw value.
+     * @return string
+     */
+    public static function sanitize_log_type(string $value): string {
+        $value = sanitize_key($value);
+
+        return in_array($value, self::ALLOWED_LOG_TYPES, true) ? $value : 'plugin';
+    }
+
+    /**
+     * Sanitize action type.
+     *
+     * @param string $value Raw value.
+     * @return string
+     */
+    public static function sanitize_action_type(string $value): string {
+        $value = sanitize_key($value);
+
+        return in_array($value, self::ALLOWED_ACTION_TYPES, true) ? $value : 'update';
+    }
+
+    /**
+     * Sanitize status.
+     *
+     * @param string $value Raw value.
+     * @return string
+     */
+    public static function sanitize_status(string $value): string {
+        $value = sanitize_key($value);
+
+        return in_array($value, self::ALLOWED_STATUSES, true) ? $value : 'success';
+    }
+
+    /**
+     * Sanitize string for DB storage (short).
+     *
+     * @param string $value Raw value.
+     * @param int    $max_length Max length (default 255).
+     * @return string
+     */
+    public static function sanitize_string(string $value, int $max_length = 255): string {
+        $value = sanitize_text_field($value);
+
+        return mb_substr($value, 0, $max_length);
+    }
+
+    /**
+     * Sanitize message (long text).
+     *
+     * @param string $value Raw value.
+     * @return string
+     */
+    public static function sanitize_message(string $value): string {
+        return wp_kses_post(wp_unslash($value));
+    }
+
+    /**
+     * Sanitize version string.
+     *
+     * @param string $value Raw value.
+     * @return string
+     */
+    public static function sanitize_version(string $value): string {
+        return mb_substr(preg_replace('/[^a-zA-Z0-9._-]/', '', $value) ?: '', 0, 64);
+    }
+
+    /**
+     * Check if current user can manage update logs.
+     *
+     * @return bool
+     */
+    public static function user_can_manage_logs(): bool {
+        return current_user_can('manage_options');
+    }
+
+    /**
+     * Verify nonce for admin actions.
+     *
+     * @param string $action Action name.
+     * @param string $nonce_key Request key (default 'nonce').
+     * @return bool
+     */
+    public static function verify_nonce(string $action, string $nonce_key = 'nonce'): bool {
+        $nonce = isset($_REQUEST[$nonce_key]) ? sanitize_text_field(wp_unslash($_REQUEST[$nonce_key])) : '';
+
+        return wp_verify_nonce($nonce, $action) !== false;
+    }
+}

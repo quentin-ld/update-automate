@@ -1,0 +1,14 @@
+# PHPStan configuration for updatescontrol: static analysis of plugin and snippets.
+includes:
+    - ../vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+    bootstrapFiles:
+        - phpstan-bootstrap.php
+    level: 6
+    excludePaths:
+        analyseAndScan:
+            - .config/*
+            - vendor/*
+            - node_modules/*
+    ignoreErrors:

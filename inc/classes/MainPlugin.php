@@ -1,0 +1,76 @@
+<?php
+
+/**
+ * Main plugin class: initialization, hooks, cron scheduling.
+ *
+ * @package updatescontrol
+ */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+/**
+ * Bootstraps the Updates Control plugin.
+ */
+final class UpdatesControl_MainPlugin {
+    /**
+     * Initialize the plugin: load classes and register hooks.
+     *
+     * @return void
+     */
+    public static function init(): void {
+        self::load_classes();
+        self::on_activation_create_table();
+        UpdatesControl_Cron::register();
+        UpdatesControl_Updater::register();
+        UpdatesControl_ErrorHandler::register();
+        UpdatesControl_Settings::register();
+        UpdatesControl_Notifications::register();
+
+        if (is_multisite()) {
+            UpdatesControl_MultisiteSupport::register();
+        }
+    }
+
+    /**
+     * Load class files.
+     *
+     * @return void
+     */
+    private static function load_classes(): void {
+        $dir = dirname(__FILE__);
+        $classes = [
+            'Database.php',
+            'Security.php',
+            'Logger.php',
+            'Cron.php',
+            'ErrorHandler.php',
+            'Updater.php',
+            'MultisiteSupport.php',
+            'Notifications.php',
+            'Settings.php',
+        ];
+        // MainPlugin is loaded by the main plugin file, not here.
+        foreach ($classes as $file) {
+            $path = $dir . '/' . $file;
+            if (is_file($path)) {
+                require_once $path;
+            }
+        }
+    }
+
+    /**
+     * Ensure log table exists (on init, after plugins loaded).
+     *
+     * @return void
+     */
+    private static function on_activation_create_table(): void {
+        $version = get_option(UpdatesControl_Database::OPTION_DB_VERSION, '');
+        if ($version === UpdatesControl_Database::DB_VERSION && UpdatesControl_Database::table_exists()) {
+            return;
+        }
+
+        UpdatesControl_Database::create_table();
+    }
+}
