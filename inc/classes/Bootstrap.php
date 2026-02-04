@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Main plugin class: initialization, hooks, cron scheduling.
+ * Plugin bootstrap: loads classes and registers hooks.
  *
  * @package updatescontrol
  */
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 /**
  * Bootstraps the Updates Control plugin.
  */
-final class UpdatesControl_MainPlugin {
+final class UpdatesControl_Bootstrap {
     /**
      * Initialize the plugin: load classes and register hooks.
      *
@@ -23,7 +23,7 @@ final class UpdatesControl_MainPlugin {
         self::load_classes();
         self::on_activation_create_table();
         UpdatesControl_Cron::register();
-        UpdatesControl_Updater::register();
+        UpdatesControl_Update_Manager::register();
         UpdatesControl_ErrorHandler::register();
         UpdatesControl_Settings::register();
         UpdatesControl_Notifications::register();
@@ -46,12 +46,12 @@ final class UpdatesControl_MainPlugin {
             'Logger.php',
             'Cron.php',
             'ErrorHandler.php',
-            'Updater.php',
+            'UpdateManager.php',
             'MultisiteSupport.php',
             'Notifications.php',
             'Settings.php',
         ];
-        // MainPlugin is loaded by the main plugin file, not here.
+        // Bootstrap is loaded by the main plugin file, not here.
         foreach ($classes as $file) {
             $path = $dir . '/' . $file;
             if (is_file($path)) {

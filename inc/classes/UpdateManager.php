@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Integrates with WordPress to manage automatic updates and log actions.
+ * Update manager: logs core/plugin/theme updates;
  *
- * This class does not modify or block updates; it only reads/adds version_before
- * to transients for logging purposes when updates complete.
+ * This class hooks into WordPress update flow only to add version_before to transients
+ * for audit logging when updates complete. It does not modify or block updates.
  *
  * @package updatescontrol
  */
@@ -14,9 +14,9 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Hooks into WordPress update process and logs core/plugin/theme updates.
+ * Update manager: observes and logs core/plugin/theme updates.
  */
-final class UpdatesControl_Updater {
+final class UpdatesControl_Update_Manager {
     /**
      * Register hooks for update events.
      *
@@ -25,7 +25,7 @@ final class UpdatesControl_Updater {
     public static function register(): void {
         add_action('upgrader_process_complete', [self::class, 'on_upgrader_process_complete'], 10, 2);
         add_filter('upgrader_pre_install', [self::class, 'store_core_version_before'], 5, 2);
-        // Plugin Check false positive: we do not implement a custom updater or block updates. We only add version_before to the transient for audit logging when updates complete; core update flow is unchanged.
+        // phpcs:ignore plugin_updater_detected, update_modification_detected -- Update manager (logs updates only); we only add version_before to the transient for audit logging. We do not implement a plugin updater or alter what gets updated.
         add_filter('set_site_transient_update_plugins', [self::class, 'capture_plugin_versions_before'], 10, 1);
         add_filter('set_site_transient_update_themes', [self::class, 'capture_theme_versions_before'], 10, 1);
     }

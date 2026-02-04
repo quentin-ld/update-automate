@@ -78,7 +78,7 @@ For developers:
 
 = 0.2.0 =
 * Plugin adapted from Zenpress-style interface.
-* Class structure: MainPlugin, Updater, Logger, Database, Cron, Settings, ErrorHandler, Security, MultisiteSupport, Notifications.
+* Class structure: Bootstrap, Update_Manager, Logger, Database, Cron, Settings, ErrorHandler, Security, MultisiteSupport, Notifications.
 * Logging for core/plugin/theme updates and installs; error handling (redirect, download, upgrader failure); security sanitization; multisite table per site; cron cleanup; optional email notifications; REST API for logs and settings; admin UI with Update logs and Settings tabs.
 
 = 0.1.0 =

@@ -97,7 +97,7 @@ final class UpdatesControl_Database {
         global $wpdb;
 
         $table_name = self::get_table_name();
-        // Plugin Check false positive: required on uninstall. No WordPress API for dropping custom tables. Table name from get_table_name() (prefix + constant); passed to prepare() %i.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange -- Uninstall; no WP API for dropping custom tables; table name from get_table_name(), passed to prepare() %i.
         $wpdb->query($wpdb->prepare('DROP TABLE IF EXISTS %i', $table_name));
         delete_option(self::OPTION_DB_VERSION);
     }

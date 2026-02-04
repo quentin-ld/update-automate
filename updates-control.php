@@ -42,14 +42,14 @@ define('updatescontrol_PLUGIN_FILE', __FILE__);
 define('updatescontrol_PLUGIN_DIR', plugin_dir_path(__FILE__));
 
 require_once __DIR__ . '/inc/core/constants.php';
-require_once __DIR__ . '/inc/classes/MainPlugin.php';
+require_once __DIR__ . '/inc/classes/Bootstrap.php';
 
 require_once __DIR__ . '/inc/admin/enqueue.php';
 require_once __DIR__ . '/inc/admin/links.php';
 require_once __DIR__ . '/inc/admin/menu.php';
 require_once __DIR__ . '/inc/settings/options.php';
 
-add_action('plugins_loaded', ['UpdatesControl_MainPlugin', 'init']);
+add_action('plugins_loaded', ['UpdatesControl_Bootstrap', 'init']);
 
 register_activation_hook(__FILE__, 'updatescontrol_activate');
 /**

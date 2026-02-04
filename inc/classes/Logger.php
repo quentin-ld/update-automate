@@ -64,7 +64,7 @@ final class UpdatesControl_Logger {
         global $wpdb;
         $table = UpdatesControl_Database::get_table_name();
 
-        // Plugin Check false positive: $wpdb->insert() is the WordPress API for custom tables; it uses prepared statements internally. No alternative for custom table inserts.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table; $wpdb->insert is the correct API, prepared internally.
         $result = $wpdb->insert(
             $table,
             [
@@ -158,11 +158,13 @@ final class UpdatesControl_Logger {
         $values[] = $per_page;
         $values[] = $offset;
 
-        // Plugin Check false positive: table/orderby via prepare() %i; $where_sql and $order are whitelisted (literal fragments and ASC/DESC). All user input is in $values. Sniffer misreports replacement count (array = multiple args) and flags safe interpolation.
+        // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Table/orderby via %i; user input only in $values.
         $prepared = $wpdb->prepare(
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $where_sql and $order are whitelisted (literal fragments and ASC/DESC).
             "SELECT * FROM %i WHERE {$where_sql} ORDER BY %i {$order} LIMIT %d OFFSET %d",
             $values
         );
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $prepared from prepare() above; user input only in bound $values.
         $results = $wpdb->get_results($prepared);
 
         return is_array($results) ? $results : [];
@@ -202,12 +204,14 @@ final class UpdatesControl_Logger {
         $where_sql = implode(' AND ', $where);
         $values = array_merge([$table], $values);
 
-        // Plugin Check false positive: table via prepare() %i; $where_sql is whitelisted fragments. User input only in $values. Sniffer flags interpolation and $prepared usage; both are safe.
+        // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Table via %i; user input only in $values.
         $prepared = $wpdb->prepare(
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $where_sql is whitelisted literal fragments only.
             "SELECT COUNT(*) FROM %i WHERE {$where_sql}",
             $values
         );
 
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $prepared from prepare() above; user input only in bound $values.
         return (int) $wpdb->get_var($prepared);
     }
 
@@ -225,7 +229,7 @@ final class UpdatesControl_Logger {
         global $wpdb;
         $table = UpdatesControl_Database::get_table_name();
 
-        // Plugin Check false positive: $wpdb->delete() is the WordPress API for custom tables; it uses prepared statements. No alternative for custom table deletes.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table; $wpdb->delete is the correct API, prepared.
         $result = $wpdb->delete($table, ['id' => $id], ['%d']);
 
         return $result !== false;
@@ -246,7 +250,7 @@ final class UpdatesControl_Logger {
         $table = UpdatesControl_Database::get_table_name();
         $date = gmdate('Y-m-d H:i:s', strtotime("-{$days} days"));
 
-        // Plugin Check false positive: table and date passed to prepare(). Direct query required for custom table; no WordPress API for bulk delete by date.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table; table and date via prepare(); no WP API for bulk delete by date.
         $result = $wpdb->query($wpdb->prepare('DELETE FROM %i WHERE created_at < %s', $table, $date));
 
         return is_numeric($result) ? (int) $result : 0;
