@@ -18,7 +18,7 @@ final class UpdatesControl_Logger {
      * Insert a log entry.
      *
      * @param string $log_type       One of: core, plugin, theme.
-     * @param string $action_type    One of: update, install, delete, failed, downgrade.
+     * @param string $action_type    One of: update, downgrade, install, same_version, failed.
      * @param string $item_name      Display name of the item.
      * @param string $item_slug      Slug/identifier.
      * @param string $version_before Previous version.
@@ -26,6 +26,7 @@ final class UpdatesControl_Logger {
      * @param string $status         success, error, cancelled.
      * @param string $message        Optional message (e.g. process log, error details).
      * @param string $trace          Optional call stack trace.
+     * @param string $performed_as   manual, automatic, or upload.
      * @return int|false Log ID on success, false on failure.
      */
     public static function log(
@@ -37,7 +38,8 @@ final class UpdatesControl_Logger {
         string $version_after = '',
         string $status = 'success',
         string $message = '',
-        string $trace = ''
+        string $trace = '',
+        string $performed_as = 'manual'
     ) {
         if (!UpdatesControl_Database::table_exists()) {
             return false;
@@ -52,6 +54,7 @@ final class UpdatesControl_Logger {
         $status = UpdatesControl_Security::sanitize_status($status);
         $message = UpdatesControl_Security::sanitize_message($message);
         $trace = UpdatesControl_Security::sanitize_trace($trace);
+        $performed_as = UpdatesControl_Security::sanitize_performed_as($performed_as);
 
         $site_id = 1;
         if (function_exists('get_current_blog_id')) {
@@ -83,9 +86,10 @@ final class UpdatesControl_Logger {
                 'trace' => $trace,
                 'user_id' => $user_id,
                 'performed_by' => $performed_by,
+                'performed_as' => $performed_as,
                 'created_at' => current_time('mysql'),
             ],
-            ['%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s']
+            ['%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s']
         );
 
         if ($result === false) {
@@ -113,7 +117,7 @@ final class UpdatesControl_Logger {
     /**
      * Get logs with optional filters and pagination.
      *
-     * @param array<string, mixed> $args Optional. site_id, log_type, status, per_page, page, orderby, order.
+     * @param array<string, mixed> $args Optional. site_id, log_type, status, performed_as, per_page, page, orderby, order.
      * @return array<int, object> Array of log row objects.
      */
     public static function get_logs(array $args = []): array {
@@ -128,6 +132,7 @@ final class UpdatesControl_Logger {
             'site_id' => null,
             'log_type' => null,
             'status' => null,
+            'performed_as' => null,
             'per_page' => 50,
             'page' => 1,
             'orderby' => 'created_at',
@@ -150,8 +155,12 @@ final class UpdatesControl_Logger {
             $where[] = 'status = %s';
             $values[] = UpdatesControl_Security::sanitize_status((string) $args['status']);
         }
+        if ($args['performed_as'] !== null && $args['performed_as'] !== '') {
+            $where[] = 'performed_as = %s';
+            $values[] = UpdatesControl_Security::sanitize_performed_as((string) $args['performed_as']);
+        }
 
-        $orderby = in_array($args['orderby'], ['id', 'created_at', 'log_type', 'status', 'item_name'], true)
+        $orderby = in_array($args['orderby'], ['id', 'created_at', 'log_type', 'status', 'item_name', 'performed_as'], true)
             ? $args['orderby']
             : 'created_at';
         $order = strtoupper($args['order']) === 'ASC' ? 'ASC' : 'DESC';
@@ -159,9 +168,7 @@ final class UpdatesControl_Logger {
         $offset = max(0, ((int) $args['page']) - 1) * $per_page;
 
         $where_sql = implode(' AND ', $where);
-        $values = array_merge([$table, $orderby], $values);
-        $values[] = $per_page;
-        $values[] = $offset;
+        $values = array_merge([$table], $values, [$orderby, $per_page, $offset]);
 
         // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Table/orderby via %i; user input only in $values.
         $prepared = $wpdb->prepare(
@@ -178,7 +185,7 @@ final class UpdatesControl_Logger {
     /**
      * Get total count of logs matching filters.
      *
-     * @param array<string, mixed> $args Optional. site_id, log_type, status.
+     * @param array<string, mixed> $args Optional. site_id, log_type, status, performed_as.
      * @return int
      */
     public static function get_logs_count(array $args = []): int {
@@ -204,6 +211,10 @@ final class UpdatesControl_Logger {
         if (isset($args['status']) && $args['status'] !== '') {
             $where[] = 'status = %s';
             $values[] = UpdatesControl_Security::sanitize_status((string) $args['status']);
+        }
+        if (isset($args['performed_as']) && $args['performed_as'] !== '') {
+            $where[] = 'performed_as = %s';
+            $values[] = UpdatesControl_Security::sanitize_performed_as((string) $args['performed_as']);
         }
 
         $where_sql = implode(' AND ', $where);

@@ -45,6 +45,10 @@ final class UpdatesControl_ErrorHandler {
             return;
         }
 
+        if ($result->get_error_code() === 'folder_exists') {
+            return;
+        }
+
         $message = $result->get_error_message();
         $type = $options['type'] ?? 'plugin';
         $name = __('Unknown', 'updates-control');
@@ -56,7 +60,7 @@ final class UpdatesControl_ErrorHandler {
         $theme_slug = '';
         if ($type === 'plugin') {
             $plugin_file = self::get_plugin_file_from_options_or_upgrader($options, $upgrader);
-            if ($plugin_file === '' && $result->get_error_code() === 'folder_exists') {
+            if ($plugin_file === '') {
                 $plugin_file = self::get_plugin_file_from_folder_exists_error($result);
             }
             if ($plugin_file !== '' && function_exists('get_plugins')) {
@@ -72,7 +76,9 @@ final class UpdatesControl_ErrorHandler {
                 $slug = dirname($plugin_file) !== '.' ? dirname($plugin_file) : $plugin_file;
             }
         } elseif ($type === 'theme') {
-            $theme_slug = $options['themes'][0] ?? $options['theme'] ?? '';
+            $theme_slug = (isset($options['themes']) && is_array($options['themes']) && isset($options['themes'][0]))
+                ? $options['themes'][0]
+                : ($options['theme'] ?? '');
             if ($theme_slug === '' && method_exists($upgrader, 'theme_info') && is_object($upgrader->theme_info())) {
                 $theme_slug = $upgrader->theme_info()->get_stylesheet();
             }
@@ -97,6 +103,7 @@ final class UpdatesControl_ErrorHandler {
         }
 
         $trace = self::capture_trace();
+        $performed_as = UpdatesControl_Update_Manager::is_automatic_update() ? 'automatic' : 'manual';
 
         UpdatesControl_Logger::log(
             $type,
@@ -107,7 +114,8 @@ final class UpdatesControl_ErrorHandler {
             $version_after,
             'error',
             $message,
-            $trace
+            $trace,
+            $performed_as
         );
     }
 
@@ -261,6 +269,7 @@ final class UpdatesControl_ErrorHandler {
      */
     public static function capture_redirect_error(string $location, int $status): string {
         if ($status >= 400 && str_contains($location, 'update-core.php')) {
+            $performed_as = UpdatesControl_Update_Manager::is_automatic_update() ? 'automatic' : 'manual';
             UpdatesControl_Logger::log(
                 'core',
                 'failed',
@@ -274,7 +283,8 @@ final class UpdatesControl_ErrorHandler {
                     __('Update redirect with status %d', 'updates-control'),
                     $status
                 ),
-                self::capture_trace()
+                self::capture_trace(),
+                $performed_as
             );
         }
 
@@ -302,7 +312,8 @@ final class UpdatesControl_ErrorHandler {
             $type = 'theme';
             $name = $skin->theme;
         }
-        UpdatesControl_Logger::log($type, 'failed', $name ?: 'unknown', '', '', '', 'error', $reply->get_error_message(), self::capture_trace());
+        $performed_as = UpdatesControl_Update_Manager::is_automatic_update() ? 'automatic' : 'manual';
+        UpdatesControl_Logger::log($type, 'failed', $name ?: 'unknown', '', '', '', 'error', $reply->get_error_message(), self::capture_trace(), $performed_as);
 
         return $reply;
     }

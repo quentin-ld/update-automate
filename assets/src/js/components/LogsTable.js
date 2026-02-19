@@ -9,8 +9,7 @@ import { useLogs } from '../hooks/useLogs';
  * @return {JSX.Element} Logs table UI.
  */
 export const LogsTable = () => {
-	const { logs, total, loading, error, fetchLogs, deleteLog, cleanupLogs } =
-		useLogs();
+	const { logs, total, loading, error, fetchLogs, deleteLog } = useLogs();
 	const [confirmAction, setConfirmAction] = useState({
 		type: null,
 		id: null,
@@ -23,10 +22,6 @@ export const LogsTable = () => {
 
 	const handleDeleteClick = (id) => {
 		setConfirmAction({ type: 'delete', id });
-	};
-
-	const handleCleanupClick = () => {
-		setConfirmAction({ type: 'cleanup', id: null });
 	};
 
 	const closeConfirm = () => {
@@ -43,8 +38,6 @@ export const LogsTable = () => {
 	const handleConfirm = async () => {
 		if (confirmAction.type === 'delete' && confirmAction.id) {
 			await deleteLog(confirmAction.id);
-		} else if (confirmAction.type === 'cleanup') {
-			await cleanupLogs();
 		}
 		closeConfirm();
 	};
@@ -52,21 +45,16 @@ export const LogsTable = () => {
 	const getActionTypeLabel = (actionType) => {
 		const labels = {
 			update: __('Update', 'updatescontrol'),
-			install: __('Install', 'updatescontrol'),
-			delete: __('Delete', 'updatescontrol'),
-			failed: __('Failed', 'updatescontrol'),
 			downgrade: __('Downgrade', 'updatescontrol'),
+			install: __('Install', 'updatescontrol'),
+			same_version: __('Same version', 'updatescontrol'),
+			failed: __('Failed', 'updatescontrol'),
+			delete: __('Delete', 'updatescontrol'), // Legacy.
 		};
 		return labels[actionType] || actionType;
 	};
 
-	const confirmMessage =
-		confirmAction.type === 'delete'
-			? __('Delete this log entry?', 'updatescontrol')
-			: __(
-					'Delete all logs older than the retention period. This cannot be undone.',
-					'updatescontrol'
-				);
+	const confirmMessage = __('Delete this log entry?', 'updatescontrol');
 
 	const formatDate = (dateStr) => {
 		if (!dateStr) {
@@ -92,11 +80,7 @@ export const LogsTable = () => {
 		<div className="updatescontrol-logs">
 			{confirmAction.type && (
 				<Modal
-					title={
-						confirmAction.type === 'delete'
-							? __('Delete log', 'updatescontrol')
-							: __('Cleanup old logs', 'updatescontrol')
-					}
+					title={__('Delete log', 'updatescontrol')}
 					onRequestClose={closeConfirm}
 				>
 					<p>{confirmMessage}</p>
@@ -168,14 +152,6 @@ export const LogsTable = () => {
 				>
 					{__('Refresh', 'updatescontrol')}
 				</Button>
-				<Button
-					variant="secondary"
-					isDestructive
-					onClick={handleCleanupClick}
-					disabled={loading}
-				>
-					{__('Cleanup old logs', 'updatescontrol')}
-				</Button>
 			</div>
 			{loading && logs.length === 0 ? (
 				<div className="updatescontrol-logs-loading">
@@ -195,8 +171,10 @@ export const LogsTable = () => {
 									<th>{__('Type', 'updatescontrol')}</th>
 									<th>{__('Action', 'updatescontrol')}</th>
 									<th>{__('Item', 'updatescontrol')}</th>
-									<th>{__('Version', 'updatescontrol')}</th>
+									<th>{__('From version', 'updatescontrol')}</th>
+									<th>{__('To version', 'updatescontrol')}</th>
 									<th>{__('Status', 'updatescontrol')}</th>
+									<th>{__('Trigger', 'updatescontrol')}</th>
 									<th>{__('Logs', 'updatescontrol')}</th>
 									<th>{__('Performed by', 'updatescontrol')}</th>
 									<th
@@ -210,7 +188,7 @@ export const LogsTable = () => {
 							<tbody>
 								{logs.length === 0 ? (
 									<tr>
-										<td colSpan="9">
+										<td colSpan="11">
 											{__(
 												'No update logs yet.',
 												'updatescontrol'
@@ -226,14 +204,8 @@ export const LogsTable = () => {
 											<td>{log.log_type}</td>
 											<td>{getActionTypeLabel(log.action_type)}</td>
 											<td>{log.item_name || '—'}</td>
-											<td>
-												{log.version_before &&
-												log.version_after
-													? `${log.version_before} → ${log.version_after}`
-													: log.version_after ||
-														log.version_before ||
-														'—'}
-											</td>
+											<td>{log.version_before || '—'}</td>
+											<td>{log.version_after || '—'}</td>
 											<td>
 												<span
 													className={`updatescontrol-status updatescontrol-status--${log.status}`}
@@ -241,6 +213,7 @@ export const LogsTable = () => {
 													{log.status}
 												</span>
 											</td>
+											<td>{log.action_display || '—'}</td>
 											<td>
 												{log.message || log.trace ? (
 													<Button

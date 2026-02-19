@@ -4,7 +4,7 @@ Donate link: https://github.com/sponsors/quentin-ld/
 Tags: updates, logging, security, multisite, notifications
 Requires at least: 6.2
 Tested up to: 6.9
-Stable tag: 0.2.0
+Stable tag: 0.1
 Requires PHP: 8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html/
@@ -66,25 +66,9 @@ For developers:
 
 * `updatescontrol_after_log` – Fired after a log entry is inserted. Parameters: `(int $log_id, array $data)`. Use to integrate with other systems or trigger custom notifications.
 
-= REST API =
-
-* `GET /wp-json/updatescontrol/v1/logs` – List logs (args: per_page, page, log_type, status, site_id). Requires `manage_options`.
-* `DELETE /wp-json/updatescontrol/v1/logs/<id>` – Delete one log. Requires `manage_options`.
-* `POST /wp-json/updatescontrol/v1/logs/cleanup` – Delete logs older than retention days. Requires `manage_options`.
-* `GET /wp-json/updatescontrol/v1/settings` – Get plugin settings. Requires `manage_options`.
-* `PUT /wp-json/updatescontrol/v1/settings` – Update settings (logging_enabled, retention_days, notify_enabled, notify_emails, notify_on). Requires `manage_options`.
-
 == Changelog ==
-
-= 0.2.0 =
-* Plugin adapted from Zenpress-style interface.
-* Class structure: Bootstrap, Update_Manager, Logger, Database, Cron, Settings, ErrorHandler, Security, MultisiteSupport, Notifications.
-* Logging for core/plugin/theme updates and installs; error handling (redirect, download, upgrader failure); security sanitization; multisite table per site; cron cleanup; optional email notifications; REST API for logs and settings; admin UI with Update logs and Settings tabs.
 
 = 0.1.0 =
 * Initial release.
 
 == Upgrade Notice ==
-
-= 0.2.0 =
-* Zenpress-style admin interface, error handling for failed updates, REST GET settings, multisite and notifications support.

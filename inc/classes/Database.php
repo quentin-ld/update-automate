@@ -26,7 +26,7 @@ final class UpdatesControl_Database {
      *
      * @var string
      */
-    public const DB_VERSION = '1.2';
+    public const DB_VERSION = UPDATESCONTROL_VERSION;
 
     /**
      * Table name (without prefix).
@@ -71,6 +71,7 @@ final class UpdatesControl_Database {
             trace longtext DEFAULT NULL,
             user_id bigint(20) unsigned NOT NULL DEFAULT 0,
             performed_by varchar(20) NOT NULL DEFAULT 'system',
+            performed_as varchar(20) NOT NULL DEFAULT 'manual',
             created_at datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
             PRIMARY KEY (id),
             KEY site_id (site_id),

@@ -11,7 +11,7 @@
  *
  * Plugin Name: Updates Control - Manage updates easily
  * Description: Log WordPress core, plugin, and theme updates with error handling, security, and optional email notifications. Supports multisite.
- * Version: 0.2.0
+ * Version: 0.1
  * Plugin URI: https://wordpress.org/plugins/updatescontrol/
  * Author: Quentin Le Duff
  * Author URI: https://profiles.wordpress.org/quentinldd/
@@ -37,6 +37,9 @@
 if (!defined('ABSPATH')) {
     exit;
 }
+
+/** Plugin version (must match Version header above; used for DB schema version). */
+define('UPDATESCONTROL_VERSION', '0.1');
 
 define('updatescontrol_PLUGIN_FILE', __FILE__);
 define('updatescontrol_PLUGIN_DIR', plugin_dir_path(__FILE__));

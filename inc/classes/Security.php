@@ -19,14 +19,14 @@ final class UpdatesControl_Security {
      *
      * @var array<string>
      */
-    public const ALLOWED_LOG_TYPES = ['core', 'plugin', 'theme'];
+    public const ALLOWED_LOG_TYPES = ['core', 'plugin', 'theme', 'translation'];
 
     /**
      * Allowed action types.
      *
      * @var array<string>
      */
-    public const ALLOWED_ACTION_TYPES = ['update', 'install', 'delete', 'failed', 'downgrade'];
+    public const ALLOWED_ACTION_TYPES = ['update', 'downgrade', 'install', 'same_version', 'failed'];
 
     /**
      * Allowed status values.
@@ -34,6 +34,14 @@ final class UpdatesControl_Security {
      * @var array<string>
      */
     public const ALLOWED_STATUSES = ['success', 'error', 'cancelled'];
+
+    /**
+     * Allowed performed_as values (manual vs automatic update).
+     *
+     * @var array<string>
+     */
+    /** Manual, automatic, or file upload (update.php upload flow). */
+    public const ALLOWED_PERFORMED_AS = ['manual', 'automatic', 'upload'];
 
     /**
      * Sanitize log type.
@@ -69,6 +77,18 @@ final class UpdatesControl_Security {
         $value = sanitize_key($value);
 
         return in_array($value, self::ALLOWED_STATUSES, true) ? $value : 'success';
+    }
+
+    /**
+     * Sanitize performed_as (manual or automatic).
+     *
+     * @param string $value Raw value.
+     * @return string
+     */
+    public static function sanitize_performed_as(string $value): string {
+        $value = sanitize_key($value);
+
+        return in_array($value, self::ALLOWED_PERFORMED_AS, true) ? $value : 'manual';
     }
 
     /**

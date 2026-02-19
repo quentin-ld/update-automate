@@ -54,7 +54,11 @@ final class UpdatesControl_Settings {
                 ],
                 'log_type' => [
                     'type' => 'string',
-                    'enum' => ['', 'core', 'plugin', 'theme'],
+                    'enum' => ['', 'core', 'plugin', 'theme', 'translation'],
+                ],
+                'performed_as' => [
+                    'type' => 'string',
+                    'enum' => ['', 'manual', 'automatic', 'upload'],
                 ],
                 'status' => [
                     'type' => 'string',
@@ -160,6 +164,9 @@ final class UpdatesControl_Settings {
         if ($request->get_param('site_id') !== null) {
             $args['site_id'] = $request->get_param('site_id');
         }
+        if ($request->get_param('performed_as') !== '') {
+            $args['performed_as'] = $request->get_param('performed_as');
+        }
 
         $logs = UpdatesControl_Logger::get_logs($args);
         $total = UpdatesControl_Logger::get_logs_count($args);
@@ -190,6 +197,15 @@ final class UpdatesControl_Settings {
             /* translators: %d: WordPress user ID when display name is not available */
             $log->performed_by_display = $user ? $user->display_name : sprintf(__('User #%d', 'updates-control'), $user_id);
             $log->user_edit_link = get_edit_user_link($user_id) ?: '';
+        }
+
+        $performed_as = $log->performed_as ?? 'manual';
+        if ($performed_as === 'automatic') {
+            $log->action_display = __('Automatic', 'updates-control');
+        } elseif ($performed_as === 'upload') {
+            $log->action_display = __('File upload', 'updates-control');
+        } else {
+            $log->action_display = __('Manual', 'updates-control');
         }
 
         return $log;
