@@ -31,6 +31,7 @@ final class UpdatesControl_Update_Manager {
         add_filter('upgrader_source_selection', [self::class, 'store_plugin_version_before_upload_overwrite'], 20, 4);
         add_filter('upgrader_source_selection', [self::class, 'store_theme_version_before_upload_overwrite'], 20, 4);
         add_filter('upgrader_pre_download', [self::class, 'init_core_feedback_on_download'], 5, 3);
+        add_filter('upgrader_pre_download', [self::class, 'start_bulk_post_flush_buffer'], 10, 3);
         // phpcs:ignore plugin_updater_detected, update_modification_detected -- Update manager (logs updates only); we only add version_before to the transient for audit logging. We do not implement a plugin updater or alter what gets updated.
         add_filter('set_site_transient_update_plugins', [self::class, 'capture_plugin_versions_before'], 10, 1);
         add_filter('set_site_transient_update_themes', [self::class, 'capture_theme_versions_before'], 10, 1);
@@ -75,17 +76,41 @@ final class UpdatesControl_Update_Manager {
         $hook_extra = $options['hook_extra'] ?? [];
         $action = $hook_extra['action'] ?? '';
         $type = $hook_extra['type'] ?? '';
+        $has_plugin = isset($hook_extra['plugin']) && is_string($hook_extra['plugin']);
+        $has_theme = isset($hook_extra['theme']) && is_string($hook_extra['theme']);
+        $has_translation = isset($hook_extra['language_update']);
+        $is_plugin_or_theme = $type === 'plugin' || $type === 'theme' || $has_plugin || $has_theme;
+        $is_translation = $has_translation;
+        $needs_feedback_ob = $is_plugin_or_theme || $is_translation;
 
-        if (($type === 'plugin' || $type === 'theme') && !self::$feedback_ob_started) {
-            ob_start();
+        // Use callback OB when skin flushes output (Bulk_*_Skin::flush_output, or show_message in translation flow).
+        // Plugin/theme bulk: is_multi + Bulk_Upgrader_Skin. Translation: Language_Pack_Upgrader_Skin uses show_message (flushes).
+        // Core updates use update_feedback filter only; no OB here.
+        // PHP forbids ob_start() inside an OB handler, so the callback only appends and clears the flag; the next run() will start a new OB.
+        if ($needs_feedback_ob && !self::$feedback_ob_started) {
+            $is_multi = !empty($options['is_multi']);
+            if ($is_multi || $is_translation) {
+                if (self::$feedback_ob_callback === null) {
+                    self::$feedback_ob_callback = function (string $buf): string {
+                        self::$captured_bulk_feedback .= $buf;
+                        self::$feedback_ob_started = false;
+                        self::$bulk_flush_happened = true;
+
+                        return $buf;
+                    };
+                }
+                ob_start(self::$feedback_ob_callback);
+            } else {
+                ob_start();
+            }
             self::$feedback_ob_started = true;
         }
 
-        if ($action !== 'update') {
+        if ($action !== 'update' && !$has_plugin && !$has_theme && !$has_translation) {
             return $options;
         }
 
-        if (isset($hook_extra['plugin']) && is_string($hook_extra['plugin'])) {
+        if ($has_plugin) {
             $file = $hook_extra['plugin'];
             $current = get_site_transient('update_plugins');
             if (is_object($current) && isset($current->response[$file])) {
@@ -100,10 +125,11 @@ final class UpdatesControl_Update_Manager {
                     'version_after' => isset($current->response[$file]->new_version) ? (string) $current->response[$file]->new_version : '',
                 ];
             }
-        } elseif (isset($hook_extra['theme']) && is_string($hook_extra['theme'])) {
+        } elseif ($has_theme) {
             $slug = $hook_extra['theme'];
             $current = get_site_transient('update_themes');
-            if (is_array($current) && isset($current['response'][$slug])) {
+            $theme_response = is_object($current) && isset($current->response[$slug]) ? $current->response[$slug] : null;
+            if (is_array($theme_response)) {
                 $themes = wp_get_themes();
                 if (!isset(self::$pending_logs['theme'])) {
                     self::$pending_logs['theme'] = [];
@@ -113,7 +139,7 @@ final class UpdatesControl_Update_Manager {
                     'name' => isset($themes[$slug]) ? (string) $themes[$slug]->get('Name') : $slug,
                     'slug' => $slug,
                     'version_before' => $version_before,
-                    'version_after' => isset($current['response'][$slug]['new_version']) ? (string) $current['response'][$slug]['new_version'] : '',
+                    'version_after' => isset($theme_response['new_version']) ? (string) $theme_response['new_version'] : '',
                 ];
             }
         } elseif (isset($hook_extra['language_update_type'], $hook_extra['language_update']) && is_object($hook_extra['language_update'])) {
@@ -341,6 +367,18 @@ final class UpdatesControl_Update_Manager {
     /** Captured feedback from WordPress show_message() during the last run (plugin/theme). */
     private static string $captured_feedback = '';
 
+    /** Accumulated output from bulk upgrade runs (bulk skin flushes the OB per item; we capture via callback). */
+    private static string $captured_bulk_feedback = '';
+
+    /** Set by bulk OB callback when skin flushed so we start a new buffer in upgrader_pre_download. */
+    private static bool $bulk_flush_happened = false;
+
+    /** True when we started an OB in upgrader_pre_download to capture post-flush feedback (Downloading…, etc.). */
+    private static bool $post_flush_ob_started = false;
+
+    /** Callable for ob_start used in bulk flow so we can re-start OB after each flush. */
+    private static ?\Closure $feedback_ob_callback = null;
+
     /**
      * Store current core/plugin/theme versions before upgrade runs. For core, also hook update_feedback to collect process.
      *
@@ -351,7 +389,7 @@ final class UpdatesControl_Update_Manager {
         if ($type === 'core') {
             update_option(self::OPTION_CORE_VERSION_BEFORE, get_bloginfo('version'));
         }
-        if ($type === 'plugin' && !empty($hook_extra['plugin']) && is_string($hook_extra['plugin'])) {
+        if (!empty($hook_extra['plugin']) && is_string($hook_extra['plugin'])) {
             $file = $hook_extra['plugin'];
             if (!function_exists('get_plugins')) {
                 require_once ABSPATH . 'wp-admin/includes/plugin.php';
@@ -364,7 +402,7 @@ final class UpdatesControl_Update_Manager {
                 update_option(self::OPTION_PLUGIN_VERSIONS_BEFORE, $stored);
             }
         }
-        if ($type === 'theme' && !empty($hook_extra['theme']) && is_string($hook_extra['theme'])) {
+        if (!empty($hook_extra['theme']) && is_string($hook_extra['theme'])) {
             $slug = $hook_extra['theme'];
             $themes = wp_get_themes();
             $version = isset($themes[$slug]) ? (string) $themes[$slug]->get('Version') : '';
@@ -376,6 +414,31 @@ final class UpdatesControl_Update_Manager {
         }
 
         return $result;
+    }
+
+    /**
+     * After bulk skin flushes output (before() → flush_output), start a new buffer so we capture the real log
+     * (Downloading…, Unpacking…, Installing…, success, etc.) in download_package / install_package.
+     *
+     * @param bool|WP_Error       $reply      Whether to short-circuit.
+     * @param string              $package    Package URL.
+     * @param WP_Upgrader         $upgrader   Upgrader instance.
+     * @param array<string,mixed> $hook_extra Extra args.
+     * @return bool|WP_Error Unchanged.
+     */
+    public static function start_bulk_post_flush_buffer($reply, string $package, WP_Upgrader $upgrader, array $hook_extra = []): bool|WP_Error {
+        if (self::$bulk_flush_happened && $upgrader->skin instanceof \Bulk_Upgrader_Skin) {
+            self::$bulk_flush_happened = false;
+            ob_start(function (string $buf): string {
+                self::$captured_bulk_feedback .= $buf;
+                self::$post_flush_ob_started = false;
+
+                return $buf;
+            });
+            self::$post_flush_ob_started = true;
+        }
+
+        return $reply;
     }
 
     /**
@@ -623,29 +686,51 @@ final class UpdatesControl_Update_Manager {
         if ($upgrader instanceof \Plugin_Upgrader && is_wp_error($upgrader->result)) {
             return;
         }
+        if ($upgrader instanceof \Theme_Upgrader && is_wp_error($upgrader->result)) {
+            return;
+        }
 
         $type = $options['type'] ?? '';
         $action = $options['action'] ?? '';
 
-        if (($type === 'plugin' || $type === 'theme') && self::$feedback_ob_started) {
-            $buffer = ob_get_clean();
-            self::$feedback_ob_started = false;
-            if (is_string($buffer) && $buffer !== '') {
+        if ($type === 'plugin' || $type === 'theme' || $type === 'translation') {
+            $buffer = '';
+            if (self::$feedback_ob_started) {
+                $ob = ob_get_clean();
+                self::$feedback_ob_started = false;
+                $buffer = is_string($ob) ? $ob : '';
+            } elseif (self::$post_flush_ob_started) {
+                ob_get_clean();
+                self::$post_flush_ob_started = false;
+                $buffer = self::$captured_bulk_feedback;
+                self::$captured_bulk_feedback = '';
+            }
+            if (self::$captured_bulk_feedback !== '') {
+                $buffer = self::$captured_bulk_feedback . $buffer;
+                self::$captured_bulk_feedback = '';
+            }
+            if ($buffer !== '') {
                 self::$captured_feedback = self::feedback_html_to_plain($buffer);
-                echo $buffer;
+                if (!$upgrader->skin instanceof \Bulk_Upgrader_Skin) {
+                    echo $buffer;
+                }
             }
         }
 
-        $process_message = UpdatesControl_ErrorHandler::get_skin_process_message($upgrader);
+        $skin_message = UpdatesControl_ErrorHandler::get_skin_process_message($upgrader);
+        $process_message = $skin_message;
         if (self::$captured_feedback !== '') {
-            if ($process_message === '') {
-                $process_message = self::$captured_feedback;
-            }
+            $ob_message = self::$captured_feedback;
             self::$captured_feedback = '';
+            $process_message = $process_message !== '' ? $process_message . "\n" . $ob_message : $ob_message;
+        }
+        if ($process_message === '' && $type !== 'core' && $action === 'install') {
+            $process_message = __('Installed from uploaded file.', 'updates-control');
         }
 
         $trace = UpdatesControl_ErrorHandler::capture_trace();
         $performed_as = self::$auto_update ? 'automatic' : 'manual';
+        $update_context = (($type === 'plugin' || $type === 'theme') && $upgrader->skin instanceof \Bulk_Upgrader_Skin) ? 'bulk' : (($type === 'plugin' || $type === 'theme') ? 'single' : '');
 
         if ($type === 'core' && $action === 'update') {
             self::log_core_update($upgrader, $process_message, $trace, $performed_as);
@@ -669,11 +754,11 @@ final class UpdatesControl_Update_Manager {
                     $has_version_before = isset($stored[$plugin_file]) || isset($by_mainfile[basename($plugin_file)]);
                     $log_action = $has_version_before ? 'update' : 'install';
                     $plugin_performed_as = $has_version_before ? 'upload' : $performed_as;
-                    self::log_plugin_update($plugin_file, $log_action, $upgrader, $process_message, $trace, $plugin_performed_as);
+                    self::log_plugin_update($plugin_file, $log_action, $upgrader, $process_message, $trace, $plugin_performed_as, $update_context);
                 }
             } else {
                 foreach ($plugins as $plugin_file) {
-                    self::log_plugin_update($plugin_file, $action, $upgrader, $process_message, $trace, $performed_as);
+                    self::log_plugin_update($plugin_file, $action, $upgrader, $process_message, $trace, $performed_as, $update_context);
                 }
             }
         }
@@ -691,12 +776,12 @@ final class UpdatesControl_Update_Manager {
                         $stored = (array) get_option(self::OPTION_THEME_VERSIONS_BEFORE, []);
                         $log_action = isset($stored[$theme_slug]) ? 'update' : 'install';
                         $theme_performed_as = isset($stored[$theme_slug]) ? 'upload' : $performed_as;
-                        self::log_theme_update($theme_slug, $log_action, $upgrader, $process_message, $trace, $theme_performed_as);
+                        self::log_theme_update($theme_slug, $log_action, $upgrader, $process_message, $trace, $theme_performed_as, $update_context);
                     }
                 }
             } else {
                 foreach ($themes as $theme_slug) {
-                    self::log_theme_update($theme_slug, $action, $upgrader, $process_message, $trace, $performed_as);
+                    self::log_theme_update($theme_slug, $action, $upgrader, $process_message, $trace, $performed_as, $update_context);
                 }
             }
         }
@@ -813,10 +898,29 @@ final class UpdatesControl_Update_Manager {
      * @return string Plain text, one message per line.
      */
     private static function feedback_html_to_plain(string $html): string {
+        $html = preg_replace('/<script\b[^>]*>.*?<\/script>\s*/is', '', $html);
         $text = strip_tags($html);
-        $text = str_replace(['&#8230;', '&hellip;'], '…', $text);
+        $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $text = preg_replace('/\s*\n\s*/', "\n", $text);
         $lines = array_filter(array_map('trim', explode("\n", $text)));
+        $lines = array_filter($lines, function (string $line): bool {
+            if ($line === 'More details.') {
+                return false;
+            }
+            if (str_starts_with($line, 'jQuery(')) {
+                return false;
+            }
+
+            return true;
+        });
+        $lines = array_map(function (string $line): string {
+            $suffix = ' More details.';
+            if (str_ends_with($line, $suffix)) {
+                return substr($line, 0, -strlen($suffix));
+            }
+
+            return $line;
+        }, $lines);
 
         return implode("\n", $lines);
     }
@@ -870,9 +974,10 @@ final class UpdatesControl_Update_Manager {
      * @param string       $process_message Optional process log (e.g. from skin).
      * @param string       $trace           Optional call stack trace.
      * @param string       $performed_as    manual or automatic.
+     * @param string       $update_context  bulk or single (empty for legacy).
      * @return void
      */
-    private static function log_plugin_update(string $plugin_file, string $action, WP_Upgrader $upgrader, string $process_message = '', string $trace = '', string $performed_as = 'manual'): void {
+    private static function log_plugin_update(string $plugin_file, string $action, WP_Upgrader $upgrader, string $process_message = '', string $trace = '', string $performed_as = 'manual', string $update_context = ''): void {
         $stored = (array) get_option(self::OPTION_PLUGIN_VERSIONS_BEFORE, []);
         $by_mainfile = (array) get_option(self::OPTION_PLUGIN_VERSIONS_BEFORE_BY_MAINFILE, []);
         $version_before = isset($stored[$plugin_file]) ? (string) $stored[$plugin_file] : '';
@@ -917,7 +1022,8 @@ final class UpdatesControl_Update_Manager {
             'success',
             $message,
             $trace,
-            $performed_as
+            $performed_as,
+            $update_context
         );
 
         unset($stored[$plugin_file]);
@@ -973,9 +1079,10 @@ final class UpdatesControl_Update_Manager {
      * @param string      $process_message Optional process log (e.g. from skin).
      * @param string      $trace           Optional call stack trace.
      * @param string      $performed_as    manual or automatic.
+     * @param string      $update_context  bulk or single (empty for legacy).
      * @return void
      */
-    private static function log_theme_update(string $theme_slug, string $action, WP_Upgrader $upgrader, string $process_message = '', string $trace = '', string $performed_as = 'manual'): void {
+    private static function log_theme_update(string $theme_slug, string $action, WP_Upgrader $upgrader, string $process_message = '', string $trace = '', string $performed_as = 'manual', string $update_context = ''): void {
         $stored = (array) get_option(self::OPTION_THEME_VERSIONS_BEFORE, []);
         $version_before = isset($stored[$theme_slug]) ? (string) $stored[$theme_slug] : '';
         $themes = wp_get_themes();
@@ -1002,7 +1109,8 @@ final class UpdatesControl_Update_Manager {
             'success',
             $message,
             $trace,
-            $performed_as
+            $performed_as,
+            $update_context
         );
 
         unset($stored[$theme_slug]);

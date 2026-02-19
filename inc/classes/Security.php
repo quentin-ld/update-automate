@@ -43,6 +43,9 @@ final class UpdatesControl_Security {
     /** Manual, automatic, or file upload (update.php upload flow). */
     public const ALLOWED_PERFORMED_AS = ['manual', 'automatic', 'upload'];
 
+    /** Update context: bulk (e.g. update-core iframe) or single (e.g. Plugins screen). Empty for core/translation/legacy. */
+    public const ALLOWED_UPDATE_CONTEXT = ['bulk', 'single', ''];
+
     /**
      * Sanitize log type.
      *
@@ -92,6 +95,18 @@ final class UpdatesControl_Security {
     }
 
     /**
+     * Sanitize update_context (bulk or single).
+     *
+     * @param string $value Raw value.
+     * @return string 'bulk', 'single', or ''.
+     */
+    public static function sanitize_update_context(string $value): string {
+        $value = sanitize_key($value);
+
+        return in_array($value, self::ALLOWED_UPDATE_CONTEXT, true) ? $value : '';
+    }
+
+    /**
      * Sanitize string for DB storage (short).
      *
      * @param string $value Raw value.
@@ -105,13 +120,15 @@ final class UpdatesControl_Security {
     }
 
     /**
-     * Sanitize message (long text).
+     * Sanitize message (long text). Decodes HTML entities (e.g. &#8230; → …) for readable logs.
      *
      * @param string $value Raw value.
      * @return string
      */
     public static function sanitize_message(string $value): string {
-        return wp_kses_post(wp_unslash($value));
+        $value = wp_kses_post(wp_unslash($value));
+
+        return html_entity_decode($value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     }
 
     /**

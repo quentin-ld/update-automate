@@ -27,6 +27,7 @@ final class UpdatesControl_Logger {
      * @param string $message        Optional message (e.g. process log, error details).
      * @param string $trace          Optional call stack trace.
      * @param string $performed_as   manual, automatic, or upload.
+     * @param string $update_context bulk, single, or '' (for core/translation/legacy).
      * @return int|false Log ID on success, false on failure.
      */
     public static function log(
@@ -39,7 +40,8 @@ final class UpdatesControl_Logger {
         string $status = 'success',
         string $message = '',
         string $trace = '',
-        string $performed_as = 'manual'
+        string $performed_as = 'manual',
+        string $update_context = ''
     ) {
         if (!UpdatesControl_Database::table_exists()) {
             return false;
@@ -55,6 +57,7 @@ final class UpdatesControl_Logger {
         $message = UpdatesControl_Security::sanitize_message($message);
         $trace = UpdatesControl_Security::sanitize_trace($trace);
         $performed_as = UpdatesControl_Security::sanitize_performed_as($performed_as);
+        $update_context = UpdatesControl_Security::sanitize_update_context($update_context);
 
         $site_id = 1;
         if (function_exists('get_current_blog_id')) {
@@ -87,9 +90,10 @@ final class UpdatesControl_Logger {
                 'user_id' => $user_id,
                 'performed_by' => $performed_by,
                 'performed_as' => $performed_as,
+                'update_context' => $update_context,
                 'created_at' => current_time('mysql'),
             ],
-            ['%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s']
+            ['%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s']
         );
 
         if ($result === false) {
@@ -107,6 +111,7 @@ final class UpdatesControl_Logger {
             'status' => $status,
             'message' => $message,
             'trace' => $trace,
+            'update_context' => $update_context,
             'created_at' => current_time('mysql'),
         ];
         do_action('updatescontrol_after_log', $log_id, $data);

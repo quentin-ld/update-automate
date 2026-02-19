@@ -219,8 +219,10 @@ final class UpdatesControl_ErrorHandler {
         if (!is_array($messages)) {
             return '';
         }
+        $lines = array_map('strip_tags', $messages);
+        $text = implode("\n", $lines);
 
-        return implode("\n", array_map('strip_tags', $messages));
+        return html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     }
 
     /**

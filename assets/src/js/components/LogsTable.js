@@ -42,16 +42,23 @@ export const LogsTable = () => {
 		closeConfirm();
 	};
 
-	const getActionTypeLabel = (actionType) => {
+	const getActionTypeLabel = (actionType, updateContext = '') => {
 		const labels = {
 			update: __('Update', 'updatescontrol'),
 			downgrade: __('Downgrade', 'updatescontrol'),
 			install: __('Install', 'updatescontrol'),
-			same_version: __('Same version', 'updatescontrol'),
+			same_version: __('Reset', 'updatescontrol'),
 			failed: __('Failed', 'updatescontrol'),
 			delete: __('Delete', 'updatescontrol'), // Legacy.
 		};
-		return labels[actionType] || actionType;
+		const base = labels[actionType] || actionType;
+		if (updateContext === 'bulk') {
+			return `${base} (${__('Bulk', 'updatescontrol')})`;
+		}
+		if (updateContext === 'single') {
+			return `${base} (${__('Single', 'updatescontrol')})`;
+		}
+		return base;
 	};
 
 	const confirmMessage = __('Delete this log entry?', 'updatescontrol');
@@ -202,7 +209,7 @@ export const LogsTable = () => {
 												{formatDate(log.created_at)}
 											</td>
 											<td>{log.log_type}</td>
-											<td>{getActionTypeLabel(log.action_type)}</td>
+											<td>{getActionTypeLabel(log.action_type, log.update_context)}</td>
 											<td>{log.item_name || '—'}</td>
 											<td>{log.version_before || '—'}</td>
 											<td>{log.version_after || '—'}</td>

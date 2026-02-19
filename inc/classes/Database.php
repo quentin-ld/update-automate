@@ -72,6 +72,7 @@ final class UpdatesControl_Database {
             user_id bigint(20) unsigned NOT NULL DEFAULT 0,
             performed_by varchar(20) NOT NULL DEFAULT 'system',
             performed_as varchar(20) NOT NULL DEFAULT 'manual',
+            update_context varchar(20) NOT NULL DEFAULT '',
             created_at datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
             PRIMARY KEY (id),
             KEY site_id (site_id),
