@@ -1,7 +1,7 @@
 === Updates Control - Manage updates easily ===
 Contributors: @quentinldd
 Donate link: https://github.com/sponsors/quentin-ld/
-Tags: updates, logging, security, multisite, notifications
+Tags: updates, logging, security, notifications
 Requires at least: 6.2
 Tested up to: 6.9
 Stable tag: 0.1
@@ -9,7 +9,7 @@ Requires PHP: 8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html/
 
-Log WordPress core, plugin, and theme updates with error handling, security, and optional email notifications. Supports multisite.
+Log WordPress core, plugin, and theme updates with error handling, security, and optional email notifications.
 
 == Description ==
 
@@ -20,7 +20,6 @@ Updates Control is a WordPress plugin that records every core, plugin, and theme
 * **Logging** – Records update type (core / plugin / theme), action (update / install / failed), item name and slug, version before/after, status, and optional message. Logs are stored in a dedicated table with proper indexes.
 * **Error handling** – Captures update failures: redirect errors during core updates, download errors during package install/update, and upgrader completion with WP_Error result. Failed updates are logged with status "error".
 * **Security** – All inputs are sanitized (log type, action type, status, versions, messages). Database access uses prepared statements. Only users with `manage_options` can view or manage logs and settings.
-* **Multisite** – On multisite, each site has its own log table. When a new site is created, the table is created automatically; when a site is deleted, the table is dropped. Logs are keyed by `site_id`.
 * **Cron** – Daily scheduled task deletes logs older than the configured retention period (default 90 days, configurable 1–365).
 * **Notifications (optional)** – Email alerts when notifications are enabled: on errors (failed updates), on core updates, or on all updates. Recipients and triggers are configurable in Settings.
 * **Admin UI** – Zenpress-style layout: header with version and docs links, main content with vertical tabs (Update logs, Settings), footer. Update logs tab shows a table with filters, refresh, cleanup, and per-row delete. Settings tab: enable/disable logging, retention days, email notifications (enable, recipients, notify on: errors / core / all).
@@ -30,7 +29,7 @@ Updates Control is a WordPress plugin that records every core, plugin, and theme
 * Keep an audit trail of what was updated and when.
 * Spot failed updates quickly via the logs or email.
 * Comply with change tracking or security reviews.
-* Works on single sites and multisite.
+* Works on single sites.
 
 == Installation ==
 
@@ -42,13 +41,9 @@ On activation, the plugin creates the log table and schedules the daily cleanup 
 
 == Frequently Asked Questions ==
 
-= Does it work on multisite? =
-
-Yes. Each site has its own log table. On network activate, each existing site gets the table on first load; new sites get it when they are created.
-
 = Where are the logs stored? =
 
-In a custom table: `{prefix}updatescontrol_logs` (e.g. `wp_updatescontrol_logs`). On multisite, each site uses its own prefix.
+In a custom table: `{prefix}updatescontrol_logs` (e.g. `wp_updatescontrol_logs`).
 
 = Can I export or delete old logs? =
 

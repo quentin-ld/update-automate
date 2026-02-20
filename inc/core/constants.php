@@ -1,6 +1,11 @@
 <?php
 /**
- * Plugin path constants (fallback when not loaded from main plugin file).
+ * Plugin path constants.
+ *
+ * Loading order: the main plugin file (updates-control.php) defines
+ * updatescontrol_PLUGIN_FILE and updatescontrol_PLUGIN_DIR first, then
+ * requires this file. The block below is a fallback when this file is
+ * loaded in isolation (e.g. from a context that did not load the main file).
  *
  * @package updatescontrol
  */

@@ -26,7 +26,7 @@ final class UpdatesControl_Security {
      *
      * @var array<string>
      */
-    public const ALLOWED_ACTION_TYPES = ['update', 'downgrade', 'install', 'same_version', 'failed'];
+    public const ALLOWED_ACTION_TYPES = ['update', 'downgrade', 'install', 'same_version', 'failed', 'uninstall'];
 
     /**
      * Allowed status values.
@@ -36,11 +36,10 @@ final class UpdatesControl_Security {
     public const ALLOWED_STATUSES = ['success', 'error', 'cancelled'];
 
     /**
-     * Allowed performed_as values (manual vs automatic update).
+     * Allowed performed_as values: manual, automatic, or file upload (update.php upload flow).
      *
      * @var array<string>
      */
-    /** Manual, automatic, or file upload (update.php upload flow). */
     public const ALLOWED_PERFORMED_AS = ['manual', 'automatic', 'upload'];
 
     /** Update context: bulk (e.g. update-core iframe) or single (e.g. Plugins screen). Empty for core/translation/legacy. */

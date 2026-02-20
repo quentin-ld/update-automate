@@ -93,10 +93,6 @@ final class UpdatesControl_ErrorHandler {
             $slug = 'core';
         }
 
-        if ($result->get_error_code() === 'folder_exists') {
-            $message .= "\n\n" . __("Use 'Replace current with uploaded' on the upload screen to complete the update or downgrade.", 'updates-control');
-        }
-
         $process = self::get_skin_process_message($upgrader);
         if ($process !== '') {
             $message .= "\n\n" . __('Process:', 'updates-control') . "\n" . $process;
@@ -231,13 +227,14 @@ final class UpdatesControl_ErrorHandler {
      * @return string Lines like "#1 path (line): function(args)".
      */
     public static function capture_trace(): string {
+        // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace -- Intentional: audit log trace, not debug output.
         $bt = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 50);
         $lines = [];
         $skip = ['capture_trace', 'log', 'log_upgrader_failure', 'log_plugin_update', 'log_theme_update', 'log_core_update', 'on_upgrader_process_complete'];
         $i = 0;
         foreach ($bt as $frame) {
-            $file = isset($frame['file']) ? $frame['file'] : '';
-            $line = isset($frame['line']) ? (int) $frame['line'] : 0;
+            $file = $frame['file'] ?? '';
+            $line = (int) ($frame['line'] ?? 0);
             $func = $frame['function'];
             if (in_array($func, $skip, true)) {
                 continue;

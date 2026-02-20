@@ -1,10 +1,9 @@
 <?php
 
 /**
- * Update manager: logs core/plugin/theme updates;
- *
- * This class hooks into WordPress update flow only to add version_before to transients
- * for audit logging when updates complete. It does not modify or block updates.
+ * Update manager: observes and logs core/plugin/theme updates. Hooks into WordPress
+ * update flow only to add version_before to transients for audit logging when updates
+ * complete. It does not modify or block updates.
  *
  * @package updatescontrol
  */
@@ -13,9 +12,6 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-/**
- * Update manager: observes and logs core/plugin/theme updates.
- */
 final class UpdatesControl_Update_Manager {
     /**
      * Register hooks for update events.
@@ -36,6 +32,8 @@ final class UpdatesControl_Update_Manager {
         add_filter('set_site_transient_update_plugins', [self::class, 'capture_plugin_versions_before'], 10, 1);
         add_filter('set_site_transient_update_themes', [self::class, 'capture_theme_versions_before'], 10, 1);
         register_shutdown_function([self::class, 'maybe_flush_pending_logs']);
+        add_action('delete_plugin', [self::class, 'log_plugin_uninstall'], 10, 1);
+        add_action('delete_theme', [self::class, 'log_theme_uninstall'], 10, 1);
     }
 
     /** Whether the current request is an automatic update run. */
@@ -69,6 +67,13 @@ final class UpdatesControl_Update_Manager {
     /**
      * Initialize pending log data before update runs (for shutdown fallback).
      *
+     * Uses callback OB when skin flushes output (Bulk_*_Skin::flush_output, or show_message
+     * in translation flow). Plugin/theme bulk: is_multi + Bulk_Upgrader_Skin. Translation:
+     * Language_Pack_Upgrader_Skin uses show_message (flushes). Core updates use
+     * update_feedback filter only; no OB here. PHP forbids ob_start() inside an OB
+     * handler, so the callback only appends and clears the flag; the next run() will
+     * start a new OB.
+     *
      * @param array<string, mixed> $options Package options with hook_extra.
      * @return array<string, mixed> Unchanged options.
      */
@@ -83,10 +88,6 @@ final class UpdatesControl_Update_Manager {
         $is_translation = $has_translation;
         $needs_feedback_ob = $is_plugin_or_theme || $is_translation;
 
-        // Use callback OB when skin flushes output (Bulk_*_Skin::flush_output, or show_message in translation flow).
-        // Plugin/theme bulk: is_multi + Bulk_Upgrader_Skin. Translation: Language_Pack_Upgrader_Skin uses show_message (flushes).
-        // Core updates use update_feedback filter only; no OB here.
-        // PHP forbids ob_start() inside an OB handler, so the callback only appends and clears the flag; the next run() will start a new OB.
         if ($needs_feedback_ob && !self::$feedback_ob_started) {
             $is_multi = !empty($options['is_multi']);
             if ($is_multi || $is_translation) {
@@ -489,7 +490,7 @@ final class UpdatesControl_Update_Manager {
      */
     public static function collect_core_feedback($feedback) {
         if (is_string($feedback) && $feedback !== '') {
-            self::$core_feedback[] = strip_tags(str_replace('&#8230;', '…', $feedback));
+            self::$core_feedback[] = wp_strip_all_tags(str_replace('&#8230;', '…', $feedback));
         }
 
         return $feedback;
@@ -712,7 +713,7 @@ final class UpdatesControl_Update_Manager {
             if ($buffer !== '') {
                 self::$captured_feedback = self::feedback_html_to_plain($buffer);
                 if (!$upgrader->skin instanceof \Bulk_Upgrader_Skin) {
-                    echo $buffer;
+                    echo wp_kses_post($buffer);
                 }
             }
         }
@@ -899,7 +900,7 @@ final class UpdatesControl_Update_Manager {
      */
     private static function feedback_html_to_plain(string $html): string {
         $html = preg_replace('/<script\b[^>]*>.*?<\/script>\s*/is', '', $html);
-        $text = strip_tags($html);
+        $text = wp_strip_all_tags($html);
         $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $text = preg_replace('/\s*\n\s*/', "\n", $text);
         $lines = array_filter(array_map('trim', explode("\n", $text)));
@@ -1034,24 +1035,120 @@ final class UpdatesControl_Update_Manager {
     }
 
     /**
+     * Log plugin uninstall/deletion (runs on delete_plugin before the plugin directory is removed).
+     *
+     * @param string $plugin_file Plugin file path relative to wp-content/plugins (e.g. "akismet/akismet.php").
+     * @return void
+     */
+    public static function log_plugin_uninstall(string $plugin_file): void {
+        if (!get_option('updatescontrol_logging_enabled', true)) {
+            return;
+        }
+        if (!UpdatesControl_Database::table_exists()) {
+            return;
+        }
+
+        $version_before = '';
+        $name = basename($plugin_file);
+        if (function_exists('get_plugins')) {
+            $all = get_plugins();
+            if (isset($all[$plugin_file])) {
+                $name = $all[$plugin_file]['Name'] ?? $name;
+                $version_before = (string) ($all[$plugin_file]['Version'] ?? '');
+            }
+        }
+
+        $slug = dirname($plugin_file);
+        if ($slug === '.') {
+            $slug = $plugin_file;
+        }
+
+        $title = self::format_plugin_log_title('uninstall', $name, $version_before);
+        $trace = UpdatesControl_ErrorHandler::capture_trace();
+
+        UpdatesControl_Logger::log(
+            'plugin',
+            'uninstall',
+            $name,
+            $slug,
+            $version_before,
+            '',
+            'success',
+            $title,
+            $trace,
+            'manual',
+            ''
+        );
+    }
+
+    /**
+     * Log theme uninstall/deletion (runs on delete_theme before the theme directory is removed).
+     *
+     * @param string $stylesheet Theme stylesheet (slug), e.g. "twentytwentyfour".
+     * @return void
+     */
+    public static function log_theme_uninstall(string $stylesheet): void {
+        if (!get_option('updatescontrol_logging_enabled', true)) {
+            return;
+        }
+        if (!UpdatesControl_Database::table_exists()) {
+            return;
+        }
+
+        $version_before = '';
+        $name = $stylesheet;
+        $themes = wp_get_themes();
+        if (isset($themes[$stylesheet])) {
+            $theme = $themes[$stylesheet];
+            $name = (string) ($theme->get('Name') ?: $stylesheet);
+            $version_before = (string) ($theme->get('Version') ?: '');
+        }
+
+        $title = self::format_plugin_log_title('uninstall', $name, $version_before);
+        $trace = UpdatesControl_ErrorHandler::capture_trace();
+
+        UpdatesControl_Logger::log(
+            'theme',
+            'uninstall',
+            $name,
+            $stylesheet,
+            $version_before,
+            '',
+            'success',
+            $title,
+            $trace,
+            'manual',
+            ''
+        );
+    }
+
+    /**
      * Format plugin log title by action type.
      *
-     * @param string $action_type   install, update, downgrade, same_version.
+     * @param string $action_type   install, update, downgrade, same_version, uninstall.
      * @param string $name          Plugin name.
-     * @param string $version_after Version after update.
+     * @param string $version_after Version after update (or version before for uninstall).
      * @return string
      */
     private static function format_plugin_log_title(string $action_type, string $name, string $version_after): string {
         if ($action_type === 'install') {
+            /* translators: 1: item name (plugin/theme), 2: version number */
             return sprintf(__('Installation of %1$s %2$s', 'updates-control'), $name, $version_after ?: '');
         }
+        if ($action_type === 'uninstall') {
+            /* translators: 1: item name (plugin/theme), 2: version number */
+            return sprintf(__('Uninstall of %1$s %2$s', 'updates-control'), $name, $version_after ?: '');
+        }
         if ($action_type === 'downgrade') {
+            /* translators: 1: item name (plugin/theme), 2: version number */
             return sprintf(__('Downgrade to %1$s %2$s', 'updates-control'), $name, $version_after ?: '');
         }
         if ($action_type === 'same_version') {
+            /* translators: 1: item name (plugin/theme), 2: version number */
             return sprintf(__('Reinstall %1$s %2$s (same version)', 'updates-control'), $name, $version_after ?: '');
         }
 
+        /* translators: 1: item name (plugin/theme), 2: version number */
         return sprintf(__('Update to %1$s %2$s', 'updates-control'), $name, $version_after ?: '');
     }
 

@@ -42,23 +42,27 @@ export const LogsTable = () => {
 		closeConfirm();
 	};
 
-	const getActionTypeLabel = (actionType, updateContext = '') => {
+	const getActionTypeLabel = (actionType) => {
 		const labels = {
 			update: __('Update', 'updatescontrol'),
 			downgrade: __('Downgrade', 'updatescontrol'),
 			install: __('Install', 'updatescontrol'),
 			same_version: __('Reset', 'updatescontrol'),
 			failed: __('Failed', 'updatescontrol'),
+			uninstall: __('Uninstall', 'updatescontrol'),
 			delete: __('Delete', 'updatescontrol'), // Legacy.
 		};
-		const base = labels[actionType] || actionType;
+		return labels[actionType] || actionType;
+	};
+
+	const getContextLabel = (updateContext) => {
 		if (updateContext === 'bulk') {
-			return `${base} (${__('Bulk', 'updatescontrol')})`;
+			return __('Bulk', 'updatescontrol');
 		}
 		if (updateContext === 'single') {
-			return `${base} (${__('Single', 'updatescontrol')})`;
+			return __('Single', 'updatescontrol');
 		}
-		return base;
+		return '—';
 	};
 
 	const confirmMessage = __('Delete this log entry?', 'updatescontrol');
@@ -177,6 +181,7 @@ export const LogsTable = () => {
 									<th>{__('Date', 'updatescontrol')}</th>
 									<th>{__('Type', 'updatescontrol')}</th>
 									<th>{__('Action', 'updatescontrol')}</th>
+									<th>{__('Context', 'updatescontrol')}</th>
 									<th>{__('Item', 'updatescontrol')}</th>
 									<th>{__('From version', 'updatescontrol')}</th>
 									<th>{__('To version', 'updatescontrol')}</th>
@@ -195,7 +200,7 @@ export const LogsTable = () => {
 							<tbody>
 								{logs.length === 0 ? (
 									<tr>
-										<td colSpan="11">
+										<td colSpan="12">
 											{__(
 												'No update logs yet.',
 												'updatescontrol'
@@ -209,7 +214,8 @@ export const LogsTable = () => {
 												{formatDate(log.created_at)}
 											</td>
 											<td>{log.log_type}</td>
-											<td>{getActionTypeLabel(log.action_type, log.update_context)}</td>
+											<td>{getActionTypeLabel(log.action_type)}</td>
+											<td>{getContextLabel(log.update_context)}</td>
 											<td>{log.item_name || '—'}</td>
 											<td>{log.version_before || '—'}</td>
 											<td>{log.version_after || '—'}</td>

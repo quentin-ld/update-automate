@@ -7,7 +7,6 @@ use PhpCsFixer\Config;
 use PhpCsFixer\Finder;
 
 $rules = [
-    // Front usefull config
     'array_indentation' => true,
     'array_push' => true, // Risky when the function array_push is overridden.
     'array_syntax' => ['syntax' => 'short'],

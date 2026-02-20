@@ -1,11 +1,17 @@
 <?php
 
+/**
+ * Admin menu: Updates Control under Tools and Dashboard.
+ *
+ * @package updatescontrol
+ */
+
 if (!defined('ABSPATH')) {
     exit;
 }
 
 /**
- * Adds Updates Control under Tools and a link under Dashboard > Update controls.
+ * Adds Updates Control under Tools and a link under Dashboard > Updates control.
  */
 add_action('admin_menu', 'updatescontrol_add_option_page');
 function updatescontrol_add_option_page(): void {
@@ -19,7 +25,7 @@ function updatescontrol_add_option_page(): void {
     add_submenu_page(
         'index.php',
         __('Updates Control', 'updates-control'),
-        __('Update controls', 'updates-control'),
+        __('Updates control', 'updates-control'),
         'manage_options',
         'updates-control',
         'updatescontrol_options_page'

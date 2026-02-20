@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Plugin action and row meta links (Settings, Changelog, Docs, Support).
+ *
+ * @package updatescontrol
+ */
+
 if (!defined('ABSPATH')) {
     exit;
 }

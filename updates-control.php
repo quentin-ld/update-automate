@@ -10,7 +10,7 @@
  * @license   GPL v2 or later
  *
  * Plugin Name: Updates Control - Manage updates easily
- * Description: Log WordPress core, plugin, and theme updates with error handling, security, and optional email notifications. Supports multisite.
+ * Description: Log WordPress core, plugin, and theme updates with error handling, security, and optional email notifications.
  * Version: 0.1
  * Plugin URI: https://wordpress.org/plugins/updatescontrol/
  * Author: Quentin Le Duff
@@ -55,8 +55,11 @@ require_once __DIR__ . '/inc/settings/options.php';
 add_action('plugins_loaded', ['UpdatesControl_Bootstrap', 'init']);
 
 register_activation_hook(__FILE__, 'updatescontrol_activate');
+
 /**
  * Create log table and schedule cron on activation.
+ *
+ * @return void
  */
 function updatescontrol_activate(): void {
     require_once __DIR__ . '/inc/classes/Database.php';
@@ -66,8 +69,11 @@ function updatescontrol_activate(): void {
 }
 
 register_deactivation_hook(__FILE__, 'updatescontrol_deactivate');
+
 /**
- * Unschedule cron on deactivation (table is kept).
+ * Unschedule cron on deactivation. The log table is kept.
+ *
+ * @return void
  */
 function updatescontrol_deactivate(): void {
     require_once __DIR__ . '/inc/classes/Cron.php';

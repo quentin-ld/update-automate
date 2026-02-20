@@ -27,14 +27,10 @@ final class UpdatesControl_Bootstrap {
         UpdatesControl_ErrorHandler::register();
         UpdatesControl_Settings::register();
         UpdatesControl_Notifications::register();
-
-        if (is_multisite()) {
-            UpdatesControl_MultisiteSupport::register();
-        }
     }
 
     /**
-     * Load class files.
+     * Load class files. Bootstrap itself is loaded by the main plugin file.
      *
      * @return void
      */
@@ -47,11 +43,9 @@ final class UpdatesControl_Bootstrap {
             'Cron.php',
             'ErrorHandler.php',
             'UpdateManager.php',
-            'MultisiteSupport.php',
             'Notifications.php',
             'Settings.php',
         ];
-        // Bootstrap is loaded by the main plugin file, not here.
         foreach ($classes as $file) {
             $path = $dir . '/' . $file;
             if (is_file($path)) {

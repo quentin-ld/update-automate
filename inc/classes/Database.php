@@ -36,7 +36,7 @@ final class UpdatesControl_Database {
     public const TABLE_LOGS = 'updatescontrol_logs';
 
     /**
-     * Get full table name including prefix (and blog prefix on multisite).
+     * Get full table name including prefix.
      *
      * @return string
      */

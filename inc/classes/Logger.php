@@ -17,8 +17,8 @@ final class UpdatesControl_Logger {
     /**
      * Insert a log entry.
      *
-     * @param string $log_type       One of: core, plugin, theme.
-     * @param string $action_type    One of: update, downgrade, install, same_version, failed.
+     * @param string $log_type       One of: core, plugin, theme, translation.
+     * @param string $action_type    One of: update, downgrade, install, same_version, failed, uninstall.
      * @param string $item_name      Display name of the item.
      * @param string $item_slug      Slug/identifier.
      * @param string $version_before Previous version.
@@ -59,15 +59,8 @@ final class UpdatesControl_Logger {
         $performed_as = UpdatesControl_Security::sanitize_performed_as($performed_as);
         $update_context = UpdatesControl_Security::sanitize_update_context($update_context);
 
-        $site_id = 1;
-        if (function_exists('get_current_blog_id')) {
-            $site_id = (int) get_current_blog_id();
-        }
-
-        $user_id = 0;
-        if (function_exists('get_current_user_id')) {
-            $user_id = (int) get_current_user_id();
-        }
+        $site_id = (int) get_current_blog_id();
+        $user_id = (int) get_current_user_id();
         $performed_by = $user_id > 0 ? 'user' : 'system';
 
         global $wpdb;
@@ -120,6 +113,39 @@ final class UpdatesControl_Logger {
     }
 
     /**
+     * Build WHERE clause and placeholder values for log queries.
+     *
+     * @param array<string, mixed> $args Keys: site_id, log_type, status, performed_as.
+     * @return array{where_sql: string, values: array<int, int|string>}
+     */
+    private static function build_logs_where(array $args): array {
+        $where = ['1=1'];
+        $values = [];
+        $site_id = $args['site_id'] ?? null;
+        if ($site_id !== null) {
+            $where[] = 'site_id = %d';
+            $values[] = (int) $site_id;
+        }
+        $log_type = $args['log_type'] ?? null;
+        if ($log_type !== null && $log_type !== '') {
+            $where[] = 'log_type = %s';
+            $values[] = UpdatesControl_Security::sanitize_log_type((string) $log_type);
+        }
+        $status = $args['status'] ?? null;
+        if ($status !== null && $status !== '') {
+            $where[] = 'status = %s';
+            $values[] = UpdatesControl_Security::sanitize_status((string) $status);
+        }
+        $performed_as = $args['performed_as'] ?? null;
+        if ($performed_as !== null && $performed_as !== '') {
+            $where[] = 'performed_as = %s';
+            $values[] = UpdatesControl_Security::sanitize_performed_as((string) $performed_as);
+        }
+
+        return ['where_sql' => implode(' AND ', $where), 'values' => $values];
+    }
+
+    /**
      * Get logs with optional filters and pagination.
      *
      * @param array<string, mixed> $args Optional. site_id, log_type, status, performed_as, per_page, page, orderby, order.
@@ -145,26 +171,7 @@ final class UpdatesControl_Logger {
         ];
         $args = wp_parse_args($args, $defaults);
 
-        $where = ['1=1'];
-        $values = [];
-
-        if ($args['site_id'] !== null) {
-            $where[] = 'site_id = %d';
-            $values[] = (int) $args['site_id'];
-        }
-        if ($args['log_type'] !== null && $args['log_type'] !== '') {
-            $where[] = 'log_type = %s';
-            $values[] = UpdatesControl_Security::sanitize_log_type((string) $args['log_type']);
-        }
-        if ($args['status'] !== null && $args['status'] !== '') {
-            $where[] = 'status = %s';
-            $values[] = UpdatesControl_Security::sanitize_status((string) $args['status']);
-        }
-        if ($args['performed_as'] !== null && $args['performed_as'] !== '') {
-            $where[] = 'performed_as = %s';
-            $values[] = UpdatesControl_Security::sanitize_performed_as((string) $args['performed_as']);
-        }
-
+        $built = self::build_logs_where($args);
         $orderby = in_array($args['orderby'], ['id', 'created_at', 'log_type', 'status', 'item_name', 'performed_as'], true)
             ? $args['orderby']
             : 'created_at';
@@ -172,13 +179,12 @@ final class UpdatesControl_Logger {
         $per_page = max(1, min(200, (int) $args['per_page']));
         $offset = max(0, ((int) $args['page']) - 1) * $per_page;
 
-        $where_sql = implode(' AND ', $where);
-        $values = array_merge([$table], $values, [$orderby, $per_page, $offset]);
+        $values = array_merge([$table], $built['values'], [$orderby, $per_page, $offset]);
 
         // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Table/orderby via %i; user input only in $values.
         $prepared = $wpdb->prepare(
             // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $where_sql and $order are whitelisted (literal fragments and ASC/DESC).
-            "SELECT * FROM %i WHERE {$where_sql} ORDER BY %i {$order} LIMIT %d OFFSET %d",
+            "SELECT * FROM %i WHERE {$built['where_sql']} ORDER BY %i {$order} LIMIT %d OFFSET %d",
             $values
         );
         // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $prepared from prepare() above; user input only in bound $values.
@@ -201,34 +207,13 @@ final class UpdatesControl_Logger {
         global $wpdb;
         $table = UpdatesControl_Database::get_table_name();
 
-        $where = ['1=1'];
-        $values = [];
-
-        $site_id = $args['site_id'] ?? null;
-        if ($site_id !== null) {
-            $where[] = 'site_id = %d';
-            $values[] = (int) $site_id;
-        }
-        if (isset($args['log_type']) && $args['log_type'] !== '') {
-            $where[] = 'log_type = %s';
-            $values[] = UpdatesControl_Security::sanitize_log_type((string) $args['log_type']);
-        }
-        if (isset($args['status']) && $args['status'] !== '') {
-            $where[] = 'status = %s';
-            $values[] = UpdatesControl_Security::sanitize_status((string) $args['status']);
-        }
-        if (isset($args['performed_as']) && $args['performed_as'] !== '') {
-            $where[] = 'performed_as = %s';
-            $values[] = UpdatesControl_Security::sanitize_performed_as((string) $args['performed_as']);
-        }
-
-        $where_sql = implode(' AND ', $where);
-        $values = array_merge([$table], $values);
+        $built = self::build_logs_where($args);
+        $values = array_merge([$table], $built['values']);
 
         // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Table via %i; user input only in $values.
         $prepared = $wpdb->prepare(
-            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $where_sql is whitelisted literal fragments only.
-            "SELECT COUNT(*) FROM %i WHERE {$where_sql}",
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- where_sql is whitelisted literal fragments only.
+            "SELECT COUNT(*) FROM %i WHERE {$built['where_sql']}",
             $values
         );
 
