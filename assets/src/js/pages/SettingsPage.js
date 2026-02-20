@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from '@wordpress/element';
 import { Notices } from '../components/Notices';
 import { Tabs } from '../components/Tabs';
-import { ActivityLogsDataView } from '../components/ActivityLogsDataView';
+import { ActivityLogsDataView } from '../components/activityLog';
 import { SettingsForm } from '../components/SettingsForm';
 import { __ } from '@wordpress/i18n';
 

@@ -302,6 +302,19 @@
 	}
 }
 
+/* Activity layout: footer block (user, badge, View log button) each on its own line */
+.updatescontrol-activity-item-footer {
+	display: flex;
+	flex-direction: column;
+	gap: $gap-sm;
+	width: 100%;
+	min-width: 100%;
+
+	&__line {
+		display: block;
+	}
+}
+
 /* View logs modal (message + trace) */
 .updatescontrol-notes-modal {
 	.updatescontrol-notes-content {
