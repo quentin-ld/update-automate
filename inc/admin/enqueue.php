@@ -35,11 +35,14 @@ function updatescontrol_admin_enqueue_scripts(string $admin_page): void {
     wp_enqueue_style(
         'updatescontrol-style',
         plugins_url('assets/build/index.css', updatescontrol_PLUGIN_FILE),
-        array_filter(
-            (array) $asset['dependencies'],
-            static function (string $style): bool {
-                return wp_style_is($style, 'registered');
-            }
+        array_merge(
+            array('wp-components'),
+            array_filter(
+                (array) $asset['dependencies'],
+                static function (string $style): bool {
+                    return wp_style_is($style, 'registered');
+                }
+            )
         ),
         $asset['version']
     );

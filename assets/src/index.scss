@@ -8,3 +8,6 @@
 @use 'scss/components/toggle-control';
 
 @use 'scss/pages/settings';
+
+// DataViews component styles (must come after @use — see https://developer.wordpress.org/news/2024/08/using-data-views-to-display-and-interact-with-data-in-plugins/)
+@import '@wordpress/dataviews/build-style/style.css';

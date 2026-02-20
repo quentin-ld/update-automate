@@ -127,10 +127,15 @@ export const LogsTable = () => {
 							<>
 								{notesLog.message && (
 									<div className="updatescontrol-notes-section">
-										<h4>{__('Message', 'updatescontrol')}</h4>
+										<h4>
+											{__('Message', 'updatescontrol')}
+										</h4>
 										<pre
 											className="updatescontrol-notes-text"
-											style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+											style={{
+												whiteSpace: 'pre-wrap',
+												wordBreak: 'break-word',
+											}}
 										>
 											{notesLog.message}
 										</pre>
@@ -141,7 +146,11 @@ export const LogsTable = () => {
 										<h4>{__('Trace', 'updatescontrol')}</h4>
 										<pre
 											className="updatescontrol-notes-trace"
-											style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-all', fontSize: '12px' }}
+											style={{
+												whiteSpace: 'pre-wrap',
+												wordBreak: 'break-all',
+												fontSize: '12px',
+											}}
 										>
 											{notesLog.trace}
 										</pre>
@@ -150,7 +159,12 @@ export const LogsTable = () => {
 							</>
 						)}
 						{!notesLog.message && !notesLog.trace && (
-							<p>{__('No message or trace for this entry.', 'updatescontrol')}</p>
+							<p>
+								{__(
+									'No message or trace for this entry.',
+									'updatescontrol'
+								)}
+							</p>
 						)}
 					</div>
 				</Modal>
@@ -183,12 +197,18 @@ export const LogsTable = () => {
 									<th>{__('Action', 'updatescontrol')}</th>
 									<th>{__('Context', 'updatescontrol')}</th>
 									<th>{__('Item', 'updatescontrol')}</th>
-									<th>{__('From version', 'updatescontrol')}</th>
-									<th>{__('To version', 'updatescontrol')}</th>
+									<th>
+										{__('From version', 'updatescontrol')}
+									</th>
+									<th>
+										{__('To version', 'updatescontrol')}
+									</th>
 									<th>{__('Status', 'updatescontrol')}</th>
 									<th>{__('Trigger', 'updatescontrol')}</th>
 									<th>{__('Logs', 'updatescontrol')}</th>
-									<th>{__('Performed by', 'updatescontrol')}</th>
+									<th>
+										{__('Performed by', 'updatescontrol')}
+									</th>
 									<th
 										aria-label={__(
 											'Actions',
@@ -214,8 +234,16 @@ export const LogsTable = () => {
 												{formatDate(log.created_at)}
 											</td>
 											<td>{log.log_type}</td>
-											<td>{getActionTypeLabel(log.action_type)}</td>
-											<td>{getContextLabel(log.update_context)}</td>
+											<td>
+												{getActionTypeLabel(
+													log.action_type
+												)}
+											</td>
+											<td>
+												{getContextLabel(
+													log.update_context
+												)}
+											</td>
 											<td>{log.item_name || '—'}</td>
 											<td>{log.version_before || '—'}</td>
 											<td>{log.version_after || '—'}</td>
@@ -232,9 +260,14 @@ export const LogsTable = () => {
 													<Button
 														variant="link"
 														isSmall
-														onClick={() => openNotes(log)}
+														onClick={() =>
+															openNotes(log)
+														}
 													>
-														{__('View logs', 'updatescontrol')}
+														{__(
+															'View logs',
+															'updatescontrol'
+														)}
 													</Button>
 												) : (
 													'—'
@@ -243,14 +276,21 @@ export const LogsTable = () => {
 											<td>
 												{log.user_edit_link ? (
 													<a
-														href={log.user_edit_link}
+														href={
+															log.user_edit_link
+														}
 														rel="noopener noreferrer"
 														target="_blank"
 													>
-														{log.performed_by_display}
+														{
+															log.performed_by_display
+														}
 													</a>
 												) : (
-													<span>{log.performed_by_display || '—'}</span>
+													<span>
+														{log.performed_by_display ||
+															'—'}
+													</span>
 												)}
 											</td>
 											<td>

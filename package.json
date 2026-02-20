@@ -12,6 +12,7 @@
   "author": "Quentin Le Duff",
   "license": "GPL-2.0-or-later",
   "devDependencies": {
+    "@wordpress/dataviews": "^12.0.0",
     "@wordpress/eslint-plugin": "^22.0.0",
     "@wordpress/scripts": "^30.22.0",
     "eslint": "^8.57.1",

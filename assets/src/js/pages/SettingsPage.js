@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from '@wordpress/element';
 import { Notices } from '../components/Notices';
 import { Tabs } from '../components/Tabs';
-import { LogsTable } from '../components/LogsTable';
+import { ActivityLogsDataView } from '../components/ActivityLogsDataView';
 import { SettingsForm } from '../components/SettingsForm';
 import { __ } from '@wordpress/i18n';
 
@@ -70,7 +70,7 @@ export const SettingsPage = () => {
 							</Tabs.Tab>
 						</Tabs.TabList>
 						<Tabs.TabPanel tabId={TAB_LOGS}>
-							<LogsTable />
+							<ActivityLogsDataView />
 						</Tabs.TabPanel>
 						<Tabs.TabPanel tabId={TAB_SETTINGS}>
 							<SettingsForm />
