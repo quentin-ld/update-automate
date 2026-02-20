@@ -50,22 +50,6 @@ export function useLogs() {
 		}
 	}, []);
 
-	const cleanupLogs = useCallback(async () => {
-		try {
-			const response = await apiFetch({
-				path: 'updatescontrol/v1/logs/cleanup',
-				method: 'POST',
-			});
-			const deleted = response?.deleted ?? 0;
-			setTotal((prev) => Math.max(0, prev - deleted));
-			setLogs((prev) => prev.filter((log) => log.id));
-			await fetchLogs({ per_page: 50, page: 1 });
-			return deleted;
-		} catch (e) {
-			return 0;
-		}
-	}, [fetchLogs]);
-
 	return {
 		logs,
 		total,
@@ -73,6 +57,5 @@ export function useLogs() {
 		error,
 		fetchLogs,
 		deleteLog,
-		cleanupLogs,
 	};
 }
