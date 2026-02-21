@@ -8,12 +8,12 @@
  * @see docs/ACTIVITY-LOGS-DATAVIEW-SPEC.md
  */
 
-import { useMemo, useState, useEffect, useRef } from '@wordpress/element';
+import { useMemo, useState, useEffect } from '@wordpress/element';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews/wp';
-import { Button, Modal } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useLogs } from '../../hooks/useLogs';
-import { LAYOUT_ACTIVITY, ACTIVITY_LAYOUT_CONFIG } from './constants';
+import { LAYOUT_ACTIVITY } from './constants';
 import {
 	statusToBadgeIntent,
 	formatDate,
@@ -25,27 +25,33 @@ import { StatusBadge } from './StatusBadge';
 import { getIconForLogType } from './logTypeIcon';
 import { LogDetailsContent } from './LogDetailsContent';
 
+const FIXED_SORT = { field: 'date', direction: 'desc' };
+
 export function ActivityLogsDataView() {
 	const { logs, loading, error, fetchLogs, deleteLog } = useLogs();
+
 	const [view, setView] = useState({
 		type: LAYOUT_ACTIVITY,
 		page: 1,
 		perPage: 50,
 		search: '',
 		filters: [],
-		sort: { field: 'date', direction: 'desc' },
-		fields: ['date', 'context', 'itemFooter'],
+		sort: FIXED_SORT,
+		fields: ['date', 'context', 'user', 'status'],
 		titleField: 'title',
 		descriptionField: 'description',
 		mediaField: 'icon',
-		groupBy: ACTIVITY_LAYOUT_CONFIG.groupBy,
 	});
 
-	const [logForViewModal, setLogForViewModal] = useState(null);
-	const viewLogModalRef = useRef({ open: () => {} });
-	useEffect(() => {
-		viewLogModalRef.current.open = (item) => setLogForViewModal(item);
-	}, []);
+	const handleChangeView = useMemo(
+		() => (nextView) => {
+			setView(() => ({
+				...nextView,
+				sort: FIXED_SORT,
+			}));
+		},
+		[]
+	);
 
 	useEffect(() => {
 		fetchLogs({ per_page: view.perPage, page: view.page });
@@ -85,32 +91,11 @@ export function ActivityLogsDataView() {
 				filterBy: false,
 			},
 			{
-				id: 'dateGroup',
-				label: __('Date', 'updatescontrol'),
-				getValue: ({ item }) => {
-					if (!item.created_at) {
-						return '';
-					}
-					const d = new Date(item.created_at);
-					return d.toISOString().slice(0, 10);
-				},
-				render: ({ item }) => formatDate(item.created_at),
-				enableSorting: true,
-				sort: (a, b, direction) => {
-					const tA = new Date(a.created_at).getTime();
-					const tB = new Date(b.created_at).getTime();
-					return direction === 'asc' ? tA - tB : tB - tA;
-				},
-				enableGlobalSearch: false,
-				enableHiding: false,
-				filterBy: false,
-			},
-			{
 				id: 'date',
 				label: __('Date', 'updatescontrol'),
 				getValue: ({ item }) => item.created_at,
 				render: ({ item }) => formatDate(item.created_at),
-				enableSorting: true,
+				enableSorting: false,
 				sort: (a, b, direction) => {
 					const tA = new Date(a.created_at).getTime();
 					const tB = new Date(b.created_at).getTime();
@@ -156,49 +141,6 @@ export function ActivityLogsDataView() {
 				enableSorting: false,
 				enableGlobalSearch: true,
 			},
-			{
-				id: 'itemFooter',
-				label: __('Details', 'updatescontrol'),
-				getValue: () => '',
-				enableSorting: false,
-				enableHiding: false,
-				filterBy: false,
-				render: ({ item }) => (
-					<div className="updatescontrol-activity-item-footer">
-						<div className="updatescontrol-activity-item-footer__line">
-							{item.user_edit_link ? (
-								<a
-									href={item.user_edit_link}
-									rel="noopener noreferrer"
-									target="_blank"
-								>
-									{item.performed_by_display || '—'}
-								</a>
-							) : (
-								<span>{item.performed_by_display || '—'}</span>
-							)}
-						</div>
-						<div className="updatescontrol-activity-item-footer__line">
-							<StatusBadge
-								intent={statusToBadgeIntent(item.status)}
-							>
-								{item.status || '—'}
-							</StatusBadge>
-						</div>
-						<div className="updatescontrol-activity-item-footer__line">
-							<Button
-								variant="secondary"
-								isSmall
-								onClick={() =>
-									viewLogModalRef.current.open?.(item)
-								}
-							>
-								{__('View log', 'updatescontrol')}
-							</Button>
-						</div>
-					</div>
-				),
-			},
 		],
 		[]
 	);
@@ -207,8 +149,10 @@ export function ActivityLogsDataView() {
 		() => [
 			{
 				id: 'view-logs',
-				label: __('View logs', 'updatescontrol'),
+				label: __('View log', 'updatescontrol'),
 				modalHeader: __('Log details', 'updatescontrol'),
+				modalSize: 'large',
+				modalFocusOnMount: 'firstContentElement',
 				isEligible: (item) => !!(item.message || item.trace),
 				RenderModal: ({ items }) => (
 					<LogDetailsContent log={items[0]} />
@@ -242,10 +186,7 @@ export function ActivityLogsDataView() {
 									marginTop: '16px',
 								}}
 							>
-								<Button
-									variant="secondary"
-									onClick={closeModal}
-								>
+								<Button variant="tertiary" onClick={closeModal}>
 									{__('Cancel', 'updatescontrol')}
 								</Button>
 								<Button
@@ -267,8 +208,7 @@ export function ActivityLogsDataView() {
 	const defaultLayouts = useMemo(
 		() => ({
 			[LAYOUT_ACTIVITY]: {
-				sort: { field: 'date', direction: 'desc' },
-				groupBy: ACTIVITY_LAYOUT_CONFIG.groupBy,
+				sort: FIXED_SORT,
 				layout: { density: 'balanced' },
 			},
 		}),
@@ -288,44 +228,20 @@ export function ActivityLogsDataView() {
 		);
 	}
 
-	const wrapperStyle = ACTIVITY_LAYOUT_CONFIG.fullWidth
-		? undefined
-		: { maxWidth: '720px' };
-
 	return (
-		<div
-			className="updatescontrol-logs updatescontrol-activity-dataview"
-			style={wrapperStyle}
-		>
-			{logForViewModal && (
-				<Modal
-					title={__('Log details', 'updatescontrol')}
-					onRequestClose={() => setLogForViewModal(null)}
-				>
-					<LogDetailsContent log={logForViewModal} />
-				</Modal>
-			)}
-			<div className="updatescontrol-logs-actions">
-				<Button
-					variant="secondary"
-					onClick={() =>
-						fetchLogs({ per_page: view.perPage, page: 1 })
-					}
-					disabled={loading}
-				>
-					{__('Refresh', 'updatescontrol')}
-				</Button>
-			</div>
+		<div className="updatescontrol-logs updatescontrol-activity-dataview">
 			<DataViews
 				getItemId={(item) => String(item.id)}
 				view={view}
-				onChangeView={setView}
+				onChangeView={handleChangeView}
 				fields={fields}
 				data={shownData}
 				actions={actions}
 				isLoading={loading}
 				paginationInfo={paginationInfo}
 				defaultLayouts={defaultLayouts}
+				config={{ perPageSizes: [10, 25, 50, 100] }}
+				empty={__('No update logs yet.', 'updatescontrol')}
 				search
 				searchLabel={__('Search logs', 'updatescontrol')}
 			/>

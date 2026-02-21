@@ -36,7 +36,7 @@ function updatescontrol_admin_enqueue_scripts(string $admin_page): void {
         'updatescontrol-style',
         plugins_url('assets/build/index.css', updatescontrol_PLUGIN_FILE),
         array_merge(
-            array('wp-components'),
+            ['wp-components'],
             array_filter(
                 (array) $asset['dependencies'],
                 static function (string $style): bool {

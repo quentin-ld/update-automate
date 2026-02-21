@@ -1,8 +1,8 @@
 import domReady from '@wordpress/dom-ready';
 import { createRoot } from '@wordpress/element';
-import './index.scss';
 import { SettingsPage } from './js/pages/SettingsPage';
 
+import './index.scss';
 /**
  * Render the updatescontrol settings page once the DOM is ready.
  */

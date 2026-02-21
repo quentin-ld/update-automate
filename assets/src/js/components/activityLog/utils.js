@@ -52,16 +52,16 @@ export function formatDate(dateStr) {
  */
 export function getContextLabel(updateContext) {
 	if (updateContext === 'bulk') {
-		return __('Bulk', 'updatescontrol');
+		return __('Bulk action', 'updatescontrol');
 	}
 	if (updateContext === 'single') {
-		return __('Single', 'updatescontrol');
+		return __('Single action', 'updatescontrol');
 	}
 	return updateContext || '—';
 }
 
 /**
- * Build activity title: [item name] + " updated" + " — " + [action].
+ * Build activity title: [item name] + " — " + [action].
  *
  * @param {Object} item Log item.
  * @return {string} Title.
@@ -73,9 +73,7 @@ export function getActivityTitle(item) {
 		item.action_display ||
 		item.action_type ||
 		'';
-	return actionLabel
-		? `${name} ${__('updated', 'updatescontrol')} — ${actionLabel}`
-		: name;
+	return actionLabel ? `${name} — ${actionLabel}` : name;
 }
 
 /**

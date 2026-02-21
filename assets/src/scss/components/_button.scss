@@ -1,5 +1,3 @@
-@use '../abstracts/variables' as *;
-
 .components-button {
-    gap: $gap-xs;
+	gap: var(--wpds-dimension-gap-xs);
 }

@@ -11,10 +11,25 @@
 
 			&[target='_blank'] {
 				position: relative;
-				gap: $gap-xs;
+				gap: var(--wpds-dimension-gap-xs);
 
+				// Gutenberg external link icon (small) — @wordpress/icons external
 				&::after {
-					content: ' ↗';
+					content: '';
+					display: inline-block;
+					width: 0.875em;
+					height: 0.875em;
+					margin-inline-start: var(--wpds-dimension-gap-xs);
+					vertical-align: -0.2em;
+					background: currentColor;
+					mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M19.5 4.5h-7V6h4.44l-5.97 5.97 1.06 1.06L18 7.06v4.44h1.5v-7Zm-13 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3H17v3a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h3V5.5h-3Z'/%3E%3C/svg%3E");
+					mask-repeat: no-repeat;
+					mask-position: center;
+					mask-size: contain;
+					-webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M19.5 4.5h-7V6h4.44l-5.97 5.97 1.06 1.06L18 7.06v4.44h1.5v-7Zm-13 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3H17v3a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h3V5.5h-3Z'/%3E%3C/svg%3E");
+					-webkit-mask-repeat: no-repeat;
+					-webkit-mask-position: center;
+					-webkit-mask-size: contain;
 				}
 			}
 		}
@@ -36,16 +51,16 @@
 		flex-wrap: wrap;
 		justify-content: space-between;
 		overflow-x: auto;
-		padding: $spacing-md;
-		gap: $gap-xl;
-		background: $color-background;
-		border: $border-width solid $color-border;
-		border-radius: $border-radius;
+		padding: var(--wpds-dimension-padding-lg);
+		gap: var(--wpds-dimension-gap-xl);
+		background: var(--wpds-color-bg-surface-neutral-strong);
+		border: var(--wpds-border-width-xs) solid var(--wpds-color-stroke-surface-neutral-weak);
+		border-radius: var(--wpds-border-radius-md);
 
 		&-navigation {
 			display: flex;
 			flex-wrap: wrap;
-			gap: $gap-md;
+			gap: var(--wpds-dimension-gap-md);
 			justify-content: space-between;
 			align-items: center;
 		}
@@ -63,15 +78,15 @@
 		flex-wrap: wrap;
 		justify-content: space-between;
 		overflow-x: auto;
-		padding: $spacing-md;
-		gap: $gap-lg;
-		border-top: $border-width solid $color-border;
-		padding-top: $gap-lg;
+		padding: var(--wpds-dimension-padding-lg);
+		gap: var(--wpds-dimension-gap-lg);
+		border-top: var(--wpds-border-width-xs) solid var(--wpds-color-stroke-surface-neutral-weak);
+		padding-top: var(--wpds-dimension-gap-lg);
 
 		&-navigation {
 			display: flex;
 			flex-wrap: wrap;
-			gap: $gap-md;
+			gap: var(--wpds-dimension-gap-md);
 			justify-content: space-between;
 			align-items: center;
 		}
@@ -83,23 +98,23 @@
 	}
 
 	&-settings {
-		margin-top: $gap-lg;
-		margin-bottom: $gap-lg;
-		border-radius: $border-radius;
+		margin-top: var(--wpds-dimension-gap-lg);
+		margin-bottom: var(--wpds-dimension-gap-lg);
+		border-radius: var(--wpds-border-radius-md);
 
 		@media screen and (max-width: 1281px) {
-			margin-top: $gap-md;
-			margin-bottom: $gap-md;
+			margin-top: var(--wpds-dimension-gap-md);
+			margin-bottom: var(--wpds-dimension-gap-md);
 		}
 	}
 
 	&-row {
 		display: grid;
 		grid-template-columns: $grid-columns-main-sidebar;
-		gap: $gap-lg;
+		gap: var(--wpds-dimension-gap-lg);
 
 		@media screen and (max-width: 1281px) {
-			gap: $gap-md;
+			gap: var(--wpds-dimension-gap-md);
 		}
 
 		@media screen and (max-width: 960px) {
@@ -108,11 +123,11 @@
 	}
 
 	&-panel {
-		border: $border-width solid $color-border;
-		border-radius: $border-radius;
+		border: var(--wpds-border-width-xs) solid var(--wpds-color-stroke-surface-neutral-weak);
+		border-radius: var(--wpds-border-radius-md);
 		width: 100%;
 		max-width: 100%;
-		background: $color-background;
+		background: var(--wpds-color-bg-surface-neutral-strong);
 	}
 
 	&-main,
@@ -126,14 +141,14 @@
 		flex-wrap: wrap;
 		justify-content: space-between;
 		align-items: center;
-		padding: $spacing-md;
-		gap: $gap-md;
-		border-top: $border-width solid $color-border;
+		padding: var(--wpds-dimension-padding-lg);
+		gap: var(--wpds-dimension-gap-md);
+		border-top: var(--wpds-border-width-xs) solid var(--wpds-color-stroke-surface-neutral-weak);
 
 		&-bulk {
 			display: flex;
 			flex-wrap: wrap;
-			gap: $gap-sm;
+			gap: var(--wpds-dimension-gap-sm);
 			justify-content: flex-start;
 			align-items: center;
 		}
@@ -142,7 +157,7 @@
 	&-sidebar {
 		display: flex;
 		flex-direction: column;
-		gap: $gap-md;
+		gap: var(--wpds-dimension-gap-md);
 		align-items: stretch;
 		justify-content: flex-start;
 
@@ -152,18 +167,18 @@
 	}
 
 	&-presets {
-		border: $border-width solid $color-border;
-		border-radius: $border-radius;
+		border: var(--wpds-border-width-xs) solid var(--wpds-color-stroke-surface-neutral-weak);
+		border-radius: var(--wpds-border-radius-md);
 		width: 100%;
 		max-width: 100%;
-		background: $color-background;
-		padding: $spacing-md;
+		background: var(--wpds-color-bg-surface-neutral-strong);
+		padding: var(--wpds-dimension-padding-lg);
 	}
 
 	&-subcategory {
 		h3 {
 			position: relative;
-			padding-left: $spacing-lg;
+			padding-left: var(--wpds-dimension-gap-2xl);
 			margin-bottom: 1.5em;
 
 			&::before {
@@ -171,7 +186,7 @@
 				left: 0;
 				top: 50%;
 				transform: translateY(-50%);
-				font-size: $font-size-icon;
+				font-size: var(--wpds-font-size-xl);
 				line-height: $line-height-icon;
 				display: inline-block;
 				width: $icon-size;
@@ -257,24 +272,17 @@
 
 /* Logs tab */
 .updatescontrol-logs {
-	padding: $spacing-md;
-
-	&-actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: $gap-md;
-		margin-bottom: $gap-md;
-	}
+	padding: var(--wpds-dimension-padding-lg);
 
 	&-loading {
 		display: flex;
 		align-items: center;
-		gap: $gap-sm;
-		padding: $spacing-md;
+		gap: var(--wpds-dimension-gap-sm);
+		padding: var(--wpds-dimension-padding-lg);
 	}
 
 	&-count {
-		margin-bottom: $gap-sm;
+		margin-bottom: var(--wpds-dimension-gap-sm);
 	}
 
 	&-table-wrap {
@@ -286,7 +294,7 @@
 	}
 
 	&-error {
-		margin: $gap-md 0;
+		margin: var(--wpds-dimension-gap-md) 0;
 	}
 
 	&-status {
@@ -299,19 +307,6 @@
 		&--cancelled {
 			color: #8c8f94;
 		}
-	}
-}
-
-/* Activity layout: footer block (user, badge, View log button) each on its own line */
-.updatescontrol-activity-item-footer {
-	display: flex;
-	flex-direction: column;
-	gap: $gap-sm;
-	width: 100%;
-	min-width: 100%;
-
-	&__line {
-		display: block;
 	}
 }
 
@@ -331,7 +326,7 @@
 
 		h4 {
 			margin: 0 0 0.5rem;
-			font-size: 13px;
+			font-size: var(--wpds-font-size-md);
 		}
 	}
 
@@ -339,12 +334,12 @@
 	.updatescontrol-notes-trace {
 		margin: 0;
 		padding: 0.75rem;
-		background: #f0f0f1;
-		border-radius: 4px;
+		background: var(--wpds-color-bg-surface-neutral-weak);
+		border-radius: var(--wpds-border-radius-md);
 		max-height: 300px;
 		overflow: auto;
-		font-family: monospace;
-		font-size: 12px;
+		font-family: var(--wpds-font-family-mono);
+		font-size: var(--wpds-font-size-sm);
 		line-height: 1.5;
 	}
 
@@ -355,37 +350,37 @@
 
 /* Settings tab */
 .updatescontrol-settings-form {
-	padding: $spacing-md;
+	padding: var(--wpds-dimension-padding-lg);
 
 	.updatescontrol-settings-section {
-		margin-bottom: $gap-xl;
+		margin-bottom: var(--wpds-dimension-gap-xl);
 
 		&-title {
 			margin-top: 0;
-			margin-bottom: $gap-md;
-			padding-bottom: $gap-sm;
-			border-bottom: 1px solid $color-border;
+			margin-bottom: var(--wpds-dimension-gap-md);
+			padding-bottom: var(--wpds-dimension-gap-sm);
+			border-bottom: var(--wpds-border-width-xs) solid var(--wpds-color-stroke-surface-neutral-weak);
 		}
 	}
 
 	.updatescontrol-settings-checkboxes {
-		margin-top: $gap-sm;
+		margin-top: var(--wpds-dimension-gap-sm);
 
 		.updatescontrol-settings-label {
-			margin-bottom: $gap-xs;
+			margin-bottom: var(--wpds-dimension-gap-xs);
 			font-weight: 600;
 		}
 	}
 
 	.updatescontrol-settings-error {
-		margin: $gap-md 0;
+		margin: var(--wpds-dimension-gap-md) 0;
 	}
 
 	.components-base-control {
-		margin-bottom: $gap-md;
+		margin-bottom: var(--wpds-dimension-gap-md);
 	}
 
 	.components-button {
-		margin-top: $gap-md;
+		margin-top: var(--wpds-dimension-gap-md);
 	}
 }

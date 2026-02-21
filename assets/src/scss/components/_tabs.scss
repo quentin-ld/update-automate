@@ -21,7 +21,7 @@
 
 			&--vertical {
 				flex-direction: column;
-				border-right: $border-width solid $color-border-light;
+				border-right: var(--wpds-border-width-xs) solid $color-border-light;
 				padding-right: 0;
 			}
 		}
@@ -29,7 +29,7 @@
 		&__tab {
 			display: flex;
 			align-items: center;
-			padding: $spacing-md;
+			padding: var(--wpds-dimension-padding-lg);
 			min-height: $tab-min-height;
 			margin: 0;
 			background: transparent;
@@ -37,17 +37,17 @@
 			border-radius: $border-radius-none;
 			cursor: pointer;
 			line-height: $line-height-base;
-			font-weight: $font-weight-normal;
-			font-size: $font-size-base;
+			font-weight: var(--wpds-font-weight-regular);
+			font-size: var(--wpds-font-size-md);
 			color: $wp-color-foreground;
 			text-align: left;
 			transition: $transition-base;
 			position: relative;
-			gap: $gap-sm;
+			gap: var(--wpds-dimension-gap-sm);
 
 			&::before {
 				font-family: dashicons;
-				font-size: $font-size-icon;
+				font-size: var(--wpds-font-size-xl);
 				line-height: $line-height-icon;
 				display: inline-block;
 				width: $icon-size;
@@ -56,22 +56,22 @@
 			}
 
 			&:hover {
-				color: $color-foreground;
-				background: $color-background-hover;
+				color: var(--wpds-color-fg-content-neutral);
+				background: var(--wpds-color-bg-surface-neutral-weak);
 				outline: 2px solid transparent;
-				box-shadow: inset 0 0 0 2px $color-foreground !important;
+				box-shadow: inset 0 0 0 2px var(--wpds-color-fg-content-neutral) !important;
 			}
 
 			&:focus {
 				outline: 2px solid transparent;
-				box-shadow: inset 0 0 0 2px $color-foreground !important;
+				box-shadow: inset 0 0 0 2px var(--wpds-color-fg-content-neutral) !important;
 			}
 
 			&--is-active {
 				color: $wp-color-accent;
 				fill: currentcolor;
 				background: transparent;
-				font-weight: $font-weight-normal;
+				font-weight: var(--wpds-font-weight-regular);
 				background-color: $color-accent-active-bg;
 
 				&::after {
@@ -120,7 +120,7 @@
 			max-height: $tab-panel-height;
 			position: relative;
 			overflow: auto;
-			padding: $spacing-md $spacing-md 0 $spacing-md;
+			padding: var(--wpds-dimension-padding-lg) var(--wpds-dimension-padding-lg) 0 var(--wpds-dimension-padding-lg);
 
 			@media screen and (max-width: 1281px) {
 				height: 600px;
@@ -134,7 +134,7 @@
 
 			&:focus {
 				outline: 2px solid transparent;
-				box-shadow: inset 0 0 0 2px $color-foreground !important;
+				box-shadow: inset 0 0 0 2px var(--wpds-color-fg-content-neutral) !important;
 			}
 
 			&[hidden] {
