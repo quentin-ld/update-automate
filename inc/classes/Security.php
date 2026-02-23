@@ -161,17 +161,4 @@ final class UpdatesControl_Security {
     public static function user_can_manage_logs(): bool {
         return current_user_can('manage_options');
     }
-
-    /**
-     * Verify nonce for admin actions.
-     *
-     * @param string $action Action name.
-     * @param string $nonce_key Request key (default 'nonce').
-     * @return bool
-     */
-    public static function verify_nonce(string $action, string $nonce_key = 'nonce'): bool {
-        $nonce = isset($_REQUEST[$nonce_key]) ? sanitize_text_field(wp_unslash($_REQUEST[$nonce_key])) : '';
-
-        return wp_verify_nonce($nonce, $action) !== false;
-    }
 }

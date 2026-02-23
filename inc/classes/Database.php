@@ -89,7 +89,11 @@ final class UpdatesControl_Database {
         return true;
     }
 
-    /** Drop logs table (uninstall). Uses %i for table name (WP 6.2+). */
+    /**
+     * Drop logs table (uninstall). Uses %i for table name (WP 6.2+).
+     *
+     * @return void
+     */
     public static function drop_table(): void {
         global $wpdb;
 
@@ -99,7 +103,11 @@ final class UpdatesControl_Database {
         delete_option(self::OPTION_DB_VERSION);
     }
 
-    /** Table existence tracked via option (no information_schema query). */
+    /**
+     * Table existence tracked via option (no information_schema query).
+     *
+     * @return bool
+     */
     public static function table_exists(): bool {
         return get_option(self::OPTION_DB_VERSION, false) !== false;
     }

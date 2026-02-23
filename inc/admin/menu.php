@@ -10,10 +10,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+add_action('admin_menu', 'updatescontrol_add_option_page');
 /**
  * Adds Updates Control under Tools and a link under Dashboard > Updates control.
+ *
+ * @return void
  */
-add_action('admin_menu', 'updatescontrol_add_option_page');
 function updatescontrol_add_option_page(): void {
     add_management_page(
         __('Updates Control options', 'updates-control'),
@@ -34,6 +36,8 @@ function updatescontrol_add_option_page(): void {
 
 /**
  * Outputs updatescontrol settings page (shell; React app mounts in #updatescontrol-settings).
+ *
+ * @return void
  */
 function updatescontrol_options_page(): void {
     $plugin_data = get_file_data(updatescontrol_PLUGIN_FILE, ['Version' => 'Version'], 'plugin');

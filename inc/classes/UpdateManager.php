@@ -383,7 +383,9 @@ final class UpdatesControl_Update_Manager {
     /**
      * Store current core/plugin/theme versions before upgrade runs. For core, also hook update_feedback to collect process.
      *
+     * @param bool                 $result     Whether the install was successful (filter pass-through).
      * @param array<string, mixed> $hook_extra Extra args (type, plugin, theme).
+     * @return bool
      */
     public static function store_core_version_before(bool $result, array $hook_extra = []): bool {
         $type = $hook_extra['type'] ?? '';
@@ -421,13 +423,13 @@ final class UpdatesControl_Update_Manager {
      * After bulk skin flushes output (before() → flush_output), start a new buffer so we capture the real log
      * (Downloading…, Unpacking…, Installing…, success, etc.) in download_package / install_package.
      *
-     * @param bool|WP_Error       $reply      Whether to short-circuit.
-     * @param string              $package    Package URL.
-     * @param WP_Upgrader         $upgrader   Upgrader instance.
-     * @param array<string,mixed> $hook_extra Extra args.
-     * @return bool|WP_Error Unchanged.
+     * @param bool|\WP_Error       $reply      Whether to short-circuit.
+     * @param string               $package    Package URL.
+     * @param \WP_Upgrader         $upgrader   Upgrader instance.
+     * @param array<string, mixed> $hook_extra Extra args.
+     * @return bool|\WP_Error Unchanged.
      */
-    public static function start_bulk_post_flush_buffer($reply, string $package, WP_Upgrader $upgrader, array $hook_extra = []): bool|WP_Error {
+    public static function start_bulk_post_flush_buffer(bool|\WP_Error $reply, string $package, \WP_Upgrader $upgrader, array $hook_extra = []): bool|\WP_Error {
         if (self::$bulk_flush_happened && $upgrader->skin instanceof \Bulk_Upgrader_Skin) {
             self::$bulk_flush_happened = false;
             ob_start(function (string $buf): string {
@@ -445,12 +447,12 @@ final class UpdatesControl_Update_Manager {
     /**
      * When core package is about to download, start collecting update_feedback (EUM-style; catches manual core update flow).
      *
-     * @param bool|WP_Error $reply    Whether to short-circuit.
-     * @param string       $package  Package URL.
-     * @param WP_Upgrader  $upgrader Upgrader instance.
-     * @return bool|WP_Error Unchanged.
+     * @param bool|\WP_Error $reply    Whether to short-circuit.
+     * @param string         $package  Package URL.
+     * @param \WP_Upgrader   $upgrader Upgrader instance.
+     * @return bool|\WP_Error Unchanged.
      */
-    public static function init_core_feedback_on_download($reply, string $package, WP_Upgrader $upgrader) {
+    public static function init_core_feedback_on_download(bool|\WP_Error $reply, string $package, \WP_Upgrader $upgrader): bool|\WP_Error {
         if (!$upgrader instanceof \Core_Upgrader) {
             return $reply;
         }
@@ -485,10 +487,10 @@ final class UpdatesControl_Update_Manager {
     /**
      * Collect core update step messages (update_feedback filter).
      *
-     * @param string|WP_Error $feedback Message or error.
-     * @return string|WP_Error Unchanged.
+     * @param mixed $feedback Message or error.
+     * @return mixed Unchanged.
      */
-    public static function collect_core_feedback($feedback) {
+    public static function collect_core_feedback(mixed $feedback): mixed {
         if (is_string($feedback) && $feedback !== '') {
             self::$core_feedback[] = wp_strip_all_tags(str_replace('&#8230;', '…', $feedback));
         }
@@ -551,13 +553,13 @@ final class UpdatesControl_Update_Manager {
      * Store current plugin version before upload overwrite (update.php?action=upload-plugin, Replace).
      * Ensures version_before is available when upgrader_process_complete runs so we can log update/downgrade.
      *
-     * @param string|WP_Error $source        Path to the unpacked package source (or WP_Error).
-     * @param string          $remote_source Remote source (unused).
-     * @param WP_Upgrader      $upgrader      Upgrader instance.
-     * @param array<string, mixed> $hook_extra hook_extra from the upgrader run.
-     * @return string|WP_Error Unchanged source path or error.
+     * @param string|\WP_Error     $source        Path to the unpacked package source (or WP_Error).
+     * @param string               $remote_source Remote source (unused).
+     * @param \WP_Upgrader         $upgrader      Upgrader instance.
+     * @param array<string, mixed> $hook_extra    hook_extra from the upgrader run.
+     * @return string|\WP_Error Unchanged source path or error.
      */
-    public static function store_plugin_version_before_upload_overwrite($source, string $remote_source, WP_Upgrader $upgrader, array $hook_extra) {
+    public static function store_plugin_version_before_upload_overwrite(string|\WP_Error $source, string $remote_source, \WP_Upgrader $upgrader, array $hook_extra): string|\WP_Error {
         if (!is_string($source) || $source === '') {
             return $source;
         }
@@ -614,13 +616,13 @@ final class UpdatesControl_Update_Manager {
     /**
      * Store current theme version before upload overwrite (update.php?action=upload-theme, Replace).
      *
-     * @param string|WP_Error $source        Path to the unpacked package source (or WP_Error).
-     * @param string          $remote_source Remote source (unused).
-     * @param WP_Upgrader     $upgrader      Upgrader instance.
-     * @param array<string, mixed> $hook_extra hook_extra from the upgrader run.
-     * @return string|WP_Error Unchanged source path or error.
+     * @param string|\WP_Error     $source        Path to the unpacked package source (or WP_Error).
+     * @param string               $remote_source Remote source (unused).
+     * @param \WP_Upgrader         $upgrader      Upgrader instance.
+     * @param array<string, mixed> $hook_extra    hook_extra from the upgrader run.
+     * @return string|\WP_Error Unchanged source path or error.
      */
-    public static function store_theme_version_before_upload_overwrite($source, string $remote_source, WP_Upgrader $upgrader, array $hook_extra) {
+    public static function store_theme_version_before_upload_overwrite(string|\WP_Error $source, string $remote_source, \WP_Upgrader $upgrader, array $hook_extra): string|\WP_Error {
         if (!is_string($source) || $source === '') {
             return $source;
         }

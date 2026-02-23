@@ -10,8 +10,8 @@ $color-accent-active-bg: color-mix(in srgb, var(--wp-components-color-accent, va
 $wp-color-foreground: var(--wp-components-color-foreground, var(--wpds-color-fg-content-neutral));
 $wp-color-accent: var(--wp-components-color-accent, var(--wp-admin-theme-color, $color-accent));
 
-// Border (plugin-specific)
-$color-border-light: #d6e2ed;
+// Border (plugin-specific; fallback for environments without WPDS)
+$color-border-light: var(--wpds-color-stroke-surface-neutral-weak, #d6e2ed);
 $border-width-thick: 3px;
 $border-radius-none: 0;
 

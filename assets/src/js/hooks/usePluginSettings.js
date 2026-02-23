@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Hook to read and save plugin settings (from localize + REST).
@@ -47,7 +48,9 @@ export function usePluginSettings() {
 				setSettings(response.options);
 			}
 		} catch (e) {
-			setSaveError(e?.message || 'Failed to save settings.');
+			setSaveError(
+				e?.message || __('Failed to save settings.', 'updatescontrol')
+			);
 		} finally {
 			setSaving(false);
 		}

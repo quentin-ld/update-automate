@@ -42,7 +42,7 @@ final class UpdatesControl_Logger {
         string $trace = '',
         string $performed_as = 'manual',
         string $update_context = ''
-    ) {
+    ): int|false {
         if (!UpdatesControl_Database::table_exists()) {
             return false;
         }

@@ -171,6 +171,14 @@ final class UpdatesControl_Settings {
         $logs = UpdatesControl_Logger::get_logs($args);
         $total = UpdatesControl_Logger::get_logs_count($args);
 
+        $user_ids = array_unique(array_filter(array_map(
+            static fn (object $log): int => (int) ($log->user_id ?? 0),
+            $logs
+        )));
+        if ($user_ids !== []) {
+            cache_users($user_ids);
+        }
+
         $logs = array_map([self::class, 'enrich_log_for_display'], $logs);
 
         return new WP_REST_Response([
@@ -260,6 +268,9 @@ final class UpdatesControl_Settings {
                 continue;
             }
             $value = $request->get_param($param);
+            if ($param === 'logging_enabled' || $param === 'notify_enabled') {
+                $value = (bool) $value;
+            }
             if ($param === 'retention_days') {
                 $value = max(1, min(365, (int) $value));
             }

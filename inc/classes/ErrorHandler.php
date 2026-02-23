@@ -23,7 +23,6 @@ final class UpdatesControl_ErrorHandler {
         add_filter('wp_redirect', [self::class, 'capture_redirect_error'], 10, 2);
         add_filter('upgrader_pre_download', [self::class, 'capture_download_error'], 10, 3);
         add_action('upgrader_process_complete', [self::class, 'log_upgrader_failure'], 20, 2);
-        add_filter('automatic_updates_is_vcs_checkout', [self::class, 'vcs_checkout_check'], 10, 2);
     }
 
     /**
@@ -315,16 +314,5 @@ final class UpdatesControl_ErrorHandler {
         UpdatesControl_Logger::log($type, 'failed', $name ?: 'unknown', '', '', '', 'error', $reply->get_error_message(), self::capture_trace(), $performed_as);
 
         return $reply;
-    }
-
-    /**
-     * Optional: detect VCS checkout to avoid auto-update on dev sites.
-     *
-     * @param bool   $checkout Whether it's a VCS checkout.
-     * @param string $context  Path context.
-     * @return bool
-     */
-    public static function vcs_checkout_check(bool $checkout, string $context): bool {
-        return $checkout;
     }
 }

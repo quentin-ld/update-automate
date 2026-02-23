@@ -14,6 +14,8 @@ add_action('init', 'updatescontrol_register_settings');
 
 /**
  * Register options for the Updates Control plugin.
+ *
+ * @return void
  */
 function updatescontrol_register_settings(): void {
     register_setting(

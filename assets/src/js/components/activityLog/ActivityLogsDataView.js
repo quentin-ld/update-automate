@@ -8,7 +8,7 @@
  * @see docs/ACTIVITY-LOGS-DATAVIEW-SPEC.md
  */
 
-import { useMemo, useState, useEffect } from '@wordpress/element';
+import { useMemo, useState, useEffect, useCallback } from '@wordpress/element';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews/wp';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -43,15 +43,12 @@ export function ActivityLogsDataView() {
 		mediaField: 'icon',
 	});
 
-	const handleChangeView = useMemo(
-		() => (nextView) => {
-			setView(() => ({
-				...nextView,
-				sort: FIXED_SORT,
-			}));
-		},
-		[]
-	);
+	const handleChangeView = useCallback((nextView) => {
+		setView(() => ({
+			...nextView,
+			sort: FIXED_SORT,
+		}));
+	}, []);
 
 	useEffect(() => {
 		fetchLogs({ per_page: view.perPage, page: view.page });

@@ -26,7 +26,7 @@ final class UpdatesControl_Notifications {
     /**
      * Check if notifications are enabled and send email for errors or important updates.
      *
-     * @param int $log_id Log ID (optional).
+     * @param int $log_id Log ID.
      * @param array<string, mixed> $data Log data (type, status, item_name, etc.).
      * @return void
      */

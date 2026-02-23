@@ -1,5 +1,6 @@
 import { useState, useCallback } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Hook to fetch, delete, and cleanup update logs.
@@ -28,7 +29,9 @@ export function useLogs() {
 			setLogs(response.logs || []);
 			setTotal(response.total ?? 0);
 		} catch (e) {
-			setError(e?.message || 'Failed to load logs.');
+			setError(
+				e?.message || __('Failed to load logs.', 'updatescontrol')
+			);
 		} finally {
 			setLoading(false);
 		}

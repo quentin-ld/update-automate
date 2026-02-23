@@ -299,13 +299,13 @@
 
 	&-status {
 		&--success {
-			color: #00a32a;
+			color: var(--wpds-color-fg-content-success-weak);
 		}
 		&--error {
-			color: #d63638;
+			color: var(--wpds-color-fg-content-error-weak);
 		}
 		&--cancelled {
-			color: #8c8f94;
+			color: var(--wpds-color-fg-content-neutral-weak);
 		}
 	}
 }
