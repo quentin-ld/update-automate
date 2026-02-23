@@ -105,7 +105,7 @@ function updateautomate_options_page(): void {
                    aria-label="<?php echo esc_attr__('Visit the developer website', 'update-automate'); ?>">
                     <?php echo esc_html__('My place', 'update-automate'); ?>
                 </a>
-                <a href="https://github.com/quentin-ld/update-automate"
+                <a href="https://github.com/quentin-ld/update-automate/"
                    target="_blank"
                    rel="noopener noreferrer"
                    aria-label="<?php echo esc_attr__('Review the code on Github', 'update-automate'); ?>">
