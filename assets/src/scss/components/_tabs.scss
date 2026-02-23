@@ -45,6 +45,21 @@
 			position: relative;
 			gap: var(--wpds-dimension-gap-sm);
 
+			&-icon {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				flex-shrink: 0;
+
+				svg {
+					fill: currentColor;
+				}
+			}
+
+			&--has-icon::before {
+				display: none;
+			}
+
 			&::before {
 				font-family: dashicons;
 				font-size: var(--wpds-font-size-xl);

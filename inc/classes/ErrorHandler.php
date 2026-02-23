@@ -98,7 +98,7 @@ final class UpdatesControl_ErrorHandler {
         }
 
         $trace = self::capture_trace();
-        $performed_as = UpdatesControl_Update_Manager::is_automatic_update() ? 'automatic' : 'manual';
+        $performed_as = UpdatesControl_Update_Logger::is_automatic_update() ? 'automatic' : 'manual';
 
         UpdatesControl_Logger::log(
             $type,
@@ -267,7 +267,7 @@ final class UpdatesControl_ErrorHandler {
      */
     public static function capture_redirect_error(string $location, int $status): string {
         if ($status >= 400 && str_contains($location, 'update-core.php')) {
-            $performed_as = UpdatesControl_Update_Manager::is_automatic_update() ? 'automatic' : 'manual';
+            $performed_as = UpdatesControl_Update_Logger::is_automatic_update() ? 'automatic' : 'manual';
             UpdatesControl_Logger::log(
                 'core',
                 'failed',
@@ -310,7 +310,7 @@ final class UpdatesControl_ErrorHandler {
             $type = 'theme';
             $name = $skin->theme;
         }
-        $performed_as = UpdatesControl_Update_Manager::is_automatic_update() ? 'automatic' : 'manual';
+        $performed_as = UpdatesControl_Update_Logger::is_automatic_update() ? 'automatic' : 'manual';
         UpdatesControl_Logger::log($type, 'failed', $name ?: 'unknown', '', '', '', 'error', $reply->get_error_message(), self::capture_trace(), $performed_as);
 
         return $reply;

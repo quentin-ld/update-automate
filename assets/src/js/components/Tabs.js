@@ -5,6 +5,7 @@ import {
 	useRef,
 	useEffect,
 } from '@wordpress/element';
+import { Icon } from '@wordpress/icons';
 
 const TabsContext = createContext();
 
@@ -94,14 +95,23 @@ export const TabList = ({ children }) => {
 /**
  * Tab component - individual tab button
  *
- * @param {Object} props           - Component props.
- * @param {string} props.tabId     - Unique identifier for the tab.
- * @param {string} props.title     - Tab title (optional, uses children if not provided).
- * @param {string} props.className - Additional CSS class name.
- * @param {Object} props.children  - Tab content.
+ * @param {Object}   props           - Component props.
+ * @param {string}   props.tabId     - Unique identifier for the tab.
+ * @param {string}   props.title    - Tab title (optional, uses children if not provided).
+ * @param {Object}   props.icon     - Optional WordPress icon (e.g. from @wordpress/icons).
+ * @param {number}   props.iconSize - Icon size in pixels (default 24).
+ * @param {string}   props.className - Additional CSS class name.
+ * @param {Object}   props.children  - Tab content.
  * @return {JSX.Element} The tab button.
  */
-export const Tab = ({ tabId, title, className = '', children }) => {
+export const Tab = ({
+	tabId,
+	title,
+	icon,
+	iconSize = 24,
+	className = '',
+	children,
+}) => {
 	const { selectedTabId, onSelect, orientation, getOrderedTabIds } =
 		useContext(TabsContext);
 	const isSelected = selectedTabId === tabId;
@@ -180,7 +190,7 @@ export const Tab = ({ tabId, title, className = '', children }) => {
 	return (
 		<button
 			ref={tabRef}
-			className={`updatescontrol-tabs__tab ${isSelected ? 'updatescontrol-tabs__tab--is-active' : ''} ${className}`.trim()}
+			className={`updatescontrol-tabs__tab ${isSelected ? 'updatescontrol-tabs__tab--is-active' : ''} ${icon ? 'updatescontrol-tabs__tab--has-icon' : ''} ${className}`.trim()}
 			role="tab"
 			aria-selected={isSelected}
 			aria-controls={`updatescontrol-tab-panel-${tabId}`}
@@ -190,7 +200,14 @@ export const Tab = ({ tabId, title, className = '', children }) => {
 			onKeyDown={handleKeyDown}
 			onFocus={handleFocus}
 		>
-			{title || children}
+			{icon && (
+				<span className="updatescontrol-tabs__tab-icon" aria-hidden>
+					<Icon icon={icon} size={iconSize} />
+				</span>
+			)}
+			<span className="updatescontrol-tabs__tab-label">
+				{title || children}
+			</span>
 		</button>
 	);
 };

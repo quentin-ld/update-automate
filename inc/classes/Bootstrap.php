@@ -23,7 +23,7 @@ final class UpdatesControl_Bootstrap {
         self::load_classes();
         self::on_activation_create_table();
         UpdatesControl_Cron::register();
-        UpdatesControl_Update_Manager::register();
+        UpdatesControl_Update_Logger::register();
         UpdatesControl_ErrorHandler::register();
         UpdatesControl_Settings::register();
         UpdatesControl_Notifications::register();
@@ -42,7 +42,7 @@ final class UpdatesControl_Bootstrap {
             'Logger.php',
             'Cron.php',
             'ErrorHandler.php',
-            'UpdateManager.php',
+            'UpdateLogger.php',
             'Notifications.php',
             'Settings.php',
         ];

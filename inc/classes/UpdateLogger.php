@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Update manager: observes and logs core/plugin/theme updates. Hooks into WordPress
- * update flow only to add version_before to transients for audit logging when updates
- * complete. It does not modify or block updates.
+ * Update logger: observes and logs core/plugin/theme/translation updates. Hooks into
+ * WordPress update flow only to add version_before to transients for audit logging
+ * when updates complete. It does not modify or block updates.
  *
  * @package updatescontrol
  */
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-final class UpdatesControl_Update_Manager {
+final class UpdatesControl_Update_Logger {
     /**
      * Register hooks for update events.
      *
@@ -28,7 +28,7 @@ final class UpdatesControl_Update_Manager {
         add_filter('upgrader_source_selection', [self::class, 'store_theme_version_before_upload_overwrite'], 20, 4);
         add_filter('upgrader_pre_download', [self::class, 'init_core_feedback_on_download'], 5, 3);
         add_filter('upgrader_pre_download', [self::class, 'start_bulk_post_flush_buffer'], 10, 3);
-        // phpcs:ignore plugin_updater_detected, update_modification_detected -- Update manager (logs updates only); we only add version_before to the transient for audit logging. We do not implement a plugin updater or alter what gets updated.
+        // phpcs:ignore plugin_updater_detected, update_modification_detected -- Update logger (logs updates only); we only add version_before to the transient for audit logging. We do not implement a plugin updater or alter what gets updated.
         add_filter('set_site_transient_update_plugins', [self::class, 'capture_plugin_versions_before'], 10, 1);
         add_filter('set_site_transient_update_themes', [self::class, 'capture_theme_versions_before'], 10, 1);
         register_shutdown_function([self::class, 'maybe_flush_pending_logs']);

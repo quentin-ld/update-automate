@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from '@wordpress/element';
+import { pages as iconPages, settings as iconSettings } from '@wordpress/icons';
 import { Notices } from '../components/Notices';
 import { Tabs } from '../components/Tabs';
 import { ActivityLogsDataView } from '../components/activityLog';
@@ -59,12 +60,14 @@ export const SettingsPage = () => {
 							<Tabs.Tab
 								tabId={TAB_LOGS}
 								title={__('Update logs', 'updatescontrol')}
+								icon={iconPages}
 							>
 								{__('Update logs', 'updatescontrol')}
 							</Tabs.Tab>
 							<Tabs.Tab
 								tabId={TAB_SETTINGS}
 								title={__('Settings', 'updatescontrol')}
+								icon={iconSettings}
 							>
 								{__('Settings', 'updatescontrol')}
 							</Tabs.Tab>
