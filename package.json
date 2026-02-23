@@ -8,8 +8,7 @@
     "lint:fix": "eslint --config .config/.eslintrc.js --fix assets/src/**/*.js",
     "start": "wp-scripts start assets/src/index.js --output-path=assets/build",
     "build": "wp-scripts build assets/src/index.js --output-path=assets/build",
-    "zip": "node .config/zip.js",
-    "i18n": "node .config/i18n.js"
+    "zip": "node .config/zip.js"
   },
   "author": "Quentin Le Duff",
   "license": "GPL-2.0-or-later",
