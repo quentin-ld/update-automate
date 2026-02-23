@@ -1,4 +1,4 @@
-=== Updates Control - Manage updates easily ===
+=== Update Automate ===
 Contributors: @quentinldd
 Donate link: https://github.com/sponsors/quentin-ld/
 Tags: updates, logging, security, notifications
@@ -13,7 +13,7 @@ Log WordPress core, plugin, and theme updates with error handling, security, and
 
 == Description ==
 
-Updates Control is a WordPress plugin that records every core, plugin, and theme update (and install) in a custom log table. It uses a Zenpress-style admin interface with vertical tabs: **Update logs** and **Settings**. You get a clear history of what was updated, when, and by whom, plus optional email alerts for errors or important updates.
+Update Automate is a WordPress plugin that records every core, plugin, and theme update (and install) in a custom log table. It uses a Zenpress-style admin interface with vertical tabs: **Update logs** and **Settings**. You get a clear history of what was updated, when, and by whom, plus optional email alerts for errors or important updates.
 
 = Features =
 
@@ -24,7 +24,7 @@ Updates Control is a WordPress plugin that records every core, plugin, and theme
 * **Notifications (optional)** – Email alerts when notifications are enabled: on errors (failed updates), on core updates, or on all updates. Recipients and triggers are configurable in Settings.
 * **Admin UI** – Zenpress-style layout: header with version and docs links, main content with vertical tabs (Update logs, Settings), footer. Update logs tab shows a table with filters, refresh, cleanup, and per-row delete. Settings tab: enable/disable logging, retention days, email notifications (enable, recipients, notify on: errors / core / all).
 
-= Why use Updates Control? =
+= Why use Update Automate? =
 
 * Keep an audit trail of what was updated and when.
 * Spot failed updates quickly via the logs or email.
@@ -33,9 +33,9 @@ Updates Control is a WordPress plugin that records every core, plugin, and theme
 
 == Installation ==
 
-1. Upload the plugin files to `/wp-content/plugins/updates-control/` or install via the Plugins screen.
+1. Upload the plugin files to `/wp-content/plugins/update-automate/` or install via the Plugins screen.
 2. Activate the plugin through the **Plugins** screen.
-3. Go to **Settings → Updates Control** to view logs and configure options (logging, retention, notifications).
+3. Go to **Tools → Update Automate** (or **Dashboard → Update Automate**) to view logs and configure options (logging, retention, notifications).
 
 On activation, the plugin creates the log table and schedules the daily cleanup cron. On deactivation, the cron is unscheduled; the table is kept.
 
@@ -43,11 +43,11 @@ On activation, the plugin creates the log table and schedules the daily cleanup 
 
 = Where are the logs stored? =
 
-In a custom table: `{prefix}updatescontrol_logs` (e.g. `wp_updatescontrol_logs`).
+In a custom table: `{prefix}updateautomate_logs` (e.g. `wp_updateautomate_logs`).
 
 = Can I export or delete old logs? =
 
-You can delete a single log from the table (Delete button per row) or run **Cleanup old logs** to remove all entries older than the retention period. Export is not included; you can query the table or use the REST API (`GET /wp-json/updatescontrol/v1/logs`) if you need to build an export.
+You can delete a single log from the table (Delete button per row) or run **Cleanup old logs** to remove all entries older than the retention period. Export is not included; you can query the table or use the REST API (`GET /wp-json/updateautomate/v1/logs`) if you need to build an export.
 
 = Does it send data outside my site? =
 
@@ -59,7 +59,7 @@ For developers:
 
 = Actions =
 
-* `updatescontrol_after_log` – Fired after a log entry is inserted. Parameters: `(int $log_id, array $data)`. Use to integrate with other systems or trigger custom notifications.
+* `updateautomate_after_log` – Fired after a log entry is inserted. Parameters: `(int $log_id, array $data)`. Use to integrate with other systems or trigger custom notifications.
 
 == Changelog ==
 

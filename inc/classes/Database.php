@@ -3,7 +3,7 @@
 /**
  * Creates and manages the custom database table for update logs.
  *
- * @package updatescontrol
+ * @package updateautomate
  */
 
 if (!defined('ABSPATH')) {
@@ -13,27 +13,27 @@ if (!defined('ABSPATH')) {
 /**
  * Database table manager for update logs.
  */
-final class UpdatesControl_Database {
+final class UpdateAutomate_Database {
     /**
      * Option key storing the database version for upgrades.
      *
      * @var string
      */
-    public const OPTION_DB_VERSION = 'updatescontrol_log_db_version';
+    public const OPTION_DB_VERSION = 'updateautomate_log_db_version';
 
     /**
      * Current schema version.
      *
      * @var string
      */
-    public const DB_VERSION = UPDATESCONTROL_VERSION;
+    public const DB_VERSION = UPDATEAUTOMATE_VERSION;
 
     /**
      * Table name (without prefix).
      *
      * @var string
      */
-    public const TABLE_LOGS = 'updatescontrol_logs';
+    public const TABLE_LOGS = 'updateautomate_logs';
 
     /**
      * Get full table name including prefix.

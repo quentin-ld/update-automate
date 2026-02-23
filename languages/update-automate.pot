@@ -2,8 +2,8 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Updates Control - Manage updates easily 0.1\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/updates-control\n"
+"Project-Id-Version: Update Automate 0.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/update-automate\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -12,35 +12,35 @@ msgstr ""
 "POT-Creation-Date: 2026-02-23T11:57:03+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
-"X-Domain: updates-control\n"
+"X-Domain: update-automate\n"
 
 #. Plugin Name of the plugin
-#: updates-control.php
-msgid "Updates Control - Manage updates easily"
+#: update-automate.php
+msgid "Update Automate"
 msgstr ""
 
 #. Plugin URI of the plugin
-#: updates-control.php
-msgid "https://wordpress.org/plugins/updatescontrol/"
+#: update-automate.php
+msgid "https://wordpress.org/plugins/update-automate/"
 msgstr ""
 
 #. Description of the plugin
-#: updates-control.php
+#: update-automate.php
 msgid "Log WordPress core, plugin, and theme updates with error handling, security, and optional email notifications."
 msgstr ""
 
 #. Author of the plugin
-#: updates-control.php
+#: update-automate.php
 msgid "Quentin Le Duff"
 msgstr ""
 
 #. Author URI of the plugin
-#: updates-control.php
+#: update-automate.php
 msgid "https://profiles.wordpress.org/quentinldd/"
 msgstr ""
 
 #: inc/admin/links.php:25
-msgid "Go to Updates Control settings page"
+msgid "Go to Update Automate settings page"
 msgstr ""
 
 #: inc/admin/links.php:26
@@ -49,7 +49,7 @@ msgstr ""
 
 #: inc/admin/links.php:46
 #: inc/admin/menu.php:56
-msgid "View Updates Control changelog on WordPress.org (opens in a new tab)"
+msgid "View Update Automate changelog on WordPress.org (opens in a new tab)"
 msgstr ""
 
 #: inc/admin/links.php:47
@@ -57,7 +57,7 @@ msgid "Changelog"
 msgstr ""
 
 #: inc/admin/links.php:52
-msgid "Read Updates Control documentation (opens in a new tab)"
+msgid "Read Update Automate documentation (opens in a new tab)"
 msgstr ""
 
 #: inc/admin/links.php:53
@@ -65,7 +65,7 @@ msgid "Docs"
 msgstr ""
 
 #: inc/admin/links.php:58
-msgid "Support Updates Control by buying a coffee (opens in a new tab)"
+msgid "Support Update Automate by buying a coffee (opens in a new tab)"
 msgstr ""
 
 #: inc/admin/links.php:59
@@ -73,17 +73,17 @@ msgid "Support ☕"
 msgstr ""
 
 #: inc/admin/menu.php:21
-msgid "Updates Control options"
+msgid "Update Automate options"
 msgstr ""
 
 #: inc/admin/menu.php:22
 #: inc/admin/menu.php:29
 #: inc/admin/menu.php:49
-msgid "Updates Control"
+msgid "Update Automate"
 msgstr ""
 
 #: inc/admin/menu.php:30
-msgid "Updates control"
+msgid "Update Automate"
 msgstr ""
 
 #: inc/admin/menu.php:52
@@ -95,7 +95,7 @@ msgid "What's new ?"
 msgstr ""
 
 #: inc/admin/menu.php:66
-msgid "Read the Updates Control documentation (opens in a new tab)"
+msgid "Read the Update Automate documentation (opens in a new tab)"
 msgstr ""
 
 #: inc/admin/menu.php:67
@@ -103,7 +103,7 @@ msgid "Documentation"
 msgstr ""
 
 #: inc/admin/menu.php:72
-msgid "Leave a review for Updates Control on WordPress.org (opens in a new tab)"
+msgid "Leave a review for Update Automate on WordPress.org (opens in a new tab)"
 msgstr ""
 
 #: inc/admin/menu.php:73
@@ -119,7 +119,7 @@ msgid "Buy me a coffee"
 msgstr ""
 
 #: inc/admin/menu.php:88
-msgid "Loading your Updates Control settings…"
+msgid "Loading your Update Automate settings…"
 msgstr ""
 
 #: inc/admin/menu.php:96
@@ -143,7 +143,7 @@ msgid "Review the code on Github"
 msgstr ""
 
 #: inc/admin/menu.php:112
-msgid "Updates Control code repository"
+msgid "Update Automate code repository"
 msgstr ""
 
 #: inc/classes/ErrorHandler.php:53

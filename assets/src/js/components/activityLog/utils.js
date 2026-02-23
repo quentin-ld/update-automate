@@ -5,7 +5,11 @@ import { __, _x } from '@wordpress/i18n';
 import { ACTION_LABELS } from './constants';
 
 /** Translated fallback for empty values (em dash). */
-export const EMPTY_FALLBACK = _x('—', 'empty value fallback', 'updatescontrol');
+export const EMPTY_FALLBACK = _x(
+	'—',
+	'empty value fallback',
+	'update-automate'
+);
 
 /**
  * Map log status to badge intent (success, warning, error, default).
@@ -55,10 +59,10 @@ export function formatDate(dateStr) {
  */
 export function getContextLabel(updateContext) {
 	if (updateContext === 'bulk') {
-		return __('Bulk action', 'updatescontrol');
+		return __('Bulk action', 'update-automate');
 	}
 	if (updateContext === 'single') {
-		return __('Single action', 'updatescontrol');
+		return __('Single action', 'update-automate');
 	}
 	return updateContext || EMPTY_FALLBACK;
 }
@@ -70,7 +74,7 @@ export function getContextLabel(updateContext) {
  * @return {string} Title.
  */
 export function getActivityTitle(item) {
-	const name = item.item_name || __('Item', 'updatescontrol');
+	const name = item.item_name || __('Item', 'update-automate');
 	const actionLabel =
 		ACTION_LABELS[item.action_type] ||
 		item.action_display ||

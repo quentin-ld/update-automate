@@ -3,7 +3,7 @@
 /**
  * Implements error handling to manage and log issues during updates.
  *
- * @package updatescontrol
+ * @package updateautomate
  */
 
 if (!defined('ABSPATH')) {
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 /**
  * Catches update errors and passes them to the logger.
  */
-final class UpdatesControl_ErrorHandler {
+final class UpdateAutomate_ErrorHandler {
     /**
      * Register hooks for update failures and errors.
      *
@@ -34,7 +34,7 @@ final class UpdatesControl_ErrorHandler {
      * @return void
      */
     public static function log_upgrader_failure(WP_Upgrader $upgrader, array $options): void {
-        if (!updatescontrol_get_settings()['logging_enabled']) {
+        if (!updateautomate_get_settings()['logging_enabled']) {
             return;
         }
 
@@ -50,7 +50,7 @@ final class UpdatesControl_ErrorHandler {
 
         $message = $result->get_error_message();
         $type = $options['type'] ?? 'plugin';
-        $name = __('Unknown', 'updates-control');
+        $name = __('Unknown', 'update-automate');
         $slug = '';
         $version_before = '';
         $version_after = '';
@@ -94,13 +94,13 @@ final class UpdatesControl_ErrorHandler {
 
         $process = self::get_skin_process_message($upgrader);
         if ($process !== '') {
-            $message .= "\n\n" . __('Process:', 'updates-control') . "\n" . $process;
+            $message .= "\n\n" . __('Process:', 'update-automate') . "\n" . $process;
         }
 
         $trace = self::capture_trace();
-        $performed_as = UpdatesControl_Update_Logger::is_automatic_update() ? 'automatic' : 'manual';
+        $performed_as = UpdateAutomate_Update_Logger::is_automatic_update() ? 'automatic' : 'manual';
 
-        UpdatesControl_Logger::log(
+        UpdateAutomate_Logger::log(
             $type,
             'failed',
             $name,
@@ -267,8 +267,8 @@ final class UpdatesControl_ErrorHandler {
      */
     public static function capture_redirect_error(string $location, int $status): string {
         if ($status >= 400 && str_contains($location, 'update-core.php')) {
-            $performed_as = UpdatesControl_Update_Logger::is_automatic_update() ? 'automatic' : 'manual';
-            UpdatesControl_Logger::log(
+            $performed_as = UpdateAutomate_Update_Logger::is_automatic_update() ? 'automatic' : 'manual';
+            UpdateAutomate_Logger::log(
                 'core',
                 'failed',
                 'WordPress',
@@ -278,7 +278,7 @@ final class UpdatesControl_ErrorHandler {
                 'error',
                 sprintf(
                     /* translators: %d: HTTP status code */
-                    __('Update redirect with status %d', 'updates-control'),
+                    __('Update redirect with status %d', 'update-automate'),
                     $status
                 ),
                 self::capture_trace(),
@@ -310,8 +310,8 @@ final class UpdatesControl_ErrorHandler {
             $type = 'theme';
             $name = $skin->theme;
         }
-        $performed_as = UpdatesControl_Update_Logger::is_automatic_update() ? 'automatic' : 'manual';
-        UpdatesControl_Logger::log($type, 'failed', $name ?: 'unknown', '', '', '', 'error', $reply->get_error_message(), self::capture_trace(), $performed_as);
+        $performed_as = UpdateAutomate_Update_Logger::is_automatic_update() ? 'automatic' : 'manual';
+        UpdateAutomate_Logger::log($type, 'failed', $name ?: 'unknown', '', '', '', 'error', $reply->get_error_message(), self::capture_trace(), $performed_as);
 
         return $reply;
     }

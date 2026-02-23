@@ -3,7 +3,7 @@
 /**
  * Manages scheduled tasks for log cleanup.
  *
- * @package updatescontrol
+ * @package updateautomate
  */
 
 if (!defined('ABSPATH')) {
@@ -13,13 +13,13 @@ if (!defined('ABSPATH')) {
 /**
  * Cron jobs for log retention cleanup.
  */
-final class UpdatesControl_Cron {
+final class UpdateAutomate_Cron {
     /**
      * Cron hook name.
      *
      * @var string
      */
-    public const HOOK_CLEANUP = 'updatescontrol_cleanup_logs';
+    public const HOOK_CLEANUP = 'updateautomate_cleanup_logs';
 
     /**
      * Register cron schedule and hook.
@@ -50,12 +50,12 @@ final class UpdatesControl_Cron {
      * @return void
      */
     public static function run_cleanup(): void {
-        $days = updatescontrol_get_settings()['retention_days'];
+        $days = updateautomate_get_settings()['retention_days'];
         if ($days < 1) {
             return;
         }
 
-        UpdatesControl_Logger::delete_older_than($days);
+        UpdateAutomate_Logger::delete_older_than($days);
     }
 
     /**

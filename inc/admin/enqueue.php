@@ -1,29 +1,29 @@
 <?php
 
 /**
- * Admin asset enqueuing for the Updates Control settings page.
+ * Admin asset enqueuing for the Update Automate settings page.
  *
- * @package updatescontrol
+ * @package updateautomate
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-add_action('admin_enqueue_scripts', 'updatescontrol_admin_enqueue_scripts');
+add_action('admin_enqueue_scripts', 'updateautomate_admin_enqueue_scripts');
 /**
- * Enqueues script and style on updatescontrol settings page only.
+ * Enqueues script and style on updateautomate settings page only.
  *
  * @param string $admin_page Current admin page hook suffix.
  * @return void
  */
-function updatescontrol_admin_enqueue_scripts(string $admin_page): void {
-    $allowed = ['tools_page_updates-control', 'dashboard_page_updates-control'];
+function updateautomate_admin_enqueue_scripts(string $admin_page): void {
+    $allowed = ['tools_page_update-automate', 'dashboard_page_update-automate'];
     if (!in_array($admin_page, $allowed, true)) {
         return;
     }
 
-    $asset_file = updatescontrol_PLUGIN_DIR . 'assets/build/index.asset.php';
+    $asset_file = updateautomate_PLUGIN_DIR . 'assets/build/index.asset.php';
     if (!file_exists($asset_file)) {
         return;
     }
@@ -34,16 +34,16 @@ function updatescontrol_admin_enqueue_scripts(string $admin_page): void {
     }
 
     wp_enqueue_script(
-        'updatescontrol-scripts',
-        plugins_url('assets/build/index.js', updatescontrol_PLUGIN_FILE),
+        'updateautomate-scripts',
+        plugins_url('assets/build/index.js', updateautomate_PLUGIN_FILE),
         (array) $asset['dependencies'],
         $asset['version'],
         true
     );
 
     wp_enqueue_style(
-        'updatescontrol-style',
-        plugins_url('assets/build/index.css', updatescontrol_PLUGIN_FILE),
+        'updateautomate-style',
+        plugins_url('assets/build/index.css', updateautomate_PLUGIN_FILE),
         array_merge(
             ['wp-components'],
             array_filter(
@@ -57,23 +57,23 @@ function updatescontrol_admin_enqueue_scripts(string $admin_page): void {
     );
 }
 
-add_action('admin_enqueue_scripts', 'updatescontrol_localize_settings');
+add_action('admin_enqueue_scripts', 'updateautomate_localize_settings');
 /**
- * Localizes REST URL and nonce for the Updates Control settings page.
+ * Localizes REST URL and nonce for the Update Automate settings page.
  *
  * @param string $admin_page Current admin page hook suffix.
  * @return void
  */
-function updatescontrol_localize_settings(string $admin_page): void {
-    $allowed = ['tools_page_updates-control', 'dashboard_page_updates-control'];
+function updateautomate_localize_settings(string $admin_page): void {
+    $allowed = ['tools_page_update-automate', 'dashboard_page_update-automate'];
     if (!in_array($admin_page, $allowed, true)) {
         return;
     }
 
-    $options = updatescontrol_get_settings();
-    wp_localize_script('updatescontrol-scripts', 'updatescontrolSettings', [
+    $options = updateautomate_get_settings();
+    wp_localize_script('updateautomate-scripts', 'updateautomateSettings', [
         'restUrl' => esc_url_raw(rest_url()),
-        'namespace' => 'updatescontrol/v1',
+        'namespace' => 'updateautomate/v1',
         'nonce' => wp_create_nonce('wp_rest'),
         'options' => $options,
     ]);

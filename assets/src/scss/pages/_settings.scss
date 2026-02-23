@@ -1,6 +1,6 @@
 @use '../abstracts/variables' as *;
 
-.updatescontrol-tabs__panel {
+.updateautomate-tabs__panel {
 	h2 {
 		position: relative;
 		padding-left: var(--wpds-dimension-gap-2xl);
@@ -23,7 +23,7 @@
 	}
 }
 
-.updatescontrol {
+.updateautomate {
 	&-dashboard-wrap {
 		* {
 			box-sizing: border-box;
@@ -254,7 +254,7 @@
 	}
 }
 
-#updatescontrol-tab-panel-logs {
+#updateautomate-tab-panel-logs {
 	h2 {
 		&::before {
 			content: '\f321'; // dashicons-list-view
@@ -262,7 +262,7 @@
 	}
 }
 
-#updatescontrol-tab-panel-settings {
+#updateautomate-tab-panel-settings {
 	h2 {
 		&::before {
 			content: '\f106'; // dashicons-admin-generic
@@ -271,7 +271,7 @@
 }
 
 /* Logs tab */
-.updatescontrol-logs {
+.updateautomate-logs {
 	padding: var(--wpds-dimension-padding-lg);
 
 	&-loading {
@@ -311,13 +311,13 @@
 }
 
 /* View logs modal (message + trace) */
-.updatescontrol-notes-modal {
-	.updatescontrol-notes-content {
+.updateautomate-notes-modal {
+	.updateautomate-notes-content {
 		max-height: 70vh;
 		overflow-y: auto;
 	}
 
-	.updatescontrol-notes-section {
+	.updateautomate-notes-section {
 		margin-bottom: 1.5rem;
 
 		&:last-child {
@@ -330,8 +330,8 @@
 		}
 	}
 
-	.updatescontrol-notes-text,
-	.updatescontrol-notes-trace {
+	.updateautomate-notes-text,
+	.updateautomate-notes-trace {
 		margin: 0;
 		padding: 0.75rem;
 		background: var(--wpds-color-bg-surface-neutral-weak);
@@ -343,16 +343,16 @@
 		line-height: 1.5;
 	}
 
-	.updatescontrol-notes-trace {
+	.updateautomate-notes-trace {
 		max-height: 250px;
 	}
 }
 
 /* Settings tab */
-.updatescontrol-settings-form {
+.updateautomate-settings-form {
 	padding: var(--wpds-dimension-padding-lg);
 
-	.updatescontrol-settings-section {
+	.updateautomate-settings-section {
 		margin-bottom: var(--wpds-dimension-gap-xl);
 
 		&-title {
@@ -363,16 +363,16 @@
 		}
 	}
 
-	.updatescontrol-settings-checkboxes {
+	.updateautomate-settings-checkboxes {
 		margin-top: var(--wpds-dimension-gap-sm);
 
-		.updatescontrol-settings-label {
+		.updateautomate-settings-label {
 			margin-bottom: var(--wpds-dimension-gap-xs);
 			font-weight: 600;
 		}
 	}
 
-	.updatescontrol-settings-error {
+	.updateautomate-settings-error {
 		margin: var(--wpds-dimension-gap-md) 0;
 	}
 

@@ -7,7 +7,7 @@
  * (core, plugin, theme) are sent to the configured recipient instead of admin_email.
  * No custom emails are sent; only WordPress core email behaviour is redirected.
  *
- * @package updatescontrol
+ * @package updateautomate
  */
 
 if (!defined('ABSPATH')) {
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
 /**
  * Redirect native WordPress update emails to the plugin's recipient.
  */
-final class UpdatesControl_Notifications {
+final class UpdateAutomate_Notifications {
     /**
      * Register filters for native WordPress update notification emails.
      *
@@ -38,7 +38,7 @@ final class UpdatesControl_Notifications {
      * @return bool
      */
     private static function should_redirect(): bool {
-        $s = updatescontrol_get_settings();
+        $s = updateautomate_get_settings();
         if (!$s['notify_enabled']) {
             return false;
         }
@@ -56,7 +56,7 @@ final class UpdatesControl_Notifications {
      * @return string|array<string>
      */
     private static function get_recipient(): string|array {
-        $emails = updatescontrol_get_settings()['notify_emails'];
+        $emails = updateautomate_get_settings()['notify_emails'];
         $recipients = array_values(array_filter(array_map('sanitize_email', explode(',', $emails))));
         if ($recipients === []) {
             return '';
@@ -71,7 +71,7 @@ final class UpdatesControl_Notifications {
      * @return array<string>
      */
     private static function get_notify_on(): array {
-        return updatescontrol_get_settings()['notify_on'];
+        return updateautomate_get_settings()['notify_on'];
     }
 
     /**

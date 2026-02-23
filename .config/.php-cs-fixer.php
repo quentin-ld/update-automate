@@ -1,7 +1,7 @@
 <?php
 
 /**
- * PHP CS Fixer configuration for updatescontrol: code style and formatting for PHP files.
+ * PHP CS Fixer configuration for Update Automate: code style and formatting for PHP files.
  */
 use PhpCsFixer\Config;
 use PhpCsFixer\Finder;

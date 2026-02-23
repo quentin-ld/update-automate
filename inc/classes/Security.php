@@ -3,7 +3,7 @@
 /**
  * Ensures secure database interactions and sanitization of inputs.
  *
- * @package updatescontrol
+ * @package updateautomate
  */
 
 if (!defined('ABSPATH')) {
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 /**
  * Security helpers for sanitization, escaping, and capability checks.
  */
-final class UpdatesControl_Security {
+final class UpdateAutomate_Security {
     /**
      * Allowed log types.
      *

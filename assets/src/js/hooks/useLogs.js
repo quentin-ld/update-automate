@@ -24,13 +24,13 @@ export function useLogs() {
 				status: params.status || '',
 			}).toString();
 			const response = await apiFetch({
-				path: `updatescontrol/v1/logs?${query}`,
+				path: `updateautomate/v1/logs?${query}`,
 			});
 			setLogs(response.logs || []);
 			setTotal(response.total ?? 0);
 		} catch (e) {
 			setError(
-				e?.message || __('Failed to load logs.', 'updatescontrol')
+				e?.message || __('Failed to load logs.', 'update-automate')
 			);
 		} finally {
 			setLoading(false);
@@ -40,7 +40,7 @@ export function useLogs() {
 	const deleteLog = useCallback(async (id) => {
 		try {
 			await apiFetch({
-				path: `updatescontrol/v1/logs/${id}`,
+				path: `updateautomate/v1/logs/${id}`,
 				method: 'DELETE',
 			});
 			setLogs((prev) =>

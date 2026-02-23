@@ -1,6 +1,6 @@
 @use '../abstracts/variables' as *;
 
-.updatescontrol {
+.updateautomate {
 	&-tabs {
 		display: grid;
 		width: 100%;
@@ -121,7 +121,7 @@
 				content: '\f332'; // dashicons-superhero
 			}
 
-			.updatescontrol-tabs__list--vertical & {
+			.updateautomate-tabs__list--vertical & {
 				width: 100%;
 				justify-content: flex-start;
 			}

@@ -13,12 +13,12 @@ export function LogDetailsContent({ log }) {
 		return null;
 	}
 	return (
-		<div className="updatescontrol-notes-content updatescontrol-notes-modal">
+		<div className="updateautomate-notes-content updateautomate-notes-modal">
 			{log.message && (
-				<div className="updatescontrol-notes-section">
-					<h4>{__('Message', 'updatescontrol')}</h4>
+				<div className="updateautomate-notes-section">
+					<h4>{__('Message', 'update-automate')}</h4>
 					<pre
-						className="updatescontrol-notes-text"
+						className="updateautomate-notes-text"
 						style={{
 							whiteSpace: 'pre-wrap',
 							wordBreak: 'break-word',
@@ -29,10 +29,10 @@ export function LogDetailsContent({ log }) {
 				</div>
 			)}
 			{log.trace && (
-				<div className="updatescontrol-notes-section">
-					<h4>{__('Trace', 'updatescontrol')}</h4>
+				<div className="updateautomate-notes-section">
+					<h4>{__('Trace', 'update-automate')}</h4>
 					<pre
-						className="updatescontrol-notes-trace"
+						className="updateautomate-notes-trace"
 						style={{
 							whiteSpace: 'pre-wrap',
 							wordBreak: 'break-all',
@@ -47,7 +47,7 @@ export function LogDetailsContent({ log }) {
 				<p>
 					{__(
 						'No message or trace for this entry.',
-						'updatescontrol'
+						'update-automate'
 					)}
 				</p>
 			)}

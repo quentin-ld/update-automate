@@ -9,11 +9,11 @@ import { __ } from '@wordpress/i18n';
 export const LAYOUT_ACTIVITY = 'activity';
 
 export const ACTION_LABELS = {
-	update: __('Update', 'updatescontrol'),
-	downgrade: __('Downgrade', 'updatescontrol'),
-	install: __('Install', 'updatescontrol'),
-	same_version: __('Reset', 'updatescontrol'),
-	failed: __('Failed', 'updatescontrol'),
-	uninstall: __('Uninstall', 'updatescontrol'),
-	delete: __('Delete', 'updatescontrol'),
+	update: __('Update', 'update-automate'),
+	downgrade: __('Downgrade', 'update-automate'),
+	install: __('Install', 'update-automate'),
+	same_version: __('Reset', 'update-automate'),
+	failed: __('Failed', 'update-automate'),
+	uninstall: __('Uninstall', 'update-automate'),
+	delete: __('Delete', 'update-automate'),
 };

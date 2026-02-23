@@ -1,4 +1,4 @@
-# PHPStan configuration for updatescontrol: static analysis of plugin and snippets.
+# PHPStan configuration for Update Automate: static analysis of plugin.
 includes:
     - ../vendor/szepeviktor/phpstan-wordpress/extension.neon
 

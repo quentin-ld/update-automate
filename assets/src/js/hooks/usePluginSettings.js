@@ -17,7 +17,7 @@ export function usePluginSettings() {
 	const initial = useMemo(() => {
 		const opts =
 			typeof window !== 'undefined' &&
-			window.updatescontrolSettings?.options;
+			window.updateautomateSettings?.options;
 		const allowedNotifyOn = [
 			'core',
 			'plugin',
@@ -65,7 +65,7 @@ export function usePluginSettings() {
 				notify_on: settings.notifyOn,
 			};
 			const response = await apiFetch({
-				path: 'updatescontrol/v1/settings',
+				path: 'updateautomate/v1/settings',
 				method: 'PUT',
 				data: payload,
 			});
@@ -74,16 +74,16 @@ export function usePluginSettings() {
 					response.options;
 				setSettings({ ...rest, notifyOn: notifyOnFromApi });
 				createSuccessNotice(
-					__('Settings saved successfully.', 'updatescontrol')
+					__('Settings saved successfully.', 'update-automate')
 				);
 			} else {
 				createWarningNotice(
-					__('Settings saved with no response.', 'updatescontrol')
+					__('Settings saved with no response.', 'update-automate')
 				);
 			}
 		} catch (e) {
 			const message =
-				e?.message || __('Failed to save settings.', 'updatescontrol');
+				e?.message || __('Failed to save settings.', 'update-automate');
 			createErrorNotice(message);
 		} finally {
 			setSaving(false);

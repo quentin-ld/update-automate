@@ -3,7 +3,7 @@
 /**
  * Provides admin interface for viewing logs and configuring settings.
  *
- * @package updatescontrol
+ * @package updateautomate
  */
 
 if (!defined('ABSPATH')) {
@@ -13,13 +13,13 @@ if (!defined('ABSPATH')) {
 /**
  * REST API and settings for logs and options.
  */
-final class UpdatesControl_Settings {
+final class UpdateAutomate_Settings {
     /**
      * REST namespace.
      *
      * @var string
      */
-    public const REST_NAMESPACE = 'updatescontrol/v1';
+    public const REST_NAMESPACE = 'updateautomate/v1';
 
     /**
      * Register REST routes and settings.
@@ -121,7 +121,7 @@ final class UpdatesControl_Settings {
      * @return WP_REST_Response
      */
     public static function rest_get_settings(\WP_REST_Request $request): WP_REST_Response {
-        $options = updatescontrol_get_settings();
+        $options = updateautomate_get_settings();
 
         return new WP_REST_Response(['options' => $options], 200);
     }
@@ -133,7 +133,7 @@ final class UpdatesControl_Settings {
      * @return bool
      */
     public static function rest_can_manage_logs(\WP_REST_Request $request): bool {
-        return UpdatesControl_Security::user_can_manage_logs();
+        return UpdateAutomate_Security::user_can_manage_logs();
     }
 
     /**
@@ -162,8 +162,8 @@ final class UpdatesControl_Settings {
             $args['performed_as'] = $request->get_param('performed_as');
         }
 
-        $logs = UpdatesControl_Logger::get_logs($args);
-        $total = UpdatesControl_Logger::get_logs_count($args);
+        $logs = UpdateAutomate_Logger::get_logs($args);
+        $total = UpdateAutomate_Logger::get_logs_count($args);
 
         $user_ids = array_unique(array_filter(array_map(
             static fn (object $log): int => (int) ($log->user_id ?? 0),
@@ -192,22 +192,22 @@ final class UpdatesControl_Settings {
         $performed_by = $log->performed_by ?? 'system';
 
         if ($performed_by === 'system' || $user_id <= 0) {
-            $log->performed_by_display = __('System', 'updates-control');
+            $log->performed_by_display = __('System', 'update-automate');
             $log->user_edit_link = '';
         } else {
             $user = get_userdata($user_id);
             /* translators: %d: WordPress user ID when display name is not available */
-            $log->performed_by_display = $user ? $user->display_name : sprintf(__('User #%d', 'updates-control'), $user_id);
+            $log->performed_by_display = $user ? $user->display_name : sprintf(__('User #%d', 'update-automate'), $user_id);
             $log->user_edit_link = get_edit_user_link($user_id) ?: '';
         }
 
         $performed_as = $log->performed_as ?? 'manual';
         if ($performed_as === 'automatic') {
-            $log->action_display = __('Automatic', 'updates-control');
+            $log->action_display = __('Automatic', 'update-automate');
         } elseif ($performed_as === 'upload') {
-            $log->action_display = __('File upload', 'updates-control');
+            $log->action_display = __('File upload', 'update-automate');
         } else {
-            $log->action_display = __('Manual', 'updates-control');
+            $log->action_display = __('Manual', 'update-automate');
         }
 
         return $log;
@@ -221,10 +221,10 @@ final class UpdatesControl_Settings {
      */
     public static function rest_delete_log(\WP_REST_Request $request): WP_REST_Response {
         $id = (int) $request->get_param('id');
-        $deleted = UpdatesControl_Logger::delete_log($id);
+        $deleted = UpdateAutomate_Logger::delete_log($id);
 
         if (!$deleted) {
-            return new WP_REST_Response(['message' => __('Failed to delete log.', 'updates-control')], 500);
+            return new WP_REST_Response(['message' => __('Failed to delete log.', 'update-automate')], 500);
         }
 
         return new WP_REST_Response(['deleted' => true], 200);
@@ -237,8 +237,8 @@ final class UpdatesControl_Settings {
      * @return WP_REST_Response
      */
     public static function rest_cleanup_logs(\WP_REST_Request $request): WP_REST_Response {
-        $settings = updatescontrol_get_settings();
-        $deleted = UpdatesControl_Logger::delete_older_than($settings['retention_days']);
+        $settings = updateautomate_get_settings();
+        $deleted = UpdateAutomate_Logger::delete_older_than($settings['retention_days']);
 
         return new WP_REST_Response(['deleted' => $deleted], 200);
     }
@@ -250,21 +250,21 @@ final class UpdatesControl_Settings {
      * @return WP_REST_Response
      */
     public static function rest_update_settings(\WP_REST_Request $request): WP_REST_Response {
-        $current = updatescontrol_get_settings();
+        $current = updateautomate_get_settings();
         $next = [
             'logging_enabled' => $request->has_param('logging_enabled') ? (bool) $request->get_param('logging_enabled') : $current['logging_enabled'],
             'retention_days' => $request->has_param('retention_days') ? max(1, min(365, (int) $request->get_param('retention_days'))) : $current['retention_days'],
             'notify_enabled' => $request->has_param('notify_enabled') ? (bool) $request->get_param('notify_enabled') : $current['notify_enabled'],
-            'notify_emails' => $request->has_param('notify_emails') ? updatescontrol_sanitize_emails($request->get_param('notify_emails')) : $current['notify_emails'],
+            'notify_emails' => $request->has_param('notify_emails') ? updateautomate_sanitize_emails($request->get_param('notify_emails')) : $current['notify_emails'],
             'notify_on' => $request->has_param('notify_on') && is_array($request->get_param('notify_on'))
                 ? array_values(array_intersect(array_filter($request->get_param('notify_on'), 'is_string'), ['core', 'plugin', 'theme', 'translation', 'error'])) ?: ['error']
                 : $current['notify_on'],
         ];
         $json = wp_json_encode($next);
         if ($json !== false) {
-            update_option(UPDATESCONTROL_OPTION_SETTINGS, $json);
+            update_option(UPDATEAUTOMATE_OPTION_SETTINGS, $json);
         }
 
-        return new WP_REST_Response(['options' => updatescontrol_get_settings()], 200);
+        return new WP_REST_Response(['options' => updateautomate_get_settings()], 200);
     }
 }

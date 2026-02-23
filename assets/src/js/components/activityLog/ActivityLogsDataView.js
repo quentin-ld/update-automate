@@ -59,21 +59,21 @@ export function ActivityLogsDataView() {
 		() => [
 			{
 				id: 'title',
-				label: __('Title', 'updatescontrol'),
+				label: __('Title', 'update-automate'),
 				getValue: ({ item }) => getActivityTitle(item),
 				enableSorting: false,
 				enableGlobalSearch: true,
 			},
 			{
 				id: 'description',
-				label: __('Version', 'updatescontrol'),
+				label: __('Version', 'update-automate'),
 				getValue: ({ item }) => getActivityDescription(item),
 				enableSorting: false,
 				enableGlobalSearch: true,
 			},
 			{
 				id: 'icon',
-				label: __('Type', 'updatescontrol'),
+				label: __('Type', 'update-automate'),
 				getValue: ({ item }) => item.log_type || '',
 				render: ({ item, config }) => {
 					const size =
@@ -90,7 +90,7 @@ export function ActivityLogsDataView() {
 			},
 			{
 				id: 'date',
-				label: __('Date', 'updatescontrol'),
+				label: __('Date', 'update-automate'),
 				getValue: ({ item }) => item.created_at,
 				render: ({ item }) => formatDate(item.created_at),
 				enableSorting: false,
@@ -103,14 +103,14 @@ export function ActivityLogsDataView() {
 			},
 			{
 				id: 'context',
-				label: __('Context', 'updatescontrol'),
+				label: __('Context', 'update-automate'),
 				getValue: ({ item }) => getContextLabel(item.update_context),
 				enableSorting: false,
 				enableGlobalSearch: true,
 			},
 			{
 				id: 'user',
-				label: __('User', 'updatescontrol'),
+				label: __('User', 'update-automate'),
 				getValue: ({ item }) => item.performed_by_display || '',
 				render: ({ item }) =>
 					item.user_edit_link ? (
@@ -131,7 +131,7 @@ export function ActivityLogsDataView() {
 			},
 			{
 				id: 'status',
-				label: __('Status', 'updatescontrol'),
+				label: __('Status', 'update-automate'),
 				getValue: ({ item }) => item.status || '',
 				render: ({ item }) => (
 					<StatusBadge intent={statusToBadgeIntent(item.status)}>
@@ -149,8 +149,8 @@ export function ActivityLogsDataView() {
 		() => [
 			{
 				id: 'view-logs',
-				label: __('View log', 'updatescontrol'),
-				modalHeader: __('Log details', 'updatescontrol'),
+				label: __('View log', 'update-automate'),
+				modalHeader: __('Log details', 'update-automate'),
 				modalSize: 'large',
 				modalFocusOnMount: 'firstContentElement',
 				isEligible: (item) => !!(item.message || item.trace),
@@ -160,8 +160,8 @@ export function ActivityLogsDataView() {
 			},
 			{
 				id: 'delete',
-				label: __('Delete', 'updatescontrol'),
-				modalHeader: __('Delete log', 'updatescontrol'),
+				label: __('Delete', 'update-automate'),
+				modalHeader: __('Delete log', 'update-automate'),
 				isDestructive: true,
 				RenderModal: ({ items, closeModal, onActionPerformed }) => {
 					const log = items[0];
@@ -176,7 +176,10 @@ export function ActivityLogsDataView() {
 					return (
 						<>
 							<p>
-								{__('Delete this log entry?', 'updatescontrol')}
+								{__(
+									'Delete this log entry?',
+									'update-automate'
+								)}
 							</p>
 							<div
 								style={{
@@ -187,14 +190,14 @@ export function ActivityLogsDataView() {
 								}}
 							>
 								<Button variant="tertiary" onClick={closeModal}>
-									{__('Cancel', 'updatescontrol')}
+									{__('Cancel', 'update-automate')}
 								</Button>
 								<Button
 									variant="primary"
 									isDestructive
 									onClick={handleConfirm}
 								>
-									{__('Confirm', 'updatescontrol')}
+									{__('Confirm', 'update-automate')}
 								</Button>
 							</div>
 						</>
@@ -222,14 +225,14 @@ export function ActivityLogsDataView() {
 
 	if (error) {
 		return (
-			<div className="updatescontrol-logs-error notice notice-error">
+			<div className="updateautomate-logs-error notice notice-error">
 				<p>{error}</p>
 			</div>
 		);
 	}
 
 	return (
-		<div className="updatescontrol-logs updatescontrol-activity-dataview">
+		<div className="updateautomate-logs updateautomate-activity-dataview">
 			<DataViews
 				getItemId={(item) => String(item.id)}
 				view={view}
@@ -241,9 +244,9 @@ export function ActivityLogsDataView() {
 				paginationInfo={paginationInfo}
 				defaultLayouts={defaultLayouts}
 				config={{ perPageSizes: [10, 25, 50, 100] }}
-				empty={__('No update logs yet.', 'updatescontrol')}
+				empty={__('No update logs yet.', 'update-automate')}
 				search
-				searchLabel={__('Search logs', 'updatescontrol')}
+				searchLabel={__('Search logs', 'update-automate')}
 			/>
 		</div>
 	);

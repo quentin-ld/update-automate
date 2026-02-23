@@ -3,7 +3,7 @@
 /**
  * Plugin bootstrap: loads classes and registers hooks.
  *
- * @package updatescontrol
+ * @package updateautomate
  */
 
 if (!defined('ABSPATH')) {
@@ -11,9 +11,9 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Bootstraps the Updates Control plugin.
+ * Bootstraps the Update Automate plugin.
  */
-final class UpdatesControl_Bootstrap {
+final class UpdateAutomate_Bootstrap {
     /**
      * Initialize the plugin: load classes and register hooks.
      *
@@ -22,11 +22,11 @@ final class UpdatesControl_Bootstrap {
     public static function init(): void {
         self::load_classes();
         self::on_activation_create_table();
-        UpdatesControl_Cron::register();
-        UpdatesControl_Update_Logger::register();
-        UpdatesControl_ErrorHandler::register();
-        UpdatesControl_Settings::register();
-        UpdatesControl_Notifications::register();
+        UpdateAutomate_Cron::register();
+        UpdateAutomate_Update_Logger::register();
+        UpdateAutomate_ErrorHandler::register();
+        UpdateAutomate_Settings::register();
+        UpdateAutomate_Notifications::register();
     }
 
     /**
@@ -60,11 +60,11 @@ final class UpdatesControl_Bootstrap {
      * @return void
      */
     private static function on_activation_create_table(): void {
-        $version = get_option(UpdatesControl_Database::OPTION_DB_VERSION, '');
-        if ($version === UpdatesControl_Database::DB_VERSION && UpdatesControl_Database::table_exists()) {
+        $version = get_option(UpdateAutomate_Database::OPTION_DB_VERSION, '');
+        if ($version === UpdateAutomate_Database::DB_VERSION && UpdateAutomate_Database::table_exists()) {
             return;
         }
 
-        UpdatesControl_Database::create_table();
+        UpdateAutomate_Database::create_table();
     }
 }

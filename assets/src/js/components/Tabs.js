@@ -46,7 +46,7 @@ export const Tabs = ({
 		return tabs
 			.map((tab) => {
 				const id = tab.getAttribute('id');
-				return id ? id.replace('updatescontrol-tab-', '') : null;
+				return id ? id.replace('updateautomate-tab-', '') : null;
 			})
 			.filter(Boolean);
 	};
@@ -62,7 +62,7 @@ export const Tabs = ({
 			}}
 		>
 			<div
-				className={`updatescontrol-tabs updatescontrol-tabs--${orientation}`}
+				className={`updateautomate-tabs updateautomate-tabs--${orientation}`}
 			>
 				{children}
 			</div>
@@ -83,7 +83,7 @@ export const TabList = ({ children }) => {
 	return (
 		<div
 			ref={tabListRef}
-			className={`updatescontrol-tabs__list updatescontrol-tabs__list--${orientation}`}
+			className={`updateautomate-tabs__list updateautomate-tabs__list--${orientation}`}
 			role="tablist"
 			aria-orientation={orientation}
 		>
@@ -172,7 +172,7 @@ export const Tab = ({
 		) {
 			const targetTabId = tabIds[targetIndex];
 			const targetTabElement = document.getElementById(
-				`updatescontrol-tab-${targetTabId}`
+				`updateautomate-tab-${targetTabId}`
 			);
 			if (targetTabElement) {
 				targetTabElement.focus();
@@ -190,22 +190,22 @@ export const Tab = ({
 	return (
 		<button
 			ref={tabRef}
-			className={`updatescontrol-tabs__tab ${isSelected ? 'updatescontrol-tabs__tab--is-active' : ''} ${icon ? 'updatescontrol-tabs__tab--has-icon' : ''} ${className}`.trim()}
+			className={`updateautomate-tabs__tab ${isSelected ? 'updateautomate-tabs__tab--is-active' : ''} ${icon ? 'updateautomate-tabs__tab--has-icon' : ''} ${className}`.trim()}
 			role="tab"
 			aria-selected={isSelected}
-			aria-controls={`updatescontrol-tab-panel-${tabId}`}
-			id={`updatescontrol-tab-${tabId}`}
+			aria-controls={`updateautomate-tab-panel-${tabId}`}
+			id={`updateautomate-tab-${tabId}`}
 			tabIndex={isSelected ? 0 : -1}
 			onClick={() => onSelect(tabId)}
 			onKeyDown={handleKeyDown}
 			onFocus={handleFocus}
 		>
 			{icon && (
-				<span className="updatescontrol-tabs__tab-icon" aria-hidden>
+				<span className="updateautomate-tabs__tab-icon" aria-hidden>
 					<Icon icon={icon} size={iconSize} />
 				</span>
 			)}
-			<span className="updatescontrol-tabs__tab-label">
+			<span className="updateautomate-tabs__tab-label">
 				{title || children}
 			</span>
 		</button>
@@ -241,10 +241,10 @@ export const TabPanel = ({ tabId, children }) => {
 	if (!isSelected) {
 		return (
 			<div
-				className="updatescontrol-tabs__panel"
+				className="updateautomate-tabs__panel"
 				role="tabpanel"
-				id={`updatescontrol-tab-panel-${tabId}`}
-				aria-labelledby={`updatescontrol-tab-${tabId}`}
+				id={`updateautomate-tab-panel-${tabId}`}
+				aria-labelledby={`updateautomate-tab-${tabId}`}
 				hidden
 			>
 				{children}
@@ -255,10 +255,10 @@ export const TabPanel = ({ tabId, children }) => {
 	return (
 		<div
 			ref={panelRef}
-			className="updatescontrol-tabs__panel"
+			className="updateautomate-tabs__panel"
 			role="tabpanel"
-			id={`updatescontrol-tab-panel-${tabId}`}
-			aria-labelledby={`updatescontrol-tab-${tabId}`}
+			id={`updateautomate-tab-panel-${tabId}`}
+			aria-labelledby={`updateautomate-tab-${tabId}`}
 		>
 			{children}
 		</div>

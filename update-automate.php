@@ -1,21 +1,21 @@
 <?php
 
 /**
- * Updates Control plugin for WordPress
+ * Update Automate plugin for WordPress
  *
- * @package   updatescontrol
- * @link      https://github.com/quentin-ld/updatescontrol/
+ * @package   updateautomate
+ * @link      https://github.com/quentin-ld/update-automate/
  * @author    Quentin Le Duff
  * @copyright 2024-2025 Quentin Le Duff
  * @license   GPL v2 or later
  *
- * Plugin Name: Updates Control - Manage updates easily
+ * Plugin Name: Update Automate
  * Description: Log WordPress core, plugin, and theme updates with error handling, security, and optional email notifications.
  * Version: 0.1
- * Plugin URI: https://wordpress.org/plugins/updatescontrol/
+ * Plugin URI: https://wordpress.org/plugins/update-automate/
  * Author: Quentin Le Duff
  * Author URI: https://profiles.wordpress.org/quentinldd/
- * Text Domain: updates-control
+ * Text Domain: update-automate
  * Domain Path: /languages/
  * Requires at least: 6.2
  * Tested up to: 6.9
@@ -39,10 +39,10 @@ if (!defined('ABSPATH')) {
 }
 
 /** Plugin version (must match Version header above; used for DB schema version). */
-define('UPDATESCONTROL_VERSION', '0.1');
+define('UPDATEAUTOMATE_VERSION', '0.1');
 
-define('updatescontrol_PLUGIN_FILE', __FILE__);
-define('updatescontrol_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('updateautomate_PLUGIN_FILE', __FILE__);
+define('updateautomate_PLUGIN_DIR', plugin_dir_path(__FILE__));
 
 require_once __DIR__ . '/inc/core/constants.php';
 require_once __DIR__ . '/inc/classes/Bootstrap.php';
@@ -52,30 +52,30 @@ require_once __DIR__ . '/inc/admin/links.php';
 require_once __DIR__ . '/inc/admin/menu.php';
 require_once __DIR__ . '/inc/settings/options.php';
 
-add_action('plugins_loaded', ['UpdatesControl_Bootstrap', 'init']);
+add_action('plugins_loaded', ['UpdateAutomate_Bootstrap', 'init']);
 
-register_activation_hook(__FILE__, 'updatescontrol_activate');
+register_activation_hook(__FILE__, 'updateautomate_activate');
 
 /**
  * Create log table and schedule cron on activation.
  *
  * @return void
  */
-function updatescontrol_activate(): void {
+function updateautomate_activate(): void {
     require_once __DIR__ . '/inc/classes/Database.php';
-    UpdatesControl_Database::create_table();
+    UpdateAutomate_Database::create_table();
     require_once __DIR__ . '/inc/classes/Cron.php';
-    UpdatesControl_Cron::schedule_if_needed();
+    UpdateAutomate_Cron::schedule_if_needed();
 }
 
-register_deactivation_hook(__FILE__, 'updatescontrol_deactivate');
+register_deactivation_hook(__FILE__, 'updateautomate_deactivate');
 
 /**
  * Unschedule cron on deactivation. The log table is kept.
  *
  * @return void
  */
-function updatescontrol_deactivate(): void {
+function updateautomate_deactivate(): void {
     require_once __DIR__ . '/inc/classes/Cron.php';
-    UpdatesControl_Cron::unschedule();
+    UpdateAutomate_Cron::unschedule();
 }

@@ -5,11 +5,11 @@ import { SettingsPage } from './js/pages/SettingsPage';
 import './index.scss';
 
 /**
- * Render the updatescontrol settings page once the DOM is ready.
+ * Render the updateautomate settings page once the DOM is ready.
  * Notices use the default context (same as zenpress); wp-data and wp-notices are script dependencies.
  */
 domReady(() => {
-	const rootEl = document.getElementById('updatescontrol-settings');
+	const rootEl = document.getElementById('updateautomate-settings');
 	if (!rootEl || !(rootEl instanceof HTMLElement)) {
 		return;
 	}

@@ -5,14 +5,14 @@
  * WordPress update flow only to add version_before to transients for audit logging
  * when updates complete. It does not modify or block updates.
  *
- * @package updatescontrol
+ * @package updateautomate
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-final class UpdatesControl_Update_Logger {
+final class UpdateAutomate_Update_Logger {
     /**
      * Register hooks for update events.
      *
@@ -219,13 +219,13 @@ final class UpdatesControl_Update_Logger {
         if (empty(self::$pending_logs)) {
             return;
         }
-        if (!updatescontrol_get_settings()['logging_enabled']) {
+        if (!updateautomate_get_settings()['logging_enabled']) {
             return;
         }
-        if (!UpdatesControl_Database::table_exists()) {
+        if (!UpdateAutomate_Database::table_exists()) {
             return;
         }
-        $trace = UpdatesControl_ErrorHandler::capture_trace();
+        $trace = UpdateAutomate_ErrorHandler::capture_trace();
         $performed_as = self::$auto_update ? 'automatic' : 'manual';
         $status = 'error';
         foreach (self::$pending_logs as $log_type => $items) {
@@ -235,7 +235,7 @@ final class UpdatesControl_Update_Logger {
                 $slug = $data['slug'];
                 $version_before = $data['version_before'];
                 $version_after = $data['version_after'];
-                UpdatesControl_Logger::log(
+                UpdateAutomate_Logger::log(
                     $log_type,
                     'update',
                     $name,
@@ -243,7 +243,7 @@ final class UpdatesControl_Update_Logger {
                     $version_before,
                     $version_after,
                     $status,
-                    __('Update may have been interrupted (logged on shutdown).', 'updates-control'),
+                    __('Update may have been interrupted (logged on shutdown).', 'update-automate'),
                     $trace,
                     $performed_as
                 );
@@ -259,10 +259,10 @@ final class UpdatesControl_Update_Logger {
      * @return void
      */
     public static function log_automatic_updates(array $update_results): void {
-        if (!updatescontrol_get_settings()['logging_enabled']) {
+        if (!updateautomate_get_settings()['logging_enabled']) {
             return;
         }
-        $trace = UpdatesControl_ErrorHandler::capture_trace();
+        $trace = UpdateAutomate_ErrorHandler::capture_trace();
         $performed_as = 'automatic';
         $all_plugins = function_exists('get_plugins') ? get_plugins() : [];
         $all_themes = wp_get_themes();
@@ -335,7 +335,7 @@ final class UpdatesControl_Update_Logger {
                 if (isset($result->messages) && is_array($result->messages)) {
                     $notes = implode("\n", array_map('strip_tags', $result->messages));
                 }
-                UpdatesControl_Logger::log(
+                UpdateAutomate_Logger::log(
                     $type === 'translation' ? 'translation' : $type,
                     $action_type,
                     $name,
@@ -351,10 +351,10 @@ final class UpdatesControl_Update_Logger {
         }
     }
 
-    private const OPTION_CORE_VERSION_BEFORE = 'updatescontrol_core_version_before';
-    private const OPTION_PLUGIN_VERSIONS_BEFORE = 'updatescontrol_plugin_versions_before';
-    private const OPTION_PLUGIN_VERSIONS_BEFORE_BY_MAINFILE = 'updatescontrol_plugin_versions_before_by_mainfile';
-    private const OPTION_THEME_VERSIONS_BEFORE = 'updatescontrol_theme_versions_before';
+    private const OPTION_CORE_VERSION_BEFORE = 'updateautomate_core_version_before';
+    private const OPTION_PLUGIN_VERSIONS_BEFORE = 'updateautomate_plugin_versions_before';
+    private const OPTION_PLUGIN_VERSIONS_BEFORE_BY_MAINFILE = 'updateautomate_plugin_versions_before_by_mainfile';
+    private const OPTION_THEME_VERSIONS_BEFORE = 'updateautomate_theme_versions_before';
 
     /** @var array<string> Collected core update feedback (update_feedback filter). */
     private static array $core_feedback = [];
@@ -679,7 +679,7 @@ final class UpdatesControl_Update_Logger {
      * @return void
      */
     public static function on_upgrader_process_complete(WP_Upgrader $upgrader, array $options): void {
-        if (!updatescontrol_get_settings()['logging_enabled']) {
+        if (!updateautomate_get_settings()['logging_enabled']) {
             return;
         }
 
@@ -720,7 +720,7 @@ final class UpdatesControl_Update_Logger {
             }
         }
 
-        $skin_message = UpdatesControl_ErrorHandler::get_skin_process_message($upgrader);
+        $skin_message = UpdateAutomate_ErrorHandler::get_skin_process_message($upgrader);
         $process_message = $skin_message;
         if (self::$captured_feedback !== '') {
             $ob_message = self::$captured_feedback;
@@ -728,10 +728,10 @@ final class UpdatesControl_Update_Logger {
             $process_message = $process_message !== '' ? $process_message . "\n" . $ob_message : $ob_message;
         }
         if ($process_message === '' && $type !== 'core' && $action === 'install') {
-            $process_message = __('Installed from uploaded file.', 'updates-control');
+            $process_message = __('Installed from uploaded file.', 'update-automate');
         }
 
-        $trace = UpdatesControl_ErrorHandler::capture_trace();
+        $trace = UpdateAutomate_ErrorHandler::capture_trace();
         $performed_as = self::$auto_update ? 'automatic' : 'manual';
         $update_context = (($type === 'plugin' || $type === 'theme') && $upgrader->skin instanceof \Bulk_Upgrader_Skin) ? 'bulk' : (($type === 'plugin' || $type === 'theme') ? 'single' : '');
 
@@ -821,7 +821,7 @@ final class UpdatesControl_Update_Logger {
                     }
                 }
                 unset(self::$pending_logs['translation'][$key]);
-                UpdatesControl_Logger::log(
+                UpdateAutomate_Logger::log(
                     'translation',
                     'update',
                     $name,
@@ -859,24 +859,24 @@ final class UpdatesControl_Update_Logger {
                 $steps,
                 sprintf(
                     /* translators: %s: download URL */
-                    __('Downloading update from %s…', 'updates-control'),
+                    __('Downloading update from %s…', 'update-automate'),
                     self::$core_package_url
                 ),
-                __('Unpacking the update…', 'updates-control')
+                __('Unpacking the update…', 'update-automate')
             );
         }
 
         $message = self::format_note_like_wp_screen(
             sprintf(
                 /* translators: %s: WordPress version number */
-                __('Update to WordPress %s', 'updates-control'),
+                __('Update to WordPress %s', 'update-automate'),
                 $version_after
             ),
             $steps,
             $process_message
         );
 
-        UpdatesControl_Logger::log(
+        UpdateAutomate_Logger::log(
             'core',
             $action_type,
             'WordPress',
@@ -1015,7 +1015,7 @@ final class UpdatesControl_Update_Logger {
         $title = self::format_plugin_log_title($action_type, $name, $version_after);
         $message = self::format_plugin_log_message($title, $process_message);
 
-        UpdatesControl_Logger::log(
+        UpdateAutomate_Logger::log(
             'plugin',
             $action_type,
             $name,
@@ -1043,10 +1043,10 @@ final class UpdatesControl_Update_Logger {
      * @return void
      */
     public static function log_plugin_uninstall(string $plugin_file): void {
-        if (!updatescontrol_get_settings()['logging_enabled']) {
+        if (!updateautomate_get_settings()['logging_enabled']) {
             return;
         }
-        if (!UpdatesControl_Database::table_exists()) {
+        if (!UpdateAutomate_Database::table_exists()) {
             return;
         }
 
@@ -1066,9 +1066,9 @@ final class UpdatesControl_Update_Logger {
         }
 
         $title = self::format_plugin_log_title('uninstall', $name, $version_before);
-        $trace = UpdatesControl_ErrorHandler::capture_trace();
+        $trace = UpdateAutomate_ErrorHandler::capture_trace();
 
-        UpdatesControl_Logger::log(
+        UpdateAutomate_Logger::log(
             'plugin',
             'uninstall',
             $name,
@@ -1090,10 +1090,10 @@ final class UpdatesControl_Update_Logger {
      * @return void
      */
     public static function log_theme_uninstall(string $stylesheet): void {
-        if (!updatescontrol_get_settings()['logging_enabled']) {
+        if (!updateautomate_get_settings()['logging_enabled']) {
             return;
         }
-        if (!UpdatesControl_Database::table_exists()) {
+        if (!UpdateAutomate_Database::table_exists()) {
             return;
         }
 
@@ -1107,9 +1107,9 @@ final class UpdatesControl_Update_Logger {
         }
 
         $title = self::format_plugin_log_title('uninstall', $name, $version_before);
-        $trace = UpdatesControl_ErrorHandler::capture_trace();
+        $trace = UpdateAutomate_ErrorHandler::capture_trace();
 
-        UpdatesControl_Logger::log(
+        UpdateAutomate_Logger::log(
             'theme',
             'uninstall',
             $name,
@@ -1135,23 +1135,23 @@ final class UpdatesControl_Update_Logger {
     private static function format_plugin_log_title(string $action_type, string $name, string $version_after): string {
         if ($action_type === 'install') {
             /* translators: 1: item name (plugin/theme), 2: version number */
-            return sprintf(__('Installation of %1$s %2$s', 'updates-control'), $name, $version_after ?: '');
+            return sprintf(__('Installation of %1$s %2$s', 'update-automate'), $name, $version_after ?: '');
         }
         if ($action_type === 'uninstall') {
             /* translators: 1: item name (plugin/theme), 2: version number */
-            return sprintf(__('Uninstall of %1$s %2$s', 'updates-control'), $name, $version_after ?: '');
+            return sprintf(__('Uninstall of %1$s %2$s', 'update-automate'), $name, $version_after ?: '');
         }
         if ($action_type === 'downgrade') {
             /* translators: 1: item name (plugin/theme), 2: version number */
-            return sprintf(__('Downgrade to %1$s %2$s', 'updates-control'), $name, $version_after ?: '');
+            return sprintf(__('Downgrade to %1$s %2$s', 'update-automate'), $name, $version_after ?: '');
         }
         if ($action_type === 'same_version') {
             /* translators: 1: item name (plugin/theme), 2: version number */
-            return sprintf(__('Reinstall %1$s %2$s (same version)', 'updates-control'), $name, $version_after ?: '');
+            return sprintf(__('Reinstall %1$s %2$s (same version)', 'update-automate'), $name, $version_after ?: '');
         }
 
         /* translators: 1: item name (plugin/theme), 2: version number */
-        return sprintf(__('Update to %1$s %2$s', 'updates-control'), $name, $version_after ?: '');
+        return sprintf(__('Update to %1$s %2$s', 'update-automate'), $name, $version_after ?: '');
     }
 
     /**
@@ -1198,7 +1198,7 @@ final class UpdatesControl_Update_Logger {
         $title = self::format_plugin_log_title($action_type, $name, $version_after);
         $message = self::format_note_like_wp_screen($title, [], $process_message);
 
-        UpdatesControl_Logger::log(
+        UpdateAutomate_Logger::log(
             'theme',
             $action_type,
             $name,
