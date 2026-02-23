@@ -3,19 +3,22 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Update Automate 0.1\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/update-automate\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/updates-automate\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-02-23T11:57:03+00:00\n"
+"POT-Creation-Date: 2026-02-23T16:14:19+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: update-automate\n"
 
 #. Plugin Name of the plugin
 #: update-automate.php
+#: inc/admin/menu.php:22
+#: inc/admin/menu.php:29
+#: inc/admin/menu.php:49
 msgid "Update Automate"
 msgstr ""
 
@@ -44,6 +47,9 @@ msgid "Go to Update Automate settings page"
 msgstr ""
 
 #: inc/admin/links.php:26
+#: assets/build/index.js:176
+#: assets/src/js/pages/SettingsPage.js:69
+#: assets/src/js/pages/SettingsPage.js:72
 msgid "Settings"
 msgstr ""
 
@@ -76,17 +82,13 @@ msgstr ""
 msgid "Update Automate options"
 msgstr ""
 
-#: inc/admin/menu.php:22
-#: inc/admin/menu.php:29
-#: inc/admin/menu.php:49
-msgid "Update Automate"
-msgstr ""
-
 #: inc/admin/menu.php:30
-msgid "Update Automate"
+msgid "Manage updates"
 msgstr ""
 
 #: inc/admin/menu.php:52
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/ActivityLogsDataView.js:69
 msgid "Version"
 msgstr ""
 
@@ -238,4 +240,268 @@ msgstr ""
 #: inc/classes/UpdateLogger.php:1154
 #, php-format
 msgid "Update to %1$s %2$s"
+msgstr ""
+
+#. translators: 1: Filter name.
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/constants.js:12
+msgid "Update"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/constants.js:13
+msgid "Downgrade"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/constants.js:14
+msgid "Install"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/constants.js:15
+msgid "Reset"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/constants.js:16
+msgid "Failed"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/constants.js:17
+msgid "Uninstall"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/ActivityLogsDataView.js:163
+#: assets/src/js/components/activityLog/constants.js:18
+msgid "Delete"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/utils.js:8
+msgctxt "empty value fallback"
+msgid "—"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/LogDetailsContent.js:19
+msgid "Message"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/LogDetailsContent.js:33
+msgid "Trace"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/LogDetailsContent.js:48
+msgid "No message or trace for this entry."
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/hooks/useLogs.js:33
+msgid "Failed to load logs."
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/ActivityLogsDataView.js:62
+msgid "Title"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/utils.js:77
+msgid "Item"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/ActivityLogsDataView.js:76
+msgid "Type"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/ActivityLogsDataView.js:93
+msgid "Date"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/ActivityLogsDataView.js:106
+msgid "Context"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/utils.js:62
+msgid "Bulk action"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/utils.js:65
+msgid "Single action"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/ActivityLogsDataView.js:113
+msgid "User"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/ActivityLogsDataView.js:134
+msgid "Status"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/ActivityLogsDataView.js:152
+msgid "View log"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/ActivityLogsDataView.js:153
+msgid "Log details"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/ActivityLogsDataView.js:164
+msgid "Delete log"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/ActivityLogsDataView.js:179
+msgid "Delete this log entry?"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/ActivityLogsDataView.js:193
+msgid "Cancel"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/ActivityLogsDataView.js:200
+msgid "Confirm"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/ActivityLogsDataView.js:247
+msgid "No update logs yet."
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/activityLog/ActivityLogsDataView.js:249
+msgid "Search logs"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/hooks/usePluginSettings.js:77
+msgid "Settings saved successfully."
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/hooks/usePluginSettings.js:81
+msgid "Settings saved with no response."
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/hooks/usePluginSettings.js:86
+msgid "Failed to save settings."
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/SettingsForm.js:27
+msgid "Logging"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/SettingsForm.js:30
+msgid "Enable update logging"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/SettingsForm.js:31
+msgid "Record core, themes, plugins, and translations updates in the database."
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/SettingsForm.js:44
+msgid "Retention (days)"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/SettingsForm.js:45
+msgid "Automatically delete logs older than this many days. Cron runs daily."
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/SettingsForm.js:65
+msgid "Email notifications"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/SettingsForm.js:68
+msgid "Enable email notifications"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/SettingsForm.js:69
+msgid "Redirect WordPress native update notification emails to the recipient below."
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/SettingsForm.js:82
+msgid "Recipient email"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/SettingsForm.js:83
+msgid "Native WordPress update emails will be sent to this address instead of the site admin."
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/SettingsForm.js:96
+msgid "admin@example.com"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/SettingsForm.js:100
+msgid "Notify on"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/SettingsForm.js:103
+msgid "WordPress core automatic updates"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/SettingsForm.js:124
+msgid "Plugin automatic updates"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/SettingsForm.js:147
+msgid "Theme automatic updates"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/SettingsForm.js:167
+msgid "Translation automatic updates"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/SettingsForm.js:190
+msgid "Errors (failed updates)"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/SettingsForm.js:218
+msgid "Saving…"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/components/SettingsForm.js:219
+msgid "Save settings"
+msgstr ""
+
+#: assets/build/index.js:176
+#: assets/src/js/pages/SettingsPage.js:62
+#: assets/src/js/pages/SettingsPage.js:65
+msgid "Update logs"
 msgstr ""
