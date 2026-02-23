@@ -1,6 +1,6 @@
 # Update Automate Plugin
 
-Update Automate is a lightweight WordPress plugin that logs core, plugin, and theme updates with error handling, security, and optional email notifications.
+Update Automate is a WordPress plugin that logs core, plugin, and theme updates with error handling, security, and optional email notifications.
 This document describes the development workflow to keep code quality, consistency, and easy deployment.
 
 ## 🚀 Getting Started
