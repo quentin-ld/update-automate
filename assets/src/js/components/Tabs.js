@@ -95,13 +95,13 @@ export const TabList = ({ children }) => {
 /**
  * Tab component - individual tab button
  *
- * @param {Object}   props           - Component props.
- * @param {string}   props.tabId     - Unique identifier for the tab.
- * @param {string}   props.title    - Tab title (optional, uses children if not provided).
- * @param {Object}   props.icon     - Optional WordPress icon (e.g. from @wordpress/icons).
- * @param {number}   props.iconSize - Icon size in pixels (default 24).
- * @param {string}   props.className - Additional CSS class name.
- * @param {Object}   props.children  - Tab content.
+ * @param {Object} props           - Component props.
+ * @param {string} props.tabId     - Unique identifier for the tab.
+ * @param {string} props.title     - Tab title (optional, uses children if not provided).
+ * @param {Object} props.icon      - Optional WordPress icon (e.g. from @wordpress/icons).
+ * @param {number} props.iconSize  - Icon size in pixels (default 24).
+ * @param {string} props.className - Additional CSS class name.
+ * @param {Object} props.children  - Tab content.
  * @return {JSX.Element} The tab button.
  */
 export const Tab = ({

@@ -1,8 +1,11 @@
 /**
  * Pure helpers for activity log display and formatting.
  */
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
 import { ACTION_LABELS } from './constants';
+
+/** Translated fallback for empty values (em dash). */
+export const EMPTY_FALLBACK = _x('—', 'empty value fallback', 'updatescontrol');
 
 /**
  * Map log status to badge intent (success, warning, error, default).
@@ -35,7 +38,7 @@ export function statusToBadgeIntent(status) {
  */
 export function formatDate(dateStr) {
 	if (!dateStr) {
-		return '—';
+		return EMPTY_FALLBACK;
 	}
 	try {
 		return new Date(dateStr).toLocaleString();
@@ -57,7 +60,7 @@ export function getContextLabel(updateContext) {
 	if (updateContext === 'single') {
 		return __('Single action', 'updatescontrol');
 	}
-	return updateContext || '—';
+	return updateContext || EMPTY_FALLBACK;
 }
 
 /**
@@ -94,5 +97,5 @@ export function getActivityDescription(item) {
 	if (from) {
 		return `v${from}`;
 	}
-	return '—';
+	return EMPTY_FALLBACK;
 }

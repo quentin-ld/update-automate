@@ -3,18 +3,22 @@ import {
 	ToggleControl,
 	TextControl,
 	CheckboxControl,
+	// NumberControl is the documented stable API; package still exports as __experimentalNumberControl.
+	// See https://developer.wordpress.org/block-editor/reference-guides/components/number-control/
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis -- NumberControl is the documented component for number input.
+	__experimentalNumberControl as NumberControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { usePluginSettings } from '../hooks/usePluginSettings';
 
 /**
  * Settings form for logging and notifications.
+ * Uses official Gutenberg components: NumberControl, TextControl (email), ToggleControl, CheckboxControl.
  *
  * @return {JSX.Element} Settings form UI.
  */
 export const SettingsForm = () => {
-	const { settings, setSettings, saveSettings, saving, saveError } =
-		usePluginSettings();
+	const { settings, setSettings, saveSettings, saving } = usePluginSettings();
 
 	return (
 		<div className="updatescontrol-settings-form">
@@ -25,7 +29,7 @@ export const SettingsForm = () => {
 				<ToggleControl
 					label={__('Enable update logging', 'updatescontrol')}
 					help={__(
-						'Record core, plugin, and theme updates in the database.',
+						'Record core, themes, plugins, and translations updates in the database.',
 						'updatescontrol'
 					)}
 					checked={settings.logging_enabled}
@@ -36,22 +40,21 @@ export const SettingsForm = () => {
 						}))
 					}
 				/>
-				<TextControl
+				<NumberControl
 					label={__('Retention (days)', 'updatescontrol')}
 					help={__(
 						'Automatically delete logs older than this many days. Cron runs daily.',
 						'updatescontrol'
 					)}
-					type="number"
 					min={1}
 					max={365}
-					value={String(settings.retention_days)}
+					value={settings.retention_days}
 					onChange={(value) =>
 						setSettings((prev) => ({
 							...prev,
 							retention_days: Math.max(
 								1,
-								Math.min(365, Number(value) || 90)
+								Math.min(365, Number(value) ?? 90)
 							),
 						}))
 					}
@@ -63,6 +66,10 @@ export const SettingsForm = () => {
 				</h3>
 				<ToggleControl
 					label={__('Enable email notifications', 'updatescontrol')}
+					help={__(
+						'Redirect WordPress native update notification emails to the recipient below.',
+						'updatescontrol'
+					)}
 					checked={settings.notify_enabled}
 					onChange={(value) =>
 						setSettings((prev) => ({
@@ -72,11 +79,12 @@ export const SettingsForm = () => {
 					}
 				/>
 				<TextControl
-					label={__('Recipient emails', 'updatescontrol')}
+					label={__('Recipient email', 'updatescontrol')}
 					help={__(
-						'Comma-separated list of email addresses.',
+						'Native WordPress update emails will be sent to this address instead of the site admin.',
 						'updatescontrol'
 					)}
+					type="email"
 					value={settings.notify_emails}
 					onChange={(value) =>
 						setSettings((prev) => ({
@@ -85,46 +93,68 @@ export const SettingsForm = () => {
 						}))
 					}
 					disabled={!settings.notify_enabled}
+					placeholder={__('admin@example.com', 'updatescontrol')}
 				/>
 				<div className="updatescontrol-settings-checkboxes">
 					<p className="updatescontrol-settings-label">
 						{__('Notify on', 'updatescontrol')}
 					</p>
 					<CheckboxControl
-						label={__('Errors (failed updates)', 'updatescontrol')}
-						checked={settings.notify_on.includes('error')}
+						label={__(
+							'WordPress core automatic updates',
+							'updatescontrol'
+						)}
+						checked={settings.notifyOn.includes('core')}
 						onChange={(checked) =>
 							setSettings((prev) => ({
 								...prev,
-								notify_on: checked
+								notifyOn: checked
 									? [
-											...prev.notify_on.filter(
-												(x) => x !== 'error'
+											...prev.notifyOn.filter(
+												(x) => x !== 'core'
 											),
-											'error',
+											'core',
 										]
-									: prev.notify_on.filter(
-											(x) => x !== 'error'
+									: prev.notifyOn.filter((x) => x !== 'core'),
+							}))
+						}
+						disabled={!settings.notify_enabled}
+					/>
+					<CheckboxControl
+						label={__('Plugin automatic updates', 'updatescontrol')}
+						checked={settings.notifyOn.includes('plugin')}
+						onChange={(checked) =>
+							setSettings((prev) => ({
+								...prev,
+								notifyOn: checked
+									? [
+											...prev.notifyOn.filter(
+												(x) => x !== 'plugin'
+											),
+											'plugin',
+										]
+									: prev.notifyOn.filter(
+											(x) => x !== 'plugin'
 										),
 							}))
 						}
 						disabled={!settings.notify_enabled}
 					/>
 					<CheckboxControl
-						label={__('Core WordPress updates', 'updatescontrol')}
-						checked={settings.notify_on.includes('core')}
+						label={__('Theme automatic updates', 'updatescontrol')}
+						checked={settings.notifyOn.includes('theme')}
 						onChange={(checked) =>
 							setSettings((prev) => ({
 								...prev,
-								notify_on: checked
+								notifyOn: checked
 									? [
-											...prev.notify_on.filter(
-												(x) => x !== 'core'
+											...prev.notifyOn.filter(
+												(x) => x !== 'theme'
 											),
-											'core',
+											'theme',
 										]
-									: prev.notify_on.filter(
-											(x) => x !== 'core'
+									: prev.notifyOn.filter(
+											(x) => x !== 'theme'
 										),
 							}))
 						}
@@ -132,32 +162,49 @@ export const SettingsForm = () => {
 					/>
 					<CheckboxControl
 						label={__(
-							'All updates (plugins & themes too)',
+							'Translation automatic updates',
 							'updatescontrol'
 						)}
-						checked={settings.notify_on.includes('all')}
+						checked={settings.notifyOn.includes('translation')}
 						onChange={(checked) =>
 							setSettings((prev) => ({
 								...prev,
-								notify_on: checked
+								notifyOn: checked
 									? [
-											...prev.notify_on.filter(
-												(x) => x !== 'all'
+											...prev.notifyOn.filter(
+												(x) => x !== 'translation'
 											),
-											'all',
+											'translation',
 										]
-									: prev.notify_on.filter((x) => x !== 'all'),
+									: prev.notifyOn.filter(
+											(x) => x !== 'translation'
+										),
+							}))
+						}
+						disabled={!settings.notify_enabled}
+					/>
+					<CheckboxControl
+						label={__('Errors (failed updates)', 'updatescontrol')}
+						checked={settings.notifyOn.includes('error')}
+						onChange={(checked) =>
+							setSettings((prev) => ({
+								...prev,
+								notifyOn: checked
+									? [
+											...prev.notifyOn.filter(
+												(x) => x !== 'error'
+											),
+											'error',
+										]
+									: prev.notifyOn.filter(
+											(x) => x !== 'error'
+										),
 							}))
 						}
 						disabled={!settings.notify_enabled}
 					/>
 				</div>
 			</div>
-			{saveError && (
-				<div className="updatescontrol-settings-error notice notice-error">
-					<p>{saveError}</p>
-				</div>
-			)}
 			<Button
 				variant="primary"
 				onClick={saveSettings}

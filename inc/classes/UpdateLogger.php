@@ -219,7 +219,7 @@ final class UpdatesControl_Update_Logger {
         if (empty(self::$pending_logs)) {
             return;
         }
-        if (!get_option('updatescontrol_logging_enabled', true)) {
+        if (!updatescontrol_get_settings()['logging_enabled']) {
             return;
         }
         if (!UpdatesControl_Database::table_exists()) {
@@ -259,11 +259,13 @@ final class UpdatesControl_Update_Logger {
      * @return void
      */
     public static function log_automatic_updates(array $update_results): void {
-        if (!get_option('updatescontrol_logging_enabled', true)) {
+        if (!updatescontrol_get_settings()['logging_enabled']) {
             return;
         }
         $trace = UpdatesControl_ErrorHandler::capture_trace();
         $performed_as = 'automatic';
+        $all_plugins = function_exists('get_plugins') ? get_plugins() : [];
+        $all_themes = wp_get_themes();
         foreach ($update_results as $type => $results) {
             if (!is_array($results)) {
                 continue;
@@ -290,9 +292,8 @@ final class UpdatesControl_Update_Logger {
                             $version_before = $p['version_before'];
                             $version_after = $p['version_after'];
                         } else {
-                            $all = function_exists('get_plugins') ? get_plugins() : [];
-                            $name = $all[$file]['Name'] ?? $file;
-                            $version_after = $all[$file]['Version'] ?? '';
+                            $name = $all_plugins[$file]['Name'] ?? $file;
+                            $version_after = $all_plugins[$file]['Version'] ?? '';
                         }
                         unset(self::$pending_logs['plugin'][$file]);
                     } elseif ($type === 'theme' && isset($item->theme)) {
@@ -303,9 +304,8 @@ final class UpdatesControl_Update_Logger {
                             $version_before = $p['version_before'];
                             $version_after = $p['version_after'];
                         } else {
-                            $themes = wp_get_themes();
-                            $name = isset($themes[$slug]) ? (string) $themes[$slug]->get('Name') : $slug;
-                            $version_after = isset($themes[$slug]) ? (string) $themes[$slug]->get('Version') : '';
+                            $name = isset($all_themes[$slug]) ? (string) $all_themes[$slug]->get('Name') : $slug;
+                            $version_after = isset($all_themes[$slug]) ? (string) $all_themes[$slug]->get('Version') : '';
                         }
                         unset(self::$pending_logs['theme'][$slug]);
                     } elseif ($type === 'translation' && isset($item->slug, $item->language)) {
@@ -679,7 +679,7 @@ final class UpdatesControl_Update_Logger {
      * @return void
      */
     public static function on_upgrader_process_complete(WP_Upgrader $upgrader, array $options): void {
-        if (!get_option('updatescontrol_logging_enabled', true)) {
+        if (!updatescontrol_get_settings()['logging_enabled']) {
             return;
         }
 
@@ -1043,7 +1043,7 @@ final class UpdatesControl_Update_Logger {
      * @return void
      */
     public static function log_plugin_uninstall(string $plugin_file): void {
-        if (!get_option('updatescontrol_logging_enabled', true)) {
+        if (!updatescontrol_get_settings()['logging_enabled']) {
             return;
         }
         if (!UpdatesControl_Database::table_exists()) {
@@ -1090,7 +1090,7 @@ final class UpdatesControl_Update_Logger {
      * @return void
      */
     public static function log_theme_uninstall(string $stylesheet): void {
-        if (!get_option('updatescontrol_logging_enabled', true)) {
+        if (!updatescontrol_get_settings()['logging_enabled']) {
             return;
         }
         if (!UpdatesControl_Database::table_exists()) {

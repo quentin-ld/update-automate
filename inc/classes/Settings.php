@@ -107,7 +107,7 @@ final class UpdatesControl_Settings {
                     'notify_emails' => ['type' => 'string'],
                     'notify_on' => [
                         'type' => 'array',
-                        'items' => ['type' => 'string', 'enum' => ['error', 'core', 'all']],
+                        'items' => ['type' => 'string', 'enum' => ['core', 'plugin', 'theme', 'translation', 'error']],
                     ],
                 ],
             ],
@@ -121,15 +121,9 @@ final class UpdatesControl_Settings {
      * @return WP_REST_Response
      */
     public static function rest_get_settings(\WP_REST_Request $request): WP_REST_Response {
-        return new WP_REST_Response([
-            'options' => [
-                'logging_enabled' => (bool) get_option('updatescontrol_logging_enabled', true),
-                'retention_days' => (int) get_option('updatescontrol_retention_days', 90),
-                'notify_enabled' => (bool) get_option('updatescontrol_notify_enabled', false),
-                'notify_emails' => (string) get_option('updatescontrol_notify_emails', ''),
-                'notify_on' => (array) get_option('updatescontrol_notify_on', ['error']),
-            ],
-        ], 200);
+        $options = updatescontrol_get_settings();
+
+        return new WP_REST_Response(['options' => $options], 200);
     }
 
     /**
@@ -243,8 +237,8 @@ final class UpdatesControl_Settings {
      * @return WP_REST_Response
      */
     public static function rest_cleanup_logs(\WP_REST_Request $request): WP_REST_Response {
-        $days = (int) get_option('updatescontrol_retention_days', 90);
-        $deleted = UpdatesControl_Logger::delete_older_than($days);
+        $settings = updatescontrol_get_settings();
+        $deleted = UpdatesControl_Logger::delete_older_than($settings['retention_days']);
 
         return new WP_REST_Response(['deleted' => $deleted], 200);
     }
@@ -256,41 +250,21 @@ final class UpdatesControl_Settings {
      * @return WP_REST_Response
      */
     public static function rest_update_settings(\WP_REST_Request $request): WP_REST_Response {
-        $options = [
-            'updatescontrol_logging_enabled' => 'logging_enabled',
-            'updatescontrol_retention_days' => 'retention_days',
-            'updatescontrol_notify_enabled' => 'notify_enabled',
-            'updatescontrol_notify_emails' => 'notify_emails',
-            'updatescontrol_notify_on' => 'notify_on',
+        $current = updatescontrol_get_settings();
+        $next = [
+            'logging_enabled' => $request->has_param('logging_enabled') ? (bool) $request->get_param('logging_enabled') : $current['logging_enabled'],
+            'retention_days' => $request->has_param('retention_days') ? max(1, min(365, (int) $request->get_param('retention_days'))) : $current['retention_days'],
+            'notify_enabled' => $request->has_param('notify_enabled') ? (bool) $request->get_param('notify_enabled') : $current['notify_enabled'],
+            'notify_emails' => $request->has_param('notify_emails') ? updatescontrol_sanitize_emails($request->get_param('notify_emails')) : $current['notify_emails'],
+            'notify_on' => $request->has_param('notify_on') && is_array($request->get_param('notify_on'))
+                ? array_values(array_intersect(array_filter($request->get_param('notify_on'), 'is_string'), ['core', 'plugin', 'theme', 'translation', 'error'])) ?: ['error']
+                : $current['notify_on'],
         ];
-        foreach ($options as $option_name => $param) {
-            if (!$request->has_param($param)) {
-                continue;
-            }
-            $value = $request->get_param($param);
-            if ($param === 'logging_enabled' || $param === 'notify_enabled') {
-                $value = (bool) $value;
-            }
-            if ($param === 'retention_days') {
-                $value = max(1, min(365, (int) $value));
-            }
-            if ($param === 'notify_on' && is_array($value)) {
-                $value = array_values(array_intersect(array_filter($value, 'is_string'), ['error', 'core', 'all'])) ?: ['error'];
-            }
-            if ($param === 'notify_emails' && is_string($value)) {
-                $value = updatescontrol_sanitize_emails($value);
-            }
-            update_option($option_name, $value);
+        $json = wp_json_encode($next);
+        if ($json !== false) {
+            update_option(UPDATESCONTROL_OPTION_SETTINGS, $json);
         }
 
-        return new WP_REST_Response([
-            'options' => [
-                'logging_enabled' => (bool) get_option('updatescontrol_logging_enabled', true),
-                'retention_days' => (int) get_option('updatescontrol_retention_days', 90),
-                'notify_enabled' => (bool) get_option('updatescontrol_notify_enabled', false),
-                'notify_emails' => (string) get_option('updatescontrol_notify_emails', ''),
-                'notify_on' => (array) get_option('updatescontrol_notify_on', ['error']),
-            ],
-        ], 200);
+        return new WP_REST_Response(['options' => updatescontrol_get_settings()], 200);
     }
 }

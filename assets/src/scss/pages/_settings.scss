@@ -1,5 +1,28 @@
 @use '../abstracts/variables' as *;
 
+.updatescontrol-tabs__panel {
+	h2 {
+		position: relative;
+		padding-left: var(--wpds-dimension-gap-2xl);
+		font-size: 1.5em;
+
+		&::before {
+			content: '';
+			font-family: dashicons;
+			font-size: $icon-size-lg;
+			line-height: $icon-size-lg;
+			display: inline-block;
+			width: $icon-size-lg;
+			height: $icon-size-lg;
+			position: absolute;
+			left: 0;
+			top: 50%;
+			transform: translateY(-50%);
+			text-align: center;
+		}
+	}
+}
+
 .updatescontrol {
 	&-dashboard-wrap {
 		* {
@@ -228,29 +251,6 @@
 		margin-bottom: 0;
 		font-size: 0.9em;
 		opacity: 0.9;
-	}
-}
-
-.updatescontrol-tabs__panel {
-	h2 {
-		position: relative;
-		padding-left: 36px;
-		font-size: 1.5em;
-
-		&::before {
-			content: '';
-			font-family: dashicons;
-			font-size: 28px;
-			line-height: 28px;
-			display: inline-block;
-			width: 28px;
-			height: 28px;
-			position: absolute;
-			left: 0;
-			top: 50%;
-			transform: translateY(-50%);
-			text-align: center;
-		}
 	}
 }
 

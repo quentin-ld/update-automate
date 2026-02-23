@@ -20,6 +20,7 @@ import {
 	getContextLabel,
 	getActivityTitle,
 	getActivityDescription,
+	EMPTY_FALLBACK,
 } from './utils';
 import { StatusBadge } from './StatusBadge';
 import { getIconForLogType } from './logTypeIcon';
@@ -118,10 +119,12 @@ export function ActivityLogsDataView() {
 							rel="noopener noreferrer"
 							target="_blank"
 						>
-							{item.performed_by_display || '—'}
+							{item.performed_by_display || EMPTY_FALLBACK}
 						</a>
 					) : (
-						<span>{item.performed_by_display || '—'}</span>
+						<span>
+							{item.performed_by_display || EMPTY_FALLBACK}
+						</span>
 					),
 				enableSorting: false,
 				enableGlobalSearch: true,
@@ -132,7 +135,7 @@ export function ActivityLogsDataView() {
 				getValue: ({ item }) => item.status || '',
 				render: ({ item }) => (
 					<StatusBadge intent={statusToBadgeIntent(item.status)}>
-						{item.status || '—'}
+						{item.status || EMPTY_FALLBACK}
 					</StatusBadge>
 				),
 				enableSorting: false,

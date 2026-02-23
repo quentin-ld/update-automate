@@ -70,16 +70,11 @@ function updatescontrol_localize_settings(string $admin_page): void {
         return;
     }
 
+    $options = updatescontrol_get_settings();
     wp_localize_script('updatescontrol-scripts', 'updatescontrolSettings', [
         'restUrl' => esc_url_raw(rest_url()),
         'namespace' => 'updatescontrol/v1',
         'nonce' => wp_create_nonce('wp_rest'),
-        'options' => [
-            'logging_enabled' => (bool) get_option('updatescontrol_logging_enabled', true),
-            'retention_days' => (int) get_option('updatescontrol_retention_days', 90),
-            'notify_enabled' => (bool) get_option('updatescontrol_notify_enabled', false),
-            'notify_emails' => (string) get_option('updatescontrol_notify_emails', ''),
-            'notify_on' => (array) get_option('updatescontrol_notify_on', ['error']),
-        ],
+        'options' => $options,
     ]);
 }

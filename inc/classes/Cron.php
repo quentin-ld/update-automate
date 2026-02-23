@@ -50,7 +50,7 @@ final class UpdatesControl_Cron {
      * @return void
      */
     public static function run_cleanup(): void {
-        $days = (int) get_option('updatescontrol_retention_days', 90);
+        $days = updatescontrol_get_settings()['retention_days'];
         if ($days < 1) {
             return;
         }

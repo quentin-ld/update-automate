@@ -34,7 +34,7 @@ final class UpdatesControl_ErrorHandler {
      * @return void
      */
     public static function log_upgrader_failure(WP_Upgrader $upgrader, array $options): void {
-        if (!get_option('updatescontrol_logging_enabled', true)) {
+        if (!updatescontrol_get_settings()['logging_enabled']) {
             return;
         }
 
