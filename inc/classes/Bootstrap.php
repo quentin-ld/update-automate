@@ -28,6 +28,7 @@ final class UpdateAutomate_Bootstrap {
         UpdateAutomate_Settings::register();
         UpdateAutomate_Notifications::register();
         UpdateAutomate_MailObserver::register();
+        UpdateAutomate_AutoUpdates::register();
     }
 
     /**
@@ -47,6 +48,7 @@ final class UpdateAutomate_Bootstrap {
             'Notifications.php',
             'MailObserver.php',
             'Settings.php',
+            'AutoUpdates.php',
         ];
         foreach ($classes as $file) {
             $path = $dir . '/' . $file;

@@ -1,0 +1,71 @@
+// ============================================================================
+// Auto Updates Panel
+// ============================================================================
+
+.updateautomate-autoupdates-panel {
+	padding: var(--wpds-dimension-padding-lg);
+
+	> .components-notice {
+		margin-bottom: var(--wpds-dimension-gap-md);
+	}
+}
+
+.updateautomate-autoupdates-loading {
+	display: flex;
+	align-items: center;
+	gap: var(--wpds-dimension-gap-sm);
+	padding: var(--wpds-dimension-padding-lg);
+	color: var(--wpds-color-fg-content-neutral-weak);
+}
+
+// ─── Section ─────────────────────────────────────────────────────────────────
+
+.updateautomate-autoupdates-section {
+	margin-bottom: var(--wpds-dimension-gap-2xl);
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+
+	> .components-notice {
+		margin-bottom: var(--wpds-dimension-gap-sm);
+	}
+
+	.components-radio-control {
+		margin-bottom: var(--wpds-dimension-gap-md);
+	}
+
+	.components-base-control {
+		margin-bottom: var(--wpds-dimension-gap-sm);
+	}
+}
+
+.updateautomate-autoupdates-section-title {
+	margin-top: 0;
+	margin-bottom: var(--wpds-dimension-gap-md);
+	padding-bottom: var(--wpds-dimension-gap-sm);
+	border-bottom: var(--wpds-border-width-xs) solid var(--wpds-color-stroke-surface-neutral-weak);
+}
+
+.autoUpdates {
+	&__iconImg {
+		object-fit: contain;
+		object-position: center;
+	}
+
+	&__name {
+		max-width: 200px;
+		display: block;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		white-space: nowrap;
+	}
+
+	&__description {
+		max-width: 400px;
+		display: block;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		white-space: nowrap;
+	}
+}

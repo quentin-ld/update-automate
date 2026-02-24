@@ -112,6 +112,54 @@ final class UpdateAutomate_Settings {
                 ],
             ],
         ]);
+
+        register_rest_route(self::REST_NAMESPACE, '/auto-updates', [
+            'methods' => \WP_REST_Server::READABLE,
+            'callback' => [self::class, 'rest_get_auto_updates'],
+            'permission_callback' => [self::class, 'rest_can_manage_logs'],
+        ]);
+
+        register_rest_route(self::REST_NAMESPACE, '/auto-updates/core', [
+            'methods' => \WP_REST_Server::CREATABLE,
+            'callback' => [self::class, 'rest_set_core_mode'],
+            'permission_callback' => [self::class, 'rest_can_manage_logs'],
+            'args' => [
+                'mode' => [
+                    'type' => 'string',
+                    'enum' => ['all', 'minor', 'disabled'],
+                    'required' => true,
+                ],
+            ],
+        ]);
+
+        register_rest_route(self::REST_NAMESPACE, '/auto-updates/plugin', [
+            'methods' => \WP_REST_Server::CREATABLE,
+            'callback' => [self::class, 'rest_toggle_plugin'],
+            'permission_callback' => [self::class, 'rest_can_manage_logs'],
+            'args' => [
+                'plugin' => ['type' => 'string', 'required' => true],
+                'enable' => ['type' => 'boolean', 'required' => true],
+            ],
+        ]);
+
+        register_rest_route(self::REST_NAMESPACE, '/auto-updates/theme', [
+            'methods' => \WP_REST_Server::CREATABLE,
+            'callback' => [self::class, 'rest_toggle_theme'],
+            'permission_callback' => [self::class, 'rest_can_manage_logs'],
+            'args' => [
+                'stylesheet' => ['type' => 'string', 'required' => true],
+                'enable' => ['type' => 'boolean', 'required' => true],
+            ],
+        ]);
+
+        register_rest_route(self::REST_NAMESPACE, '/auto-updates/translation', [
+            'methods' => \WP_REST_Server::CREATABLE,
+            'callback' => [self::class, 'rest_toggle_translation'],
+            'permission_callback' => [self::class, 'rest_can_manage_logs'],
+            'args' => [
+                'enable' => ['type' => 'boolean', 'required' => true],
+            ],
+        ]);
     }
 
     /**
@@ -266,5 +314,87 @@ final class UpdateAutomate_Settings {
         }
 
         return new WP_REST_Response(['options' => updateautomate_get_settings()], 200);
+    }
+
+    /**
+     * REST: Get all auto-update data (constants, core, plugins, themes, translations).
+     *
+     * @param \WP_REST_Request<array<string, mixed>> $request Request.
+     * @return WP_REST_Response
+     */
+    public static function rest_get_auto_updates(\WP_REST_Request $request): WP_REST_Response {
+        return new WP_REST_Response(UpdateAutomate_AutoUpdates::get_data(), 200);
+    }
+
+    /**
+     * REST: Set core auto-update mode.
+     *
+     * @param \WP_REST_Request<array<string, mixed>> $request Request.
+     * @return WP_REST_Response
+     */
+    public static function rest_set_core_mode(\WP_REST_Request $request): WP_REST_Response {
+        $mode = sanitize_key($request->get_param('mode'));
+        $ok = UpdateAutomate_AutoUpdates::set_core_mode($mode);
+
+        if (!$ok) {
+            return new WP_REST_Response([
+                'message' => __('Core auto-update mode is overridden by a wp-config constant.', 'update-automate'),
+            ], 403);
+        }
+
+        return new WP_REST_Response(UpdateAutomate_AutoUpdates::get_data(), 200);
+    }
+
+    /**
+     * REST: Toggle auto-update for a single plugin.
+     *
+     * @param \WP_REST_Request<array<string, mixed>> $request Request.
+     * @return WP_REST_Response
+     */
+    public static function rest_toggle_plugin(\WP_REST_Request $request): WP_REST_Response {
+        $plugin = sanitize_text_field($request->get_param('plugin'));
+        $enable = (bool) $request->get_param('enable');
+        $ok = UpdateAutomate_AutoUpdates::toggle_plugin($plugin, $enable);
+
+        if (!$ok) {
+            return new WP_REST_Response([
+                'message' => __('Plugin not found.', 'update-automate'),
+            ], 404);
+        }
+
+        return new WP_REST_Response(UpdateAutomate_AutoUpdates::get_data(), 200);
+    }
+
+    /**
+     * REST: Toggle auto-update for a single theme.
+     *
+     * @param \WP_REST_Request<array<string, mixed>> $request Request.
+     * @return WP_REST_Response
+     */
+    public static function rest_toggle_theme(\WP_REST_Request $request): WP_REST_Response {
+        $stylesheet = sanitize_text_field($request->get_param('stylesheet'));
+        $enable = (bool) $request->get_param('enable');
+        $ok = UpdateAutomate_AutoUpdates::toggle_theme($stylesheet, $enable);
+
+        if (!$ok) {
+            return new WP_REST_Response([
+                'message' => __('Theme not found.', 'update-automate'),
+            ], 404);
+        }
+
+        return new WP_REST_Response(UpdateAutomate_AutoUpdates::get_data(), 200);
+    }
+
+    /**
+     * REST: Toggle translation auto-updates.
+     *
+     * @param \WP_REST_Request<array<string, mixed>> $request Request.
+     * @return WP_REST_Response
+     */
+    public static function rest_toggle_translation(\WP_REST_Request $request): WP_REST_Response {
+        $enable = (bool) $request->get_param('enable');
+        UpdateAutomate_AutoUpdates::set_translations($enable);
+
+        return new WP_REST_Response(UpdateAutomate_AutoUpdates::get_data(), 200);
     }
 }

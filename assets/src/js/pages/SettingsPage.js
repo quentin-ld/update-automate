@@ -1,20 +1,26 @@
 import { useState, useEffect, useCallback } from '@wordpress/element';
-import { pages as iconPages, settings as iconSettings } from '@wordpress/icons';
+import {
+	pages as iconPages,
+	settings as iconSettings,
+	update as iconUpdate,
+} from '@wordpress/icons';
 import { Notices } from '../components/Notices';
 import { Tabs } from '../components/Tabs';
 import { ActivityLogsDataView } from '../components/activityLog';
 import { SettingsForm } from '../components/SettingsForm';
+import { AutoUpdatesPanel } from '../components/AutoUpdatesPanel';
 import { usePluginSettings } from '../hooks/usePluginSettings';
 import { __ } from '@wordpress/i18n';
 
 const TAB_LOGS = 'logs';
+const TAB_AUTO_UPDATES = 'auto-updates';
 const TAB_SETTINGS = 'settings';
-const VALID_TABS = [TAB_LOGS, TAB_SETTINGS];
+const VALID_TABS = [TAB_AUTO_UPDATES, TAB_LOGS, TAB_SETTINGS];
 
 function getTabFromUrl() {
 	const params = new URLSearchParams(window.location.search);
 	const tab = params.get('tab');
-	return VALID_TABS.includes(tab) ? tab : TAB_LOGS;
+	return VALID_TABS.includes(tab) ? tab : TAB_AUTO_UPDATES;
 }
 
 function setTabInUrl(tabId) {
@@ -41,8 +47,8 @@ export const SettingsPage = () => {
 
 	useEffect(() => {
 		if (!selectedTabId || !VALID_TABS.includes(selectedTabId)) {
-			setSelectedTabId(TAB_LOGS);
-			setTabInUrl(TAB_LOGS);
+			setSelectedTabId(TAB_AUTO_UPDATES);
+			setTabInUrl(TAB_AUTO_UPDATES);
 		}
 	}, [selectedTabId]);
 
@@ -60,6 +66,13 @@ export const SettingsPage = () => {
 					>
 						<Tabs.TabList>
 							<Tabs.Tab
+								tabId={TAB_AUTO_UPDATES}
+								title={__('Auto-updates', 'update-automate')}
+								icon={iconUpdate}
+							>
+								{__('Auto-updates', 'update-automate')}
+							</Tabs.Tab>
+							<Tabs.Tab
 								tabId={TAB_LOGS}
 								title={__('Update logs', 'update-automate')}
 								icon={iconPages}
@@ -74,6 +87,9 @@ export const SettingsPage = () => {
 								{__('Settings', 'update-automate')}
 							</Tabs.Tab>
 						</Tabs.TabList>
+						<Tabs.TabPanel tabId={TAB_AUTO_UPDATES}>
+							<AutoUpdatesPanel />
+						</Tabs.TabPanel>
 						<Tabs.TabPanel tabId={TAB_LOGS}>
 							<ActivityLogsDataView
 								loggingEnabled={settings.logging_enabled}

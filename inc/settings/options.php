@@ -20,6 +20,7 @@ const UPDATEAUTOMATE_SETTINGS_DEFAULTS = [
     'notify_enabled' => false,
     'notify_emails' => '',
     'notify_on' => [],
+    'auto_update_translations' => true,
 ];
 
 add_action('init', 'updateautomate_register_settings');
@@ -45,7 +46,7 @@ function updateautomate_register_settings(): void {
 /**
  * Get plugin settings from the single JSON option.
  *
- * @return array{logging_enabled: bool, retention_days: int, notify_enabled: bool, notify_emails: string, notify_on: array<string>}
+ * @return array{logging_enabled: bool, retention_days: int, notify_enabled: bool, notify_emails: string, notify_on: array<string>, auto_update_translations: bool}
  */
 function updateautomate_get_settings(): array {
     $raw = get_option(UPDATEAUTOMATE_OPTION_SETTINGS, '');
@@ -64,6 +65,7 @@ function updateautomate_get_settings(): array {
         'notify_enabled' => isset($decoded['notify_enabled']) ? (bool) $decoded['notify_enabled'] : $defaults['notify_enabled'],
         'notify_emails' => isset($decoded['notify_emails']) ? (string) $decoded['notify_emails'] : $defaults['notify_emails'],
         'notify_on' => updateautomate_normalize_notify_on($decoded['notify_on'] ?? $defaults['notify_on']),
+        'auto_update_translations' => isset($decoded['auto_update_translations']) ? (bool) $decoded['auto_update_translations'] : $defaults['auto_update_translations'],
     ];
 
     return $out;
@@ -93,6 +95,7 @@ function updateautomate_sanitize_settings_json(mixed $value): string {
             array_filter((array) ($value['notify_on'] ?? []), 'is_string'),
             $allowed_notify
         )),
+        'auto_update_translations' => (bool) ($value['auto_update_translations'] ?? true),
     ];
     $encoded = wp_json_encode($out);
 
