@@ -36,7 +36,6 @@
 				position: relative;
 				gap: var(--wpds-dimension-gap-xs);
 
-				// Gutenberg external link icon (small) — @wordpress/icons external
 				&::after {
 					content: '';
 					display: inline-block;
@@ -158,122 +157,9 @@
 		width: 100%;
 		max-width: 100%;
 	}
-
-	&-actions {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: space-between;
-		align-items: center;
-		padding: var(--wpds-dimension-padding-lg);
-		gap: var(--wpds-dimension-gap-md);
-		border-top: var(--wpds-border-width-xs) solid var(--wpds-color-stroke-surface-neutral-weak);
-
-		&-bulk {
-			display: flex;
-			flex-wrap: wrap;
-			gap: var(--wpds-dimension-gap-sm);
-			justify-content: flex-start;
-			align-items: center;
-		}
-	}
-
-	&-sidebar {
-		display: flex;
-		flex-direction: column;
-		gap: var(--wpds-dimension-gap-md);
-		align-items: stretch;
-		justify-content: flex-start;
-
-		hr {
-			margin-top: 2em;
-		}
-	}
-
-	&-presets {
-		border: var(--wpds-border-width-xs) solid var(--wpds-color-stroke-surface-neutral-weak);
-		border-radius: var(--wpds-border-radius-md);
-		width: 100%;
-		max-width: 100%;
-		background: var(--wpds-color-bg-surface-neutral-strong);
-		padding: var(--wpds-dimension-padding-lg);
-	}
-
-	&-subcategory {
-		h3 {
-			position: relative;
-			padding-left: var(--wpds-dimension-gap-2xl);
-			margin-bottom: 1.5em;
-
-			&::before {
-				position: absolute;
-				left: 0;
-				top: 50%;
-				transform: translateY(-50%);
-				font-size: var(--wpds-font-size-xl);
-				line-height: $line-height-icon;
-				display: inline-block;
-				width: $icon-size;
-				height: $icon-size;
-			}
-		}
-
-		&-performance {
-			h3::before {
-				content: '🚀';
-			}
-		}
-
-		&-security {
-			h3::before {
-				content: '🛡️';
-			}
-		}
-
-		&-user-interface {
-			h3::before {
-				content: '💻️';
-			}
-		}
-
-		&-integrations {
-			h3::before {
-				content: '🔌';
-			}
-		}
-	}
-
-	&-autoconfig-actions {
-		margin-top: 1em;
-	}
-
-	&-autoconfig-help {
-		margin-top: 0.5em;
-		margin-bottom: 0;
-		font-size: 0.9em;
-		opacity: 0.9;
-	}
 }
 
-#updateautomate-tab-panel-logs {
-	h2 {
-		&::before {
-			content: '\f321'; // dashicons-list-view
-		}
-	}
-}
-
-#updateautomate-tab-panel-settings {
-	h2 {
-		&::before {
-			content: '\f106'; // dashicons-admin-generic
-		}
-	}
-}
-
-/* Logs tab */
 .updateautomate-logs {
-	padding: var(--wpds-dimension-padding-lg);
-
 	&-loading {
 		display: flex;
 		align-items: center;
@@ -297,6 +183,11 @@
 		margin: var(--wpds-dimension-gap-md) 0;
 	}
 
+	&-disabled-message {
+		margin: var(--wpds-dimension-gap-md) 0;
+		color: var(--wpds-color-fg-content-neutral-weak);
+	}
+
 	&-status {
 		&--success {
 			color: var(--wpds-color-fg-content-success-weak);
@@ -310,7 +201,6 @@
 	}
 }
 
-/* View logs modal (message + trace) */
 .updateautomate-notes-modal {
 	.updateautomate-notes-content {
 		max-height: 70vh;
@@ -348,7 +238,6 @@
 	}
 }
 
-/* Settings tab */
 .updateautomate-settings-form {
 	padding: var(--wpds-dimension-padding-lg);
 

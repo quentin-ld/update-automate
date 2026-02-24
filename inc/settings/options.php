@@ -19,7 +19,7 @@ const UPDATEAUTOMATE_SETTINGS_DEFAULTS = [
     'retention_days' => 90,
     'notify_enabled' => false,
     'notify_emails' => '',
-    'notify_on' => ['error'],
+    'notify_on' => [],
 ];
 
 add_action('init', 'updateautomate_register_settings');
@@ -83,7 +83,7 @@ function updateautomate_sanitize_settings_json(mixed $value): string {
     if (!is_array($value)) {
         $value = [];
     }
-    $allowed_notify = ['core', 'plugin', 'theme', 'translation', 'error'];
+    $allowed_notify = ['core', 'plugin', 'theme', 'translation', 'error', 'technical'];
     $out = [
         'logging_enabled' => (bool) ($value['logging_enabled'] ?? true),
         'retention_days' => max(1, min(365, (int) ($value['retention_days'] ?? 90))),
@@ -92,7 +92,7 @@ function updateautomate_sanitize_settings_json(mixed $value): string {
         'notify_on' => array_values(array_intersect(
             array_filter((array) ($value['notify_on'] ?? []), 'is_string'),
             $allowed_notify
-        )) ?: ['error'],
+        )),
     ];
     $encoded = wp_json_encode($out);
 
@@ -118,11 +118,11 @@ function updateautomate_sanitize_emails(mixed $value): string {
  * @return array<string>
  */
 function updateautomate_normalize_notify_on(mixed $notify_on): array {
-    $allowed = ['core', 'plugin', 'theme', 'translation', 'error'];
+    $allowed = ['core', 'plugin', 'theme', 'translation', 'error', 'technical'];
     $arr = array_values(array_intersect(array_filter((array) $notify_on, 'is_string'), $allowed));
     if (in_array('all', (array) $notify_on, true)) {
         return $allowed;
     }
 
-    return $arr !== [] ? $arr : ['error'];
+    return $arr;
 }

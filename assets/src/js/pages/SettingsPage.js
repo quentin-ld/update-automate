@@ -4,6 +4,7 @@ import { Notices } from '../components/Notices';
 import { Tabs } from '../components/Tabs';
 import { ActivityLogsDataView } from '../components/activityLog';
 import { SettingsForm } from '../components/SettingsForm';
+import { usePluginSettings } from '../hooks/usePluginSettings';
 import { __ } from '@wordpress/i18n';
 
 const TAB_LOGS = 'logs';
@@ -30,6 +31,7 @@ function setTabInUrl(tabId) {
  * @return {JSX.Element} The settings page UI.
  */
 export const SettingsPage = () => {
+	const { settings, setSettings, saveSettings, saving } = usePluginSettings();
 	const [selectedTabId, setSelectedTabId] = useState(getTabFromUrl);
 
 	const handleSelectTab = useCallback((tabId) => {
@@ -73,10 +75,17 @@ export const SettingsPage = () => {
 							</Tabs.Tab>
 						</Tabs.TabList>
 						<Tabs.TabPanel tabId={TAB_LOGS}>
-							<ActivityLogsDataView />
+							<ActivityLogsDataView
+								loggingEnabled={settings.logging_enabled}
+							/>
 						</Tabs.TabPanel>
 						<Tabs.TabPanel tabId={TAB_SETTINGS}>
-							<SettingsForm />
+							<SettingsForm
+								settings={settings}
+								setSettings={setSettings}
+								saveSettings={saveSettings}
+								saving={saving}
+							/>
 						</Tabs.TabPanel>
 					</Tabs>
 				</div>

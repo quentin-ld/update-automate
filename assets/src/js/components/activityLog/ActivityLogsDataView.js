@@ -28,7 +28,11 @@ import { LogDetailsContent } from './LogDetailsContent';
 
 const FIXED_SORT = { field: 'date', direction: 'desc' };
 
-export function ActivityLogsDataView() {
+/**
+ * @param {Object} props
+ * @param {boolean} [props.loggingEnabled=true] Whether update logging is enabled (from plugin settings).
+ */
+export function ActivityLogsDataView({ loggingEnabled = true }) {
 	const { logs, loading, error, fetchLogs, deleteLog } = useLogs();
 
 	const [view, setView] = useState({
@@ -227,6 +231,21 @@ export function ActivityLogsDataView() {
 		return (
 			<div className="updateautomate-logs-error notice notice-error">
 				<p>{error}</p>
+			</div>
+		);
+	}
+
+	if (!loggingEnabled) {
+		return (
+			<div className="updateautomate-logs updateautomate-activity-dataview">
+				<p className="updateautomate-logs-disabled-message">
+					{__('Logs are disabled.', 'update-automate')}
+				</p>
+				<div
+					className="updateautomate-logs-dataview-wrapper"
+					style={{ display: 'none' }}
+					aria-hidden="true"
+				/>
 			</div>
 		);
 	}

@@ -60,16 +60,6 @@
 				display: none;
 			}
 
-			&::before {
-				font-family: dashicons;
-				font-size: var(--wpds-font-size-xl);
-				line-height: $line-height-icon;
-				display: inline-block;
-				width: $icon-size;
-				height: $icon-size;
-				text-align: center;
-			}
-
 			&:hover {
 				color: var(--wpds-color-fg-content-neutral);
 				background: var(--wpds-color-bg-surface-neutral-weak);
@@ -98,27 +88,6 @@
 					width: $border-width-thick;
 					background: $wp-color-accent;
 				}
-			}
-
-			// Category-specific dashicons
-			&--category-core::before {
-				content: '\f226'; // dashicons-dashboard
-			}
-
-			&--category-gutenberg::before {
-				content: '\f12b'; // dashicons-block-default
-			}
-
-			&--category-woocommerce::before {
-				content: '\f174'; // dashicons-cart
-			}
-
-			&--category-tools::before {
-				content: '\f107'; // dashicons-admin-tools
-			}
-
-			&--category-ads-blocker::before {
-				content: '\f332'; // dashicons-superhero
 			}
 
 			.updateautomate-tabs__list--vertical & {

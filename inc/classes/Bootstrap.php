@@ -27,6 +27,7 @@ final class UpdateAutomate_Bootstrap {
         UpdateAutomate_ErrorHandler::register();
         UpdateAutomate_Settings::register();
         UpdateAutomate_Notifications::register();
+        UpdateAutomate_MailObserver::register();
     }
 
     /**
@@ -44,6 +45,7 @@ final class UpdateAutomate_Bootstrap {
             'ErrorHandler.php',
             'UpdateLogger.php',
             'Notifications.php',
+            'MailObserver.php',
             'Settings.php',
         ];
         foreach ($classes as $file) {

@@ -24,15 +24,13 @@ export function usePluginSettings() {
 			'theme',
 			'translation',
 			'error',
+			'technical',
 		];
-		let notifyOn = ['error'];
+		let notifyOn = [];
 		if (opts && Array.isArray(opts.notify_on)) {
 			notifyOn = opts.notify_on.includes('all')
 				? [...allowedNotifyOn]
 				: opts.notify_on.filter((x) => allowedNotifyOn.includes(x));
-			if (notifyOn.length === 0) {
-				notifyOn = ['error'];
-			}
 		}
 		return opts
 			? {
