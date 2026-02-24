@@ -14,15 +14,19 @@ import { __ } from '@wordpress/i18n';
  * Settings form for logging and notifications.
  * Uses official Gutenberg components: NumberControl, TextControl (email), ToggleControl, CheckboxControl.
  *
- * @param {Object} props
- * @param {Object} props.settings     Current settings (logging_enabled, retention_days, etc.).
- * @param {Function} props.setSettings Setter for settings (e.g. (prev) => ({ ...prev, key: value })).
+ * @param {Object}   props
+ * @param {Object}   props.settings     Current settings (logging_enabled, retention_days, etc.).
+ * @param {Function} props.setSettings  Setter for settings (e.g. (prev) => ({ ...prev, key: value })).
  * @param {Function} props.saveSettings Async save to REST API.
- * @param {boolean} props.saving      Whether save is in progress.
+ * @param {boolean}  props.saving       Whether save is in progress.
  * @return {JSX.Element} Settings form UI.
  */
-export const SettingsForm = ({ settings, setSettings, saveSettings, saving }) => {
-
+export const SettingsForm = ({
+	settings,
+	setSettings,
+	saveSettings,
+	saving,
+}) => {
 	return (
 		<div className="updateautomate-settings-form">
 			<div className="updateautomate-settings-section">

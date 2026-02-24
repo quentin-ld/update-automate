@@ -29,7 +29,7 @@ import { LogDetailsContent } from './LogDetailsContent';
 const FIXED_SORT = { field: 'date', direction: 'desc' };
 
 /**
- * @param {Object} props
+ * @param {Object}  props
  * @param {boolean} [props.loggingEnabled=true] Whether update logging is enabled (from plugin settings).
  */
 export function ActivityLogsDataView({ loggingEnabled = true }) {
