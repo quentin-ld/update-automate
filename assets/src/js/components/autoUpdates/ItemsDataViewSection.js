@@ -88,25 +88,37 @@ export function ItemsDataViewSection({
 				label: __('Auto-update', 'update-automate'),
 				render: ({ item }) => (
 					<span className="updateautomate-autoupdates__toggle">
-						<ToggleControl
-							__nextHasNoMarginBottom
-							checked={item.auto_update}
-							onChange={(checked) =>
-								onToggle(item[itemIdKey], checked)
-							}
-							disabled={locked || busy}
-							aria-label={
-								item.auto_update
-									? __(
-											'Disable auto-update',
-											'update-automate'
-										)
-									: __(
-											'Enable auto-update',
-											'update-automate'
-										)
-							}
-						/>
+						{item.auto_update_available === false ? (
+							<span
+								className="updateautomate-autoupdates__unavailable"
+								title={__(
+									'Automatic updates are not available for this item (e.g. not from WordPress.org).',
+									'update-automate'
+								)}
+							>
+								{__('Unavailable', 'update-automate')}
+							</span>
+						) : (
+							<ToggleControl
+								__nextHasNoMarginBottom
+								checked={item.auto_update}
+								onChange={(checked) =>
+									onToggle(item[itemIdKey], checked)
+								}
+								disabled={locked || busy}
+								aria-label={
+									item.auto_update
+										? __(
+												'Disable auto-update',
+												'update-automate'
+											)
+										: __(
+												'Enable auto-update',
+												'update-automate'
+											)
+								}
+							/>
+						)}
 					</span>
 				),
 				enableSorting: false,

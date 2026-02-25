@@ -198,6 +198,10 @@ final class UpdateAutomate_AutoUpdates {
                 $icon_url = $icon_data['svg'] ?? $icon_data['2x'] ?? $icon_data['1x'] ?? $icon_data['default'] ?? '';
             }
 
+            $auto_update_available = $update_transient
+                && (isset($update_transient->response[$file])
+                    || isset($update_transient->no_update[$file]));
+
             $plugins[] = [
                 'file' => $file,
                 'slug' => $slug,
@@ -208,6 +212,7 @@ final class UpdateAutomate_AutoUpdates {
                 'plugin_uri' => $data['PluginURI'] ?? '',
                 'icon' => $icon_url,
                 'auto_update' => in_array($file, $auto_update_plugins, true),
+                'auto_update_available' => $auto_update_available,
                 'active' => is_plugin_active($file),
             ];
         }
@@ -228,9 +233,16 @@ final class UpdateAutomate_AutoUpdates {
         $all_themes = wp_get_themes();
         $auto_update_themes = (array) get_site_option('auto_update_themes', []);
         $active_stylesheet = get_stylesheet();
+        $update_themes_transient = get_site_transient('update_themes');
 
         $themes = [];
         foreach ($all_themes as $stylesheet => $theme) {
+            $auto_update_available = false;
+            if ($update_themes_transient) {
+                $auto_update_available = isset($update_themes_transient->response[$stylesheet])
+                    || isset($update_themes_transient->no_update[$stylesheet]);
+            }
+
             $themes[] = [
                 'stylesheet' => $stylesheet,
                 'name' => $theme->get('Name'),
@@ -240,6 +252,7 @@ final class UpdateAutomate_AutoUpdates {
                 'theme_uri' => $theme->get('ThemeURI'),
                 'icon' => $theme->get_screenshot() ?: '',
                 'auto_update' => in_array($stylesheet, $auto_update_themes, true),
+                'auto_update_available' => $auto_update_available,
                 'active' => $stylesheet === $active_stylesheet,
             ];
         }

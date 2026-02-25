@@ -49,6 +49,12 @@
 }
 
 .updateautomate-autoupdates {
+	&__unavailable {
+		color: var(--wpds-color-fg-content-neutral-weak);
+		font-size: 0.8125rem;
+		font-style: italic;
+	}
+
 	&__icon-img {
 		object-fit: contain;
 		object-position: center;
