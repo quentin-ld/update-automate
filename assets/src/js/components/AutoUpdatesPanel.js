@@ -12,8 +12,15 @@ import {
 	RadioControl,
 	ToggleControl,
 	Icon,
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis -- Text is the documented typography component.
+	__experimentalText as Text,
 } from '@wordpress/components';
-import { plugins as pluginsIcon, brush as brushIcon } from '@wordpress/icons';
+import {
+	dashboard as dashboardIcon,
+	plugins as pluginsIcon,
+	brush as brushIcon,
+	language as languageIcon,
+} from '@wordpress/icons';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews/wp';
 import { __ } from '@wordpress/i18n';
 import { useAutoUpdates } from '../hooks/useAutoUpdates';
@@ -145,6 +152,7 @@ function CoreSection({ core, constants, setCoreMode, busy }) {
 	return (
 		<div className="updateautomate-autoupdates-section">
 			<h3 className="updateautomate-autoupdates-section-title">
+				<Icon icon={dashboardIcon} size={24} />
 				{__('WordPress Core', 'update-automate')}
 			</h3>
 			<ConstantNotices
@@ -334,6 +342,7 @@ function PluginsSection({ plugins, constants, togglePlugin, busy }) {
 	return (
 		<div className="updateautomate-autoupdates-section">
 			<h3 className="updateautomate-autoupdates-section-title">
+				<Icon icon={pluginsIcon} size={24} />
 				{__('Plugins', 'update-automate')}
 			</h3>
 			<ConstantNotices
@@ -519,6 +528,7 @@ function ThemesSection({ themes, constants, toggleTheme, busy }) {
 	return (
 		<div className="updateautomate-autoupdates-section">
 			<h3 className="updateautomate-autoupdates-section-title">
+				<Icon icon={brushIcon} size={24} />
 				{__('Themes', 'update-automate')}
 			</h3>
 			<ConstantNotices
@@ -554,6 +564,7 @@ function TranslationsSection({
 	return (
 		<div className="updateautomate-autoupdates-section">
 			<h3 className="updateautomate-autoupdates-section-title">
+				<Icon icon={languageIcon} size={24} />
 				{__('Translations', 'update-automate')}
 			</h3>
 			<ConstantNotices
@@ -610,6 +621,15 @@ export function AutoUpdatesPanel() {
 
 	return (
 		<div className="updateautomate-autoupdates-panel">
+			<h2 className="updateautomate-panel-title">
+				{__('Auto-updates', 'update-automate')}
+			</h2>
+			<Text variant="muted">
+				{__(
+					'Control which parts of your site update automatically — core, themes, plugins, and translations.',
+					'update-automate'
+				)}
+			</Text>
 			<ConstantNotices
 				constants={data.constants}
 				sections={['core', 'plugins', 'themes', 'translations']}
@@ -624,13 +644,6 @@ export function AutoUpdatesPanel() {
 				busy={busy}
 			/>
 
-			<TranslationsSection
-				translations={data.translations}
-				constants={data.constants}
-				toggleTranslation={toggleTranslation}
-				busy={busy}
-			/>
-
 			<ThemesSection
 				themes={data.themes}
 				constants={data.constants}
@@ -642,6 +655,13 @@ export function AutoUpdatesPanel() {
 				plugins={data.plugins}
 				constants={data.constants}
 				togglePlugin={togglePlugin}
+				busy={busy}
+			/>
+
+			<TranslationsSection
+				translations={data.translations}
+				constants={data.constants}
+				toggleTranslation={toggleTranslation}
 				busy={busy}
 			/>
 		</div>

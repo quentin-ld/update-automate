@@ -1,28 +1,5 @@
 @use '../abstracts/variables' as *;
 
-.updateautomate-tabs__panel {
-	h2 {
-		position: relative;
-		padding-left: var(--wpds-dimension-gap-2xl);
-		font-size: 1.5em;
-
-		&::before {
-			content: '';
-			font-family: dashicons;
-			font-size: $icon-size-lg;
-			line-height: $icon-size-lg;
-			display: inline-block;
-			width: $icon-size-lg;
-			height: $icon-size-lg;
-			position: absolute;
-			left: 0;
-			top: 50%;
-			transform: translateY(-50%);
-			text-align: center;
-		}
-	}
-}
-
 .updateautomate {
 	&-dashboard-wrap {
 		* {
@@ -239,7 +216,7 @@
 }
 
 .updateautomate-settings-form {
-	padding: var(--wpds-dimension-padding-lg);
+	//padding: var(--wpds-dimension-padding-lg);
 
 	.updateautomate-settings-section {
 		margin-bottom: var(--wpds-dimension-gap-xl);
@@ -282,5 +259,17 @@
 
 	.components-button {
 		margin-top: var(--wpds-dimension-gap-md);
+	}
+}
+
+.updateautomate-panel-title {
+	margin-top: 0;
+	margin-bottom: var(--wpds-dimension-gap-sm);
+	font-size: 1.5em;
+
+	+ .components-text {
+		display: block;
+		padding-bottom: var(--wpds-dimension-gap-lg);
+		margin-bottom: var(--wpds-dimension-gap-lg);
 	}
 }

@@ -7,6 +7,8 @@ import {
 	// See https://developer.wordpress.org/block-editor/reference-guides/components/number-control/
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis -- NumberControl is the documented component for number input.
 	__experimentalNumberControl as NumberControl,
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis -- Text is the documented typography component.
+	__experimentalText as Text,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
@@ -29,6 +31,15 @@ export const SettingsForm = ({
 }) => {
 	return (
 		<div className="updateautomate-settings-form">
+			<h2 className="updateautomate-panel-title">
+				{__('Settings', 'update-automate')}
+			</h2>
+			<Text variant="muted">
+				{__(
+					'Configure logging, data retention, and email notifications for updates.',
+					'update-automate'
+				)}
+			</Text>
 			<div className="updateautomate-settings-section">
 				<h3 className="updateautomate-settings-section-title">
 					{__('Logging', 'update-automate')}

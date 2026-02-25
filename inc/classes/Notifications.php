@@ -258,20 +258,7 @@ final class UpdateAutomate_Notifications {
      * @return array<string, string>
      */
     public static function filter_debug_email_to(array $email, int $failures, array $results): array {
-        if (!self::should_redirect()) {
-            return $email;
-        }
-
-        $has_translation = !empty($results['translation']);
-        $should_route = false;
-
-        if (self::has_notify('translation') && $has_translation) {
-            $should_route = true;
-        }
-        if (self::has_notify('error') && $failures > 0) {
-            $should_route = true;
-        }
-        if ($should_route) {
+        if (self::should_redirect()) {
             $email['to'] = self::get_recipient();
         }
 

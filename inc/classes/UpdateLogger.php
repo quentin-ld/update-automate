@@ -40,6 +40,14 @@ final class UpdateAutomate_Update_Logger {
     private static bool $auto_update = false;
 
     /**
+     * Items already logged by upgrader_process_complete (to avoid duplicate logging
+     * when automatic_updates_complete fires afterwards). Keyed by "{type}:{item}".
+     *
+     * @var array<string, true>
+     */
+    private static array $already_logged = [];
+
+    /**
      * Pending log entries keyed by type and item (for shutdown fallback).
      *
      * @var array<string, array<string, array{name: string, slug: string, version_before: string, version_after: string}>>
@@ -285,6 +293,10 @@ final class UpdateAutomate_Update_Logger {
                     $item = $result->item;
                     if ($type === 'plugin' && isset($item->plugin)) {
                         $file = $item->plugin;
+                        if (isset(self::$already_logged['plugin:' . $file])) {
+                            unset(self::$pending_logs['plugin'][$file]);
+                            continue;
+                        }
                         $slug = dirname($file) === '.' ? $file : dirname($file);
                         if (isset(self::$pending_logs['plugin'][$file])) {
                             $p = self::$pending_logs['plugin'][$file];
@@ -298,6 +310,10 @@ final class UpdateAutomate_Update_Logger {
                         unset(self::$pending_logs['plugin'][$file]);
                     } elseif ($type === 'theme' && isset($item->theme)) {
                         $slug = $item->theme;
+                        if (isset(self::$already_logged['theme:' . $slug])) {
+                            unset(self::$pending_logs['theme'][$slug]);
+                            continue;
+                        }
                         if (isset(self::$pending_logs['theme'][$slug])) {
                             $p = self::$pending_logs['theme'][$slug];
                             $name = $p['name'];
@@ -310,6 +326,10 @@ final class UpdateAutomate_Update_Logger {
                         unset(self::$pending_logs['theme'][$slug]);
                     } elseif ($type === 'translation' && isset($item->slug, $item->language)) {
                         $slug = $item->slug . '_' . $item->language;
+                        if (isset(self::$already_logged['translation:' . $slug])) {
+                            unset(self::$pending_logs['translation'][$slug]);
+                            continue;
+                        }
                         if (isset(self::$pending_logs['translation'][$slug])) {
                             $p = self::$pending_logs['translation'][$slug];
                             $name = $p['name'];
@@ -321,6 +341,12 @@ final class UpdateAutomate_Update_Logger {
                         }
                         unset(self::$pending_logs['translation'][$slug]);
                     } elseif ($type === 'core') {
+                        if (isset(self::$already_logged['core:core'])) {
+                            if (!empty(self::$pending_logs['core'])) {
+                                array_shift(self::$pending_logs['core']);
+                            }
+                            continue;
+                        }
                         $name = 'WordPress';
                         $version_before = get_option(self::OPTION_CORE_VERSION_BEFORE, '');
                         $version_after = get_bloginfo('version');
@@ -737,6 +763,7 @@ final class UpdateAutomate_Update_Logger {
 
         if ($type === 'core' && $action === 'update') {
             self::log_core_update($upgrader, $process_message, $trace, $performed_as);
+            self::$already_logged['core:core'] = true;
             if (!empty(self::$pending_logs['core'])) {
                 array_shift(self::$pending_logs['core']);
             }
@@ -758,10 +785,12 @@ final class UpdateAutomate_Update_Logger {
                     $log_action = $has_version_before ? 'update' : 'install';
                     $plugin_performed_as = $has_version_before ? 'upload' : $performed_as;
                     self::log_plugin_update($plugin_file, $log_action, $upgrader, $process_message, $trace, $plugin_performed_as, $update_context);
+                    self::$already_logged['plugin:' . $plugin_file] = true;
                 }
             } else {
                 foreach ($plugins as $plugin_file) {
                     self::log_plugin_update($plugin_file, $action, $upgrader, $process_message, $trace, $performed_as, $update_context);
+                    self::$already_logged['plugin:' . $plugin_file] = true;
                 }
             }
         }
@@ -780,11 +809,13 @@ final class UpdateAutomate_Update_Logger {
                         $log_action = isset($stored[$theme_slug]) ? 'update' : 'install';
                         $theme_performed_as = isset($stored[$theme_slug]) ? 'upload' : $performed_as;
                         self::log_theme_update($theme_slug, $log_action, $upgrader, $process_message, $trace, $theme_performed_as, $update_context);
+                        self::$already_logged['theme:' . $theme_slug] = true;
                     }
                 }
             } else {
                 foreach ($themes as $theme_slug) {
                     self::log_theme_update($theme_slug, $action, $upgrader, $process_message, $trace, $performed_as, $update_context);
+                    self::$already_logged['theme:' . $theme_slug] = true;
                 }
             }
         }
@@ -833,6 +864,7 @@ final class UpdateAutomate_Update_Logger {
                     $trace,
                     $performed_as
                 );
+                self::$already_logged['translation:' . $key] = true;
             }
         }
     }

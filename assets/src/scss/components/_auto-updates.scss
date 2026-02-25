@@ -3,7 +3,7 @@
 // ============================================================================
 
 .updateautomate-autoupdates-panel {
-	padding: var(--wpds-dimension-padding-lg);
+	//padding: var(--wpds-dimension-padding-lg);
 
 	> .components-notice {
 		margin-bottom: var(--wpds-dimension-gap-md);
@@ -41,10 +41,18 @@
 }
 
 .updateautomate-autoupdates-section-title {
+	display: flex;
+	align-items: center;
+	gap: var(--wpds-dimension-gap-xs);
 	margin-top: 0;
 	margin-bottom: var(--wpds-dimension-gap-md);
 	padding-bottom: var(--wpds-dimension-gap-sm);
 	border-bottom: var(--wpds-border-width-xs) solid var(--wpds-color-stroke-surface-neutral-weak);
+
+	> svg {
+		fill: currentColor;
+		flex-shrink: 0;
+	}
 }
 
 .autoUpdates {

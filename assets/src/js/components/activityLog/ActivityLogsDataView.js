@@ -10,7 +10,11 @@
 
 import { useMemo, useState, useEffect, useCallback } from '@wordpress/element';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews/wp';
-import { Button } from '@wordpress/components';
+import {
+	Button,
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis -- Text is the documented typography component.
+	__experimentalText as Text,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useLogs } from '../../hooks/useLogs';
 import { LAYOUT_ACTIVITY } from './constants';
@@ -252,6 +256,15 @@ export function ActivityLogsDataView({ loggingEnabled = true }) {
 
 	return (
 		<div className="updateautomate-logs updateautomate-activity-dataview">
+			<h2 className="updateautomate-panel-title">
+				{__('Update logs', 'update-automate')}
+			</h2>
+			<Text variant="muted">
+				{__(
+					'Browse and search the history of all automatic and manual updates performed on your site.',
+					'update-automate'
+				)}
+			</Text>
 			<DataViews
 				getItemId={(item) => String(item.id)}
 				view={view}
