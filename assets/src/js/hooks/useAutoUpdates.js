@@ -150,6 +150,25 @@ export function useAutoUpdates() {
 		[createSuccessNotice, createErrorNotice]
 	);
 
+	const dismissConstant = useCallback(
+		async (constant) => {
+			try {
+				const response = await apiFetch({
+					path: `${API_BASE}/dismiss-constant`,
+					method: 'POST',
+					data: { constant },
+				});
+				setData(response);
+			} catch (e) {
+				createErrorNotice(
+					e?.message ||
+						__('Failed to dismiss notice.', 'update-automate')
+				);
+			}
+		},
+		[createErrorNotice]
+	);
+
 	return {
 		data,
 		loading,
@@ -158,5 +177,6 @@ export function useAutoUpdates() {
 		togglePlugin,
 		toggleTheme,
 		toggleTranslation,
+		dismissConstant,
 	};
 }

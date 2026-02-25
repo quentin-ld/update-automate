@@ -160,6 +160,15 @@ final class UpdateAutomate_Settings {
                 'enable' => ['type' => 'boolean', 'required' => true],
             ],
         ]);
+
+        register_rest_route(self::REST_NAMESPACE, '/auto-updates/dismiss-constant', [
+            'methods' => \WP_REST_Server::CREATABLE,
+            'callback' => [self::class, 'rest_dismiss_constant'],
+            'permission_callback' => [self::class, 'rest_can_manage_logs'],
+            'args' => [
+                'constant' => ['type' => 'string', 'required' => true],
+            ],
+        ]);
     }
 
     /**
@@ -307,6 +316,8 @@ final class UpdateAutomate_Settings {
             'notify_on' => $request->has_param('notify_on') && is_array($request->get_param('notify_on'))
                 ? array_values(array_intersect(array_filter($request->get_param('notify_on'), 'is_string'), ['core', 'plugin', 'theme', 'translation', 'error', 'technical']))
                 : $current['notify_on'],
+            'auto_update_translations' => $current['auto_update_translations'],
+            'dismissed_constants' => $current['dismissed_constants'],
         ];
         $json = wp_json_encode($next);
         if ($json !== false) {
@@ -394,6 +405,19 @@ final class UpdateAutomate_Settings {
     public static function rest_toggle_translation(\WP_REST_Request $request): WP_REST_Response {
         $enable = (bool) $request->get_param('enable');
         UpdateAutomate_AutoUpdates::set_translations($enable);
+
+        return new WP_REST_Response(UpdateAutomate_AutoUpdates::get_data(), 200);
+    }
+
+    /**
+     * REST: Dismiss a constant notice.
+     *
+     * @param \WP_REST_Request<array<string, mixed>> $request Request.
+     * @return WP_REST_Response
+     */
+    public static function rest_dismiss_constant(\WP_REST_Request $request): WP_REST_Response {
+        $constant = sanitize_text_field($request->get_param('constant'));
+        UpdateAutomate_AutoUpdates::dismiss_constant($constant);
 
         return new WP_REST_Response(UpdateAutomate_AutoUpdates::get_data(), 200);
     }

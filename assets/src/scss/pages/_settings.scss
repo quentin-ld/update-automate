@@ -261,6 +261,17 @@
 		}
 	}
 
+	.updateautomate-settings-fieldset {
+		border: none;
+		margin: 0;
+		padding: 0;
+
+		&:disabled {
+			opacity: 0.4;
+			pointer-events: none;
+		}
+	}
+
 	.updateautomate-settings-error {
 		margin: var(--wpds-dimension-gap-md) 0;
 	}

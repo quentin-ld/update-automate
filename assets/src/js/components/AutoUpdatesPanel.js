@@ -29,50 +29,69 @@ const FIXED_FIELDS = [
 	'details',
 ];
 
+const CONSTANT_DESCRIPTIONS = {
+	WP_AUTO_UPDATE_CORE: __(
+		'The WP_AUTO_UPDATE_CORE constant is defined in wp-config.php and overrides the core auto-update setting below.',
+		'update-automate'
+	),
+	AUTOMATIC_UPDATER_DISABLED: __(
+		'The AUTOMATIC_UPDATER_DISABLED constant is set to true in wp-config.php. All automatic updates are disabled at the WordPress level.',
+		'update-automate'
+	),
+	DISALLOW_FILE_MODS: __(
+		'The DISALLOW_FILE_MODS constant is set to true in wp-config.php. WordPress cannot modify files, so all automatic updates are blocked.',
+		'update-automate'
+	),
+	DISABLE_WP_CRON: __(
+		'The DISABLE_WP_CRON constant is set to true in wp-config.php. Background auto-updates rely on WP-Cron and will not run unless an external cron is configured.',
+		'update-automate'
+	),
+};
+
 /**
  * Constant warning notices.
  *
  * @param {Object}   props
- * @param {Object}   props.constants Map of constant name → { defined, value, affects }.
- * @param {string[]} props.sections  Sections to filter for ('core', 'plugins', etc.).
+ * @param {Object}   props.constants     Map of constant name → { defined, value, affects, locks }.
+ * @param {string[]} props.sections      Sections to filter for ('core', 'plugins', etc.).
+ * @param {boolean}  [props.lockingOnly] When true, only show constants with locks=true.
+ * @param {string[]} [props.dismissed]   List of dismissed constant names.
+ * @param {Function} [props.onDismiss]   Called with constant name when dismissed.
  */
-function ConstantNotices({ constants, sections }) {
+function ConstantNotices({
+	constants,
+	sections,
+	lockingOnly = false,
+	dismissed = [],
+	onDismiss,
+}) {
 	if (!constants || Object.keys(constants).length === 0) {
 		return null;
 	}
 
-	const relevant = Object.entries(constants).filter(([, info]) =>
-		info.affects.some((s) => sections.includes(s))
+	const relevant = Object.entries(constants).filter(
+		([name, info]) =>
+			info.affects.some((s) => sections.includes(s)) &&
+			(!lockingOnly || info.locks) &&
+			!dismissed.includes(name)
 	);
 
 	if (relevant.length === 0) {
 		return null;
 	}
 
-	const descriptions = {
-		WP_AUTO_UPDATE_CORE: __(
-			'The WP_AUTO_UPDATE_CORE constant is defined in wp-config.php and overrides the core auto-update setting below.',
-			'update-automate'
-		),
-		AUTOMATIC_UPDATER_DISABLED: __(
-			'The AUTOMATIC_UPDATER_DISABLED constant is set to true in wp-config.php. All automatic updates are disabled at the WordPress level.',
-			'update-automate'
-		),
-		DISALLOW_FILE_MODS: __(
-			'The DISALLOW_FILE_MODS constant is set to true in wp-config.php. WordPress cannot modify files, so all automatic updates are blocked.',
-			'update-automate'
-		),
-		DISABLE_WP_CRON: __(
-			'The DISABLE_WP_CRON constant is set to true in wp-config.php. Background auto-updates rely on WP-Cron and will not run unless an external cron is configured.',
-			'update-automate'
-		),
-	};
-
-	return relevant.map(([name]) => (
-		<Notice key={name} status="warning" isDismissible={false}>
+	return relevant.map(([name, info]) => (
+		<Notice
+			key={name}
+			status="warning"
+			isDismissible={!info.locks}
+			onDismiss={
+				!info.locks && onDismiss ? () => onDismiss(name) : undefined
+			}
+		>
 			<strong>{name}</strong>
 			<br />
-			{descriptions[name] || name}
+			{CONSTANT_DESCRIPTIONS[name] || name}
 		</Notice>
 	));
 }
@@ -89,10 +108,7 @@ function isSectionLocked(constants, section) {
 		return false;
 	}
 	return Object.values(constants).some(
-		(info) =>
-			info.value &&
-			info.affects.includes(section) &&
-			info.affects.length > 1
+		(info) => info.locks && info.value && info.affects.includes(section)
 	);
 }
 
@@ -131,7 +147,11 @@ function CoreSection({ core, constants, setCoreMode, busy }) {
 			<h3 className="updateautomate-autoupdates-section-title">
 				{__('WordPress Core', 'update-automate')}
 			</h3>
-			<ConstantNotices constants={constants} sections={['core']} />
+			<ConstantNotices
+				constants={constants}
+				sections={['core']}
+				lockingOnly
+			/>
 			<RadioControl
 				label={__('Core auto-update behaviour', 'update-automate')}
 				selected={core.mode}
@@ -316,7 +336,11 @@ function PluginsSection({ plugins, constants, togglePlugin, busy }) {
 			<h3 className="updateautomate-autoupdates-section-title">
 				{__('Plugins', 'update-automate')}
 			</h3>
-			<ConstantNotices constants={constants} sections={['plugins']} />
+			<ConstantNotices
+				constants={constants}
+				sections={['plugins']}
+				lockingOnly
+			/>
 			<DataViews
 				getItemId={(item) => item.file}
 				view={view}
@@ -497,7 +521,11 @@ function ThemesSection({ themes, constants, toggleTheme, busy }) {
 			<h3 className="updateautomate-autoupdates-section-title">
 				{__('Themes', 'update-automate')}
 			</h3>
-			<ConstantNotices constants={constants} sections={['themes']} />
+			<ConstantNotices
+				constants={constants}
+				sections={['themes']}
+				lockingOnly
+			/>
 			<DataViews
 				getItemId={(item) => item.stylesheet}
 				view={view}
@@ -531,6 +559,7 @@ function TranslationsSection({
 			<ConstantNotices
 				constants={constants}
 				sections={['translations']}
+				lockingOnly
 			/>
 			<ToggleControl
 				label={__(
@@ -565,6 +594,7 @@ export function AutoUpdatesPanel() {
 		togglePlugin,
 		toggleTheme,
 		toggleTranslation,
+		dismissConstant,
 	} = useAutoUpdates();
 
 	if (loading || !data) {
@@ -583,6 +613,8 @@ export function AutoUpdatesPanel() {
 			<ConstantNotices
 				constants={data.constants}
 				sections={['core', 'plugins', 'themes', 'translations']}
+				dismissed={data.dismissed_constants || []}
+				onDismiss={dismissConstant}
 			/>
 
 			<CoreSection

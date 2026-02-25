@@ -21,6 +21,7 @@ const UPDATEAUTOMATE_SETTINGS_DEFAULTS = [
     'notify_emails' => '',
     'notify_on' => [],
     'auto_update_translations' => true,
+    'dismissed_constants' => [],
 ];
 
 add_action('init', 'updateautomate_register_settings');
@@ -46,7 +47,7 @@ function updateautomate_register_settings(): void {
 /**
  * Get plugin settings from the single JSON option.
  *
- * @return array{logging_enabled: bool, retention_days: int, notify_enabled: bool, notify_emails: string, notify_on: array<string>, auto_update_translations: bool}
+ * @return array{logging_enabled: bool, retention_days: int, notify_enabled: bool, notify_emails: string, notify_on: array<string>, auto_update_translations: bool, dismissed_constants: array<string>}
  */
 function updateautomate_get_settings(): array {
     $raw = get_option(UPDATEAUTOMATE_OPTION_SETTINGS, '');
@@ -66,6 +67,9 @@ function updateautomate_get_settings(): array {
         'notify_emails' => isset($decoded['notify_emails']) ? (string) $decoded['notify_emails'] : $defaults['notify_emails'],
         'notify_on' => updateautomate_normalize_notify_on($decoded['notify_on'] ?? $defaults['notify_on']),
         'auto_update_translations' => isset($decoded['auto_update_translations']) ? (bool) $decoded['auto_update_translations'] : $defaults['auto_update_translations'],
+        'dismissed_constants' => isset($decoded['dismissed_constants']) && is_array($decoded['dismissed_constants'])
+            ? array_values(array_filter($decoded['dismissed_constants'], 'is_string'))
+            : $defaults['dismissed_constants'],
     ];
 
     return $out;
@@ -96,6 +100,7 @@ function updateautomate_sanitize_settings_json(mixed $value): string {
             $allowed_notify
         )),
         'auto_update_translations' => (bool) ($value['auto_update_translations'] ?? true),
+        'dismissed_constants' => array_values(array_filter((array) ($value['dismissed_constants'] ?? []), 'is_string')),
     ];
     $encoded = wp_json_encode($out);
 

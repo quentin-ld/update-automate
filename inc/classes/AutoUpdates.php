@@ -42,11 +42,12 @@ final class UpdateAutomate_AutoUpdates {
     /**
      * Full payload for the GET /auto-updates endpoint.
      *
-     * @return array{constants: array<string, array{defined: bool, value: mixed, affects: array<string>}>, core: array{mode: string, major: string, minor: string, dev: string, overridden_by_constant: bool}, plugins: array<int, array{file: string, slug: string, name: string, description: string, version: string, author: string, plugin_uri: string, icon: string, auto_update: bool, active: bool}>, themes: array<int, array{stylesheet: string, name: string, description: string, version: string, author: string, theme_uri: string, icon: string, auto_update: bool, active: bool}>, translations: array{auto_update: bool}}
+     * @return array{constants: array<string, array{defined: bool, value: mixed, affects: array<string>, locks: bool}>, dismissed_constants: array<string>, core: array{mode: string, major: string, minor: string, dev: string, overridden_by_constant: bool}, plugins: array<int, array{file: string, slug: string, name: string, description: string, version: string, author: string, plugin_uri: string, icon: string, auto_update: bool, active: bool}>, themes: array<int, array{stylesheet: string, name: string, description: string, version: string, author: string, theme_uri: string, icon: string, auto_update: bool, active: bool}>, translations: array{auto_update: bool}}
      */
     public static function get_data(): array {
         return [
             'constants' => self::get_constants(),
+            'dismissed_constants' => updateautomate_get_settings()['dismissed_constants'],
             'core' => self::get_core_config(),
             'plugins' => self::get_plugins_data(),
             'themes' => self::get_themes_data(),
@@ -57,7 +58,7 @@ final class UpdateAutomate_AutoUpdates {
     /**
      * Detect wp-config constants that override auto-update behaviour.
      *
-     * @return array<string, array{defined: bool, value: mixed, affects: array<string>}>
+     * @return array<string, array{defined: bool, value: mixed, affects: array<string>, locks: bool}>
      */
     public static function get_constants(): array {
         $constants = [];
@@ -67,6 +68,7 @@ final class UpdateAutomate_AutoUpdates {
                 'defined' => true,
                 'value' => constant('WP_AUTO_UPDATE_CORE'),
                 'affects' => ['core'],
+                'locks' => true,
             ];
         }
 
@@ -75,6 +77,7 @@ final class UpdateAutomate_AutoUpdates {
                 'defined' => true,
                 'value' => true,
                 'affects' => ['core', 'plugins', 'themes', 'translations'],
+                'locks' => true,
             ];
         }
 
@@ -83,6 +86,7 @@ final class UpdateAutomate_AutoUpdates {
                 'defined' => true,
                 'value' => true,
                 'affects' => ['core', 'plugins', 'themes', 'translations'],
+                'locks' => true,
             ];
         }
 
@@ -91,6 +95,7 @@ final class UpdateAutomate_AutoUpdates {
                 'defined' => true,
                 'value' => true,
                 'affects' => ['core', 'plugins', 'themes', 'translations'],
+                'locks' => false,
             ];
         }
 
@@ -106,7 +111,7 @@ final class UpdateAutomate_AutoUpdates {
     public static function is_section_locked(string $section): bool {
         $constants = self::get_constants();
         foreach ($constants as $info) {
-            if (in_array($section, $info['affects'], true) && $info['value']) {
+            if ($info['locks'] && in_array($section, $info['affects'], true) && $info['value']) {
                 return true;
             }
         }
@@ -348,6 +353,27 @@ final class UpdateAutomate_AutoUpdates {
 
         $auto_updates = array_values(array_intersect($auto_updates, array_keys($all_themes)));
         update_site_option('auto_update_themes', $auto_updates);
+
+        return true;
+    }
+
+    /**
+     * Dismiss a constant notice (stored in plugin settings JSON).
+     *
+     * @param string $constant_name The constant name to dismiss.
+     * @return bool
+     */
+    public static function dismiss_constant(string $constant_name): bool {
+        $settings = updateautomate_get_settings();
+        $dismissed = $settings['dismissed_constants'];
+        if (!in_array($constant_name, $dismissed, true)) {
+            $dismissed[] = $constant_name;
+        }
+        $settings['dismissed_constants'] = $dismissed;
+        $json = wp_json_encode($settings);
+        if ($json !== false) {
+            update_option(UPDATEAUTOMATE_OPTION_SETTINGS, $json);
+        }
 
         return true;
     }
