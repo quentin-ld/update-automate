@@ -1,5 +1,4 @@
 /**
- * Activity log DataView — public API.
- * DataViews styles (required when using @wordpress/dataviews/wp).
+ * Activity log panel — public API.
  */
-export { ActivityLogsDataView } from './ActivityLogsDataView';
+export { ActivityLogPanel } from './ActivityLogPanel';

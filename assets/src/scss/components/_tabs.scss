@@ -104,7 +104,7 @@
 			max-height: $tab-panel-height;
 			position: relative;
 			overflow: auto;
-			padding: var(--wpds-dimension-padding-lg) var(--wpds-dimension-padding-lg) 0 var(--wpds-dimension-padding-lg);
+			padding: var(--wpds-dimension-padding-3xl) var(--wpds-dimension-padding-2xl);
 
 			@media screen and (max-width: 1281px) {
 				height: 600px;

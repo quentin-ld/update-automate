@@ -1,0 +1,30 @@
+.dataviews-view-activity {
+    &__item {
+        &-fields {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 12px;
+            row-gap: 4px;
+        }
+
+        &-field {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+    }
+}
+
+.dataviews__view-actions {
+    padding-left: var(--wpds-dimension-padding-xs) !important;
+    padding-right: var(--wpds-dimension-padding-xs) !important;
+}
+
+.dataviews-view-activity {
+    padding-left: var(--wpds-dimension-padding-xs) !important;
+    padding-right: var(--wpds-dimension-padding-xs) !important;
+}

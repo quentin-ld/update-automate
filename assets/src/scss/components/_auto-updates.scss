@@ -1,10 +1,4 @@
-// ============================================================================
-// Auto Updates Panel
-// ============================================================================
-
 .updateautomate-autoupdates-panel {
-	//padding: var(--wpds-dimension-padding-lg);
-
 	> .components-notice {
 		margin-bottom: var(--wpds-dimension-gap-md);
 	}
@@ -18,7 +12,6 @@
 	color: var(--wpds-color-fg-content-neutral-weak);
 }
 
-// ─── Section ─────────────────────────────────────────────────────────────────
 
 .updateautomate-autoupdates-section {
 	margin-bottom: var(--wpds-dimension-gap-2xl);
@@ -55,8 +48,8 @@
 	}
 }
 
-.autoUpdates {
-	&__iconImg {
+.updateautomate-autoupdates {
+	&__icon-img {
 		object-fit: contain;
 		object-position: center;
 	}

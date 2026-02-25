@@ -1,18 +1,16 @@
 /**
- * Activity Logs Data View — Gutenberg DataViews component for update logs.
- *
+ * Activity log panel — DataViews component for update logs.
  * Uses the official activity layout. Orchestrates view state, fields, actions,
  * and modal. Helpers and UI pieces live in sibling modules.
  *
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-dataviews/
- * @see docs/ACTIVITY-LOGS-DATAVIEW-SPEC.md
  */
 
 import { useMemo, useState, useEffect, useCallback } from '@wordpress/element';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews/wp';
 import {
 	Button,
-	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis -- Text is the documented typography component.
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -32,11 +30,21 @@ import { LogDetailsContent } from './LogDetailsContent';
 
 const FIXED_SORT = { field: 'date', direction: 'desc' };
 
+const DELETE_MODAL_STYLE = {
+	display: 'flex',
+	gap: '8px',
+	justifyContent: 'flex-end',
+	marginTop: '16px',
+};
+
 /**
+ * Activity log panel — renders inside a TabPanel.
+ *
  * @param {Object}  props
- * @param {boolean} [props.loggingEnabled=true] Whether update logging is enabled (from plugin settings).
+ * @param {boolean} [props.loggingEnabled=true] Whether update logging is enabled.
+ * @return {JSX.Element} The activity log panel UI.
  */
-export function ActivityLogsDataView({ loggingEnabled = true }) {
+export function ActivityLogPanel({ loggingEnabled = true }) {
 	const { logs, loading, error, fetchLogs, deleteLog } = useLogs();
 
 	const [view, setView] = useState({
@@ -189,14 +197,7 @@ export function ActivityLogsDataView({ loggingEnabled = true }) {
 									'update-automate'
 								)}
 							</p>
-							<div
-								style={{
-									display: 'flex',
-									gap: '8px',
-									justifyContent: 'flex-end',
-									marginTop: '16px',
-								}}
-							>
+							<div style={DELETE_MODAL_STYLE}>
 								<Button variant="tertiary" onClick={closeModal}>
 									{__('Cancel', 'update-automate')}
 								</Button>
@@ -245,7 +246,7 @@ export function ActivityLogsDataView({ loggingEnabled = true }) {
 
 	if (!loggingEnabled) {
 		return (
-			<div className="updateautomate-logs updateautomate-activity-dataview">
+			<div className="updateautomate-logs updateautomate-activitylog-panel">
 				<p className="updateautomate-logs-disabled-message">
 					{__(
 						'Update logging is turned off. You can turn it on in the Settings tab.',
@@ -262,7 +263,7 @@ export function ActivityLogsDataView({ loggingEnabled = true }) {
 	}
 
 	return (
-		<div className="updateautomate-logs updateautomate-activity-dataview">
+		<div className="updateautomate-logs updateautomate-activitylog-panel">
 			<h2 className="updateautomate-panel-title">
 				{__('Update logs', 'update-automate')}
 			</h2>

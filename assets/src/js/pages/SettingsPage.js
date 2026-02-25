@@ -6,9 +6,9 @@ import {
 } from '@wordpress/icons';
 import { Notices } from '../components/Notices';
 import { Tabs } from '../components/Tabs';
-import { ActivityLogsDataView } from '../components/activityLog';
-import { SettingsForm } from '../components/SettingsForm';
-import { AutoUpdatesPanel } from '../components/AutoUpdatesPanel';
+import { ActivityLogPanel } from '../components/activityLog';
+import { SettingsPanel } from '../components/SettingsPanel';
+import { AutoUpdatesPanel } from '../components/autoUpdates';
 import { usePluginSettings } from '../hooks/usePluginSettings';
 import { __ } from '@wordpress/i18n';
 
@@ -88,7 +88,7 @@ export const SettingsPage = () => {
 							</Tabs.Tab>
 						</Tabs.TabList>
 						<Tabs.TabPanel tabId={TAB_LOGS}>
-							<ActivityLogsDataView
+							<ActivityLogPanel
 								loggingEnabled={settings.logging_enabled}
 							/>
 						</Tabs.TabPanel>
@@ -96,7 +96,7 @@ export const SettingsPage = () => {
 							<AutoUpdatesPanel />
 						</Tabs.TabPanel>
 						<Tabs.TabPanel tabId={TAB_SETTINGS}>
-							<SettingsForm
+							<SettingsPanel
 								settings={settings}
 								setSettings={setSettings}
 								saveSettings={saveSettings}

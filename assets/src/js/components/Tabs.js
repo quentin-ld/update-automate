@@ -4,6 +4,8 @@ import {
 	useContext,
 	useRef,
 	useEffect,
+	useMemo,
+	useCallback,
 } from '@wordpress/element';
 import { Icon } from '@wordpress/icons';
 
@@ -28,14 +30,18 @@ export const Tabs = ({
 	const [internalId, setInternalId] = useState();
 	const tabListRef = useRef(null);
 	const selectedId = controlledId !== undefined ? controlledId : internalId;
-	const handleSelect = (id) => {
-		if (controlledId === undefined) {
-			setInternalId(id);
-		}
-		onSelect?.(id);
-	};
 
-	const getOrderedTabIds = () => {
+	const handleSelect = useCallback(
+		(id) => {
+			if (controlledId === undefined) {
+				setInternalId(id);
+			}
+			onSelect?.(id);
+		},
+		[controlledId, onSelect]
+	);
+
+	const getOrderedTabIds = useCallback(() => {
 		if (!tabListRef.current) {
 			return [];
 		}
@@ -49,18 +55,21 @@ export const Tabs = ({
 				return id ? id.replace('updateautomate-tab-', '') : null;
 			})
 			.filter(Boolean);
-	};
+	}, []);
+
+	const contextValue = useMemo(
+		() => ({
+			selectedTabId: selectedId,
+			onSelect: handleSelect,
+			orientation,
+			getOrderedTabIds,
+			tabListRef,
+		}),
+		[selectedId, handleSelect, orientation, getOrderedTabIds]
+	);
 
 	return (
-		<TabsContext.Provider
-			value={{
-				selectedTabId: selectedId,
-				onSelect: handleSelect,
-				orientation,
-				getOrderedTabIds,
-				tabListRef,
-			}}
-		>
+		<TabsContext.Provider value={contextValue}>
 			<div
 				className={`updateautomate-tabs updateautomate-tabs--${orientation}`}
 			>
@@ -246,9 +255,8 @@ export const TabPanel = ({ tabId, children }) => {
 				id={`updateautomate-tab-panel-${tabId}`}
 				aria-labelledby={`updateautomate-tab-${tabId}`}
 				hidden
-			>
-				{children}
-			</div>
+				aria-hidden="true"
+			/>
 		);
 	}
 
