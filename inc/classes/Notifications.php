@@ -116,6 +116,10 @@ final class UpdateAutomate_Notifications {
      * @return bool
      */
     public static function filter_core_send_email(bool $send, string $type, mixed $core_update, mixed $result): bool {
+        if (!updateautomate_get_settings()['notify_enabled']) {
+            return $send;
+        }
+
         if (!$send) {
             return false;
         }
@@ -135,6 +139,10 @@ final class UpdateAutomate_Notifications {
      * @return bool
      */
     public static function filter_send_core_update_notification_email(bool $notify, mixed $item): bool {
+        if (!updateautomate_get_settings()['notify_enabled']) {
+            return $notify;
+        }
+
         if (!$notify) {
             return false;
         }
@@ -167,6 +175,10 @@ final class UpdateAutomate_Notifications {
      * @return bool
      */
     public static function filter_plugin_send_email(bool $enabled, array $update_results): bool {
+        if (!updateautomate_get_settings()['notify_enabled']) {
+            return $enabled;
+        }
+
         if (!$enabled) {
             return false;
         }
@@ -186,6 +198,10 @@ final class UpdateAutomate_Notifications {
      * @return bool
      */
     public static function filter_theme_send_email(bool $enabled, array $update_results): bool {
+        if (!updateautomate_get_settings()['notify_enabled']) {
+            return $enabled;
+        }
+
         if (!$enabled) {
             return false;
         }
