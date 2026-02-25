@@ -213,6 +213,23 @@
 	.updateautomate-notes-trace {
 		max-height: 250px;
 	}
+
+	.updateautomate-notes-toggle {
+		cursor: pointer;
+		font-weight: var(--wpds-font-weight-medium);
+		font-size: var(--wpds-font-size-md);
+		padding: var(--wpds-dimension-padding-sm) 0;
+		color: var(--wpds-color-fg-interactive-brand);
+		user-select: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+
+	details[open] > .updateautomate-notes-toggle {
+		margin-bottom: var(--wpds-dimension-gap-sm);
+	}
 }
 
 .updateautomate-settings-form {
@@ -235,6 +252,12 @@
 		.updateautomate-settings-label {
 			margin-bottom: var(--wpds-dimension-gap-xs);
 			font-weight: 600;
+		}
+
+		.updateautomate-settings-help {
+			color: var(--wpds-color-fg-content-neutral-weak);
+			font-size: var(--wpds-font-size-md);
+			margin-bottom: var(--wpds-dimension-gap-sm);
 		}
 	}
 

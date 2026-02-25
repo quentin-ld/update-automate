@@ -185,7 +185,7 @@ export function ActivityLogsDataView({ loggingEnabled = true }) {
 						<>
 							<p>
 								{__(
-									'Delete this log entry?',
+									'Are you sure you want to delete this log entry? This action cannot be undone.',
 									'update-automate'
 								)}
 							</p>
@@ -233,7 +233,11 @@ export function ActivityLogsDataView({ loggingEnabled = true }) {
 
 	if (error) {
 		return (
-			<div className="updateautomate-logs-error notice notice-error">
+			<div
+				className="updateautomate-logs-error notice notice-error is-dismissible"
+				aria-live="assertive"
+				role="alert"
+			>
 				<p>{error}</p>
 			</div>
 		);
@@ -243,7 +247,10 @@ export function ActivityLogsDataView({ loggingEnabled = true }) {
 		return (
 			<div className="updateautomate-logs updateautomate-activity-dataview">
 				<p className="updateautomate-logs-disabled-message">
-					{__('Logs are disabled.', 'update-automate')}
+					{__(
+						'Update logging is turned off. You can turn it on in the Settings tab.',
+						'update-automate'
+					)}
 				</p>
 				<div
 					className="updateautomate-logs-dataview-wrapper"
@@ -261,7 +268,7 @@ export function ActivityLogsDataView({ loggingEnabled = true }) {
 			</h2>
 			<Text variant="muted">
 				{__(
-					'Browse and search the history of all automatic and manual updates performed on your site.',
+					'Browse and search the history of all updates on your site, both automatic and manual.',
 					'update-automate'
 				)}
 			</Text>
@@ -276,7 +283,10 @@ export function ActivityLogsDataView({ loggingEnabled = true }) {
 				paginationInfo={paginationInfo}
 				defaultLayouts={defaultLayouts}
 				config={{ perPageSizes: [10, 25, 50, 100] }}
-				empty={__('No update logs yet.', 'update-automate')}
+				empty={__(
+					'No update logs yet. Logs will appear here after your first update.',
+					'update-automate'
+				)}
 				search
 				searchLabel={__('Search logs', 'update-automate')}
 			/>

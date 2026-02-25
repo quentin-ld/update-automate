@@ -76,12 +76,19 @@ export function usePluginSettings() {
 				);
 			} else {
 				createWarningNotice(
-					__('Settings saved with no response.', 'update-automate')
+					__(
+						'Your settings were saved, but the server did not return the updated values. Refresh the page to confirm.',
+						'update-automate'
+					)
 				);
 			}
 		} catch (e) {
 			const message =
-				e?.message || __('Failed to save settings.', 'update-automate');
+				e?.message ||
+				__(
+					'Your settings could not be saved. Check your connection and try again.',
+					'update-automate'
+				);
 			createErrorNotice(message);
 		} finally {
 			setSaving(false);

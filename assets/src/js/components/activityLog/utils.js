@@ -1,7 +1,7 @@
 /**
  * Pure helpers for activity log display and formatting.
  */
-import { __, _x } from '@wordpress/i18n';
+import { __, _x, sprintf } from '@wordpress/i18n';
 import { ACTION_LABELS } from './constants';
 
 /** Translated fallback for empty values (em dash). */
@@ -93,13 +93,26 @@ export function getActivityDescription(item) {
 	const from = item.version_before;
 	const to = item.version_after;
 	if (from && to) {
-		return `v${from} → v${to}`;
+		return sprintf(
+			/* translators: 1: previous version number, 2: new version number */
+			__('v%1$s → v%2$s', 'update-automate'),
+			from,
+			to
+		);
 	}
 	if (to) {
-		return `v${to}`;
+		return sprintf(
+			/* translators: %s: version number */
+			__('v%s', 'update-automate'),
+			to
+		);
 	}
 	if (from) {
-		return `v${from}`;
+		return sprintf(
+			/* translators: %s: version number */
+			__('v%s', 'update-automate'),
+			from
+		);
 	}
 	return EMPTY_FALLBACK;
 }

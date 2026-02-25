@@ -50,7 +50,7 @@ final class UpdateAutomate_ErrorHandler {
 
         $message = $result->get_error_message();
         $type = $options['type'] ?? 'plugin';
-        $name = __('Unknown', 'update-automate');
+        $name = __('Unknown item', 'update-automate');
         $slug = '';
         $version_before = '';
         $version_after = '';
@@ -278,7 +278,7 @@ final class UpdateAutomate_ErrorHandler {
                 'error',
                 sprintf(
                     /* translators: %d: HTTP status code */
-                    __('Update redirect with status %d', 'update-automate'),
+                    __('The core update encountered a redirect error (HTTP %d). Check your server configuration.', 'update-automate'),
                     $status
                 ),
                 self::capture_trace(),

@@ -29,8 +29,10 @@ export function LogDetailsContent({ log }) {
 				</div>
 			)}
 			{log.trace && (
-				<div className="updateautomate-notes-section">
-					<h4>{__('Trace', 'update-automate')}</h4>
+				<details className="updateautomate-notes-section">
+					<summary className="updateautomate-notes-toggle">
+						{__('Advanced details', 'update-automate')}
+					</summary>
 					<pre
 						className="updateautomate-notes-trace"
 						style={{
@@ -41,12 +43,12 @@ export function LogDetailsContent({ log }) {
 					>
 						{log.trace}
 					</pre>
-				</div>
+				</details>
 			)}
 			{!log.message && !log.trace && (
 				<p>
 					{__(
-						'No message or trace for this entry.',
+						'No details available for this log entry.',
 						'update-automate'
 					)}
 				</p>

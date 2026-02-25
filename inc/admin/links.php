@@ -22,7 +22,7 @@ function updateautomate_add_settings_link(array $links): array {
     $links[] = sprintf(
         '<a href="%s" aria-label="%s">%s</a>',
         esc_url($url),
-        esc_attr__('Go to Update Automate settings page', 'update-automate'),
+        esc_attr__('Open Update Automate settings', 'update-automate'),
         esc_html__('Settings', 'update-automate')
     );
 
@@ -55,8 +55,8 @@ function updateautomate_plugin_row_meta(array $links, string $file): array {
             sprintf(
                 '<a href="%s" target="_blank" rel="noopener noreferrer" aria-label="%s">%s</a>',
                 esc_url('https://buymeacoffee.com/quentinld'),
-                esc_attr__('Support Update Automate by buying a coffee (opens in a new tab)', 'update-automate'),
-                esc_html__('Support ☕', 'update-automate')
+                esc_attr__('Support the development of Update Automate (opens in a new tab)', 'update-automate'),
+                esc_html__('Support', 'update-automate') . ' ☕'
             )
         ];
         $links = array_merge($links, $extra_links);

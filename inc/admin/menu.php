@@ -18,7 +18,7 @@ add_action('admin_menu', 'updateautomate_add_option_page');
  */
 function updateautomate_add_option_page(): void {
     add_management_page(
-        __('Update Automate options', 'update-automate'),
+        __('Update Automate', 'update-automate'),
         __('Update Automate', 'update-automate'),
         'manage_options',
         'update-automate',
@@ -49,12 +49,19 @@ function updateautomate_options_page(): void {
                 <h1><?php echo esc_html__('Update Automate', 'update-automate'); ?></h1>
                 <?php if ($plugin_version) { ?>
                     <p class="updateautomate-plugin-version">
-                        <?php echo esc_html__('Version', 'update-automate') . ' ' . esc_html($plugin_version) . ' - '; ?>
+                        <?php
+                        printf(
+                            /* translators: %s: plugin version number */
+                            esc_html__('Version %s', 'update-automate'),
+                            esc_html($plugin_version)
+                        );
+                    echo ' — ';
+                    ?>
                         <a href="https://wordpress.org/plugins/update-automate/#developers"
                            target="_blank"
                            rel="noopener noreferrer"
                            aria-label="<?php echo esc_attr__('View Update Automate changelog on WordPress.org (opens in a new tab)', 'update-automate'); ?>">
-                            <?php echo esc_html__('What\'s new ?', 'update-automate'); ?>
+                            <?php echo esc_html__('What\'s new?', 'update-automate'); ?>
                         </a>
                     </p>
                 <?php } ?>
@@ -70,7 +77,7 @@ function updateautomate_options_page(): void {
                    target="_blank"
                    rel="noopener noreferrer"
                    aria-label="<?php echo esc_attr__('Leave a review for Update Automate on WordPress.org (opens in a new tab)', 'update-automate'); ?>">
-                    <?php echo esc_html__('Leave a review (helps a lot)', 'update-automate'); ?>
+                    <?php echo esc_html__('Leave a review', 'update-automate'); ?>
                 </a>
                 <a href="https://buymeacoffee.com/quentinld"
                    target="_blank"
@@ -93,23 +100,28 @@ function updateautomate_options_page(): void {
         <footer class="updateautomate-footer">
             <div class="updateautomate-footer-title">
                 <p>
-                    <?php echo esc_html__('Made ', 'update-automate'); ?>
-                    <span aria-hidden="true"> x ❤️ </span>
-                    <?php echo esc_html__(' by Quentin Le Duff - Your WordPress Partner', 'update-automate'); ?>
+                    <?php
+                    echo wp_kses_post(sprintf(
+                        /* translators: 1: decorative heart emoji, 2: author name */
+                        __('Made with %1$s by %2$s', 'update-automate'),
+                        '<span aria-hidden="true">❤️</span>',
+                        'Quentin Le Duff'
+                    ));
+    ?>
                 </p>
             </div>
             <div class="updateautomate-footer-navigation">
                 <a href="https://holdmywp.com/"
                    target="_blank"
                    rel="noopener noreferrer"
-                   aria-label="<?php echo esc_attr__('Visit the developer website', 'update-automate'); ?>">
-                    <?php echo esc_html__('My place', 'update-automate'); ?>
+                   aria-label="<?php echo esc_attr__('Visit the developer website (opens in a new tab)', 'update-automate'); ?>">
+                    <?php echo esc_html__('Developer website', 'update-automate'); ?>
                 </a>
                 <a href="https://github.com/quentin-ld/update-automate/"
                    target="_blank"
                    rel="noopener noreferrer"
-                   aria-label="<?php echo esc_attr__('Review the code on Github', 'update-automate'); ?>">
-                    <?php echo esc_html__('Update Automate code repository', 'update-automate'); ?>
+                   aria-label="<?php echo esc_attr__('View the source code on GitHub (opens in a new tab)', 'update-automate'); ?>">
+                    <?php echo esc_html__('Source code', 'update-automate'); ?>
                 </a>
             </div>
         </footer>

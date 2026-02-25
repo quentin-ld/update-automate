@@ -38,19 +38,19 @@ const FIXED_FIELDS = [
 
 const CONSTANT_DESCRIPTIONS = {
 	WP_AUTO_UPDATE_CORE: __(
-		'The WP_AUTO_UPDATE_CORE constant is defined in wp-config.php and overrides the core auto-update setting below.',
+		'WP_AUTO_UPDATE_CORE is set in your wp-config.php file. It controls which core updates run automatically, and this setting cannot be changed here.',
 		'update-automate'
 	),
 	AUTOMATIC_UPDATER_DISABLED: __(
-		'The AUTOMATIC_UPDATER_DISABLED constant is set to true in wp-config.php. All automatic updates are disabled at the WordPress level.',
+		'AUTOMATIC_UPDATER_DISABLED is set to true in your wp-config.php file. All automatic updates are turned off.',
 		'update-automate'
 	),
 	DISALLOW_FILE_MODS: __(
-		'The DISALLOW_FILE_MODS constant is set to true in wp-config.php. WordPress cannot modify files, so all automatic updates are blocked.',
+		'DISALLOW_FILE_MODS is set to true in your wp-config.php file. WordPress cannot change any files, so all automatic updates are blocked.',
 		'update-automate'
 	),
 	DISABLE_WP_CRON: __(
-		'The DISABLE_WP_CRON constant is set to true in wp-config.php. Background auto-updates rely on WP-Cron and will not run unless an external cron is configured.',
+		'DISABLE_WP_CRON is set to true in your wp-config.php file. Automatic updates use WP-Cron and will not run unless you have set up an external cron job.',
 		'update-automate'
 	),
 };
@@ -128,14 +128,14 @@ function CoreSection({ core, constants, setCoreMode, busy }) {
 	const options = [
 		{
 			label: __(
-				'Minor releases only (default — e.g. 6.4.1 → 6.4.2)',
+				'Minor releases only (default — e.g. 6.4.1 to 6.4.2)',
 				'update-automate'
 			),
 			value: 'minor',
 		},
 		{
 			label: __(
-				'All releases — major and minor (e.g. 6.4 → 6.5)',
+				'All releases — major and minor (e.g. 6.4 to 6.5)',
 				'update-automate'
 			),
 			value: 'all',
@@ -153,7 +153,7 @@ function CoreSection({ core, constants, setCoreMode, busy }) {
 		<div className="updateautomate-autoupdates-section">
 			<h3 className="updateautomate-autoupdates-section-title">
 				<Icon icon={dashboardIcon} size={24} />
-				{__('WordPress Core', 'update-automate')}
+				{__('Core updates', 'update-automate')}
 			</h3>
 			<ConstantNotices
 				constants={constants}
@@ -161,7 +161,7 @@ function CoreSection({ core, constants, setCoreMode, busy }) {
 				lockingOnly
 			/>
 			<RadioControl
-				label={__('Core auto-update behaviour', 'update-automate')}
+				label={__('Core auto-update mode', 'update-automate')}
 				selected={core.mode}
 				options={options}
 				onChange={(value) => setCoreMode(value)}
@@ -169,7 +169,7 @@ function CoreSection({ core, constants, setCoreMode, busy }) {
 				help={
 					locked
 						? __(
-								'This setting is managed by a wp-config.php constant and cannot be changed here.',
+								'A constant in your wp-config.php file controls this setting. To change it, edit that file directly.',
 								'update-automate'
 							)
 						: ''
@@ -573,12 +573,9 @@ function TranslationsSection({
 				lockingOnly
 			/>
 			<ToggleControl
-				label={__(
-					'Enable automatic translation updates',
-					'update-automate'
-				)}
+				label={__('Automatic translation updates', 'update-automate')}
 				help={__(
-					'WordPress updates translations automatically by default. Disable this to prevent automatic translation downloads.',
+					'WordPress updates translations automatically by default. Turn this off to stop automatic translation downloads.',
 					'update-automate'
 				)}
 				checked={translations.auto_update}
@@ -610,7 +607,11 @@ export function AutoUpdatesPanel() {
 
 	if (loading || !data) {
 		return (
-			<div className="updateautomate-autoupdates-loading">
+			<div
+				className="updateautomate-autoupdates-loading"
+				aria-live="polite"
+				role="status"
+			>
 				<Spinner />
 				<span>
 					{__('Loading auto-update settings…', 'update-automate')}
@@ -626,7 +627,7 @@ export function AutoUpdatesPanel() {
 			</h2>
 			<Text variant="muted">
 				{__(
-					'Control which parts of your site update automatically — core, themes, plugins, and translations.',
+					'Choose which parts of your site update automatically: core, plugins, themes, and translations.',
 					'update-automate'
 				)}
 			</Text>

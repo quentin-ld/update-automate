@@ -281,7 +281,7 @@ final class UpdateAutomate_Settings {
         $deleted = UpdateAutomate_Logger::delete_log($id);
 
         if (!$deleted) {
-            return new WP_REST_Response(['message' => __('Failed to delete log.', 'update-automate')], 500);
+            return new WP_REST_Response(['message' => __('The log entry could not be deleted. Try again or check your database connection.', 'update-automate')], 500);
         }
 
         return new WP_REST_Response(['deleted' => true], 200);
@@ -349,7 +349,7 @@ final class UpdateAutomate_Settings {
 
         if (!$ok) {
             return new WP_REST_Response([
-                'message' => __('Core auto-update mode is overridden by a wp-config constant.', 'update-automate'),
+                'message' => __('The core auto-update setting is controlled by a constant in your wp-config.php file and cannot be changed here.', 'update-automate'),
             ], 403);
         }
 
@@ -369,7 +369,7 @@ final class UpdateAutomate_Settings {
 
         if (!$ok) {
             return new WP_REST_Response([
-                'message' => __('Plugin not found.', 'update-automate'),
+                'message' => __('This plugin was not found on your site. It may have been removed.', 'update-automate'),
             ], 404);
         }
 
@@ -389,7 +389,7 @@ final class UpdateAutomate_Settings {
 
         if (!$ok) {
             return new WP_REST_Response([
-                'message' => __('Theme not found.', 'update-automate'),
+                'message' => __('This theme was not found on your site. It may have been removed.', 'update-automate'),
             ], 404);
         }
 

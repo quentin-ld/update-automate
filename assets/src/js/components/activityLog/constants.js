@@ -10,9 +10,9 @@ export const LAYOUT_ACTIVITY = 'activity';
 
 export const ACTION_LABELS = {
 	update: __('Update', 'update-automate'),
-	downgrade: __('Downgrade', 'update-automate'),
+	downgrade: __('Rollback', 'update-automate'),
 	install: __('Install', 'update-automate'),
-	same_version: __('Reset', 'update-automate'),
+	same_version: __('Reinstall', 'update-automate'),
 	failed: __('Failed', 'update-automate'),
 	uninstall: __('Uninstall', 'update-automate'),
 	delete: __('Delete', 'update-automate'),

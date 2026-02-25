@@ -30,7 +30,10 @@ export function useAutoUpdates() {
 		} catch (e) {
 			createErrorNotice(
 				e?.message ||
-					__('Failed to load auto-update data.', 'update-automate')
+					__(
+						'Your auto-update settings could not be loaded. Try refreshing the page.',
+						'update-automate'
+					)
 			);
 		} finally {
 			setLoading(false);
@@ -58,7 +61,7 @@ export function useAutoUpdates() {
 				createErrorNotice(
 					e?.message ||
 						__(
-							'Failed to save core auto-update setting.',
+							'The core auto-update setting could not be saved. Check your connection and try again.',
 							'update-automate'
 						)
 				);
@@ -83,7 +86,7 @@ export function useAutoUpdates() {
 				createErrorNotice(
 					e?.message ||
 						__(
-							'Failed to toggle plugin auto-update.',
+							'The plugin auto-update setting could not be changed. Try again.',
 							'update-automate'
 						)
 				);
@@ -108,7 +111,7 @@ export function useAutoUpdates() {
 				createErrorNotice(
 					e?.message ||
 						__(
-							'Failed to toggle theme auto-update.',
+							'The theme auto-update setting could not be changed. Try again.',
 							'update-automate'
 						)
 				);
@@ -139,7 +142,7 @@ export function useAutoUpdates() {
 				createErrorNotice(
 					e?.message ||
 						__(
-							'Failed to toggle translation auto-updates.',
+							'The translation auto-update setting could not be changed. Try again.',
 							'update-automate'
 						)
 				);
@@ -162,7 +165,10 @@ export function useAutoUpdates() {
 			} catch (e) {
 				createErrorNotice(
 					e?.message ||
-						__('Failed to dismiss notice.', 'update-automate')
+						__(
+							'The notice could not be dismissed. Try again.',
+							'update-automate'
+						)
 				);
 			}
 		},

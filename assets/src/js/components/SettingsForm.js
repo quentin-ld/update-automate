@@ -36,7 +36,7 @@ export const SettingsForm = ({
 			</h2>
 			<Text variant="muted">
 				{__(
-					'Configure logging, data retention, and email notifications for updates.',
+					'Set up logging, choose how long to keep records, and manage email notifications.',
 					'update-automate'
 				)}
 			</Text>
@@ -45,9 +45,9 @@ export const SettingsForm = ({
 					{__('Logging', 'update-automate')}
 				</h3>
 				<ToggleControl
-					label={__('Enable update logging', 'update-automate')}
+					label={__('Update logging', 'update-automate')}
 					help={__(
-						'Record core, themes, plugins, and translations updates in the database.',
+						'Keep a record of all core, plugin, theme, and translation updates.',
 						'update-automate'
 					)}
 					checked={settings.logging_enabled}
@@ -63,9 +63,9 @@ export const SettingsForm = ({
 					className="updateautomate-settings-fieldset"
 				>
 					<NumberControl
-						label={__('Retention (days)', 'update-automate')}
+						label={__('Keep logs for (days)', 'update-automate')}
 						help={__(
-							'Automatically delete logs older than this many days. Cron runs daily.',
+							'Logs older than this number of days are automatically removed once a day.',
 							'update-automate'
 						)}
 						min={1}
@@ -90,7 +90,7 @@ export const SettingsForm = ({
 				<ToggleControl
 					label={__('Manage update notifications', 'update-automate')}
 					help={__(
-						'Controls how native WordPress update emails are handled. Category checkboxes decide which update notifications are allowed. When this switch is ON, allowed emails are redirected to the recipient below. When OFF, recipient redirection is disabled.',
+						'When on, WordPress built-in update emails are sent to the address you choose below. Use the checkboxes to pick which types of updates you want to hear about.',
 						'update-automate'
 					)}
 					checked={settings.notify_enabled}
@@ -106,12 +106,9 @@ export const SettingsForm = ({
 					className="updateautomate-settings-fieldset"
 				>
 					<TextControl
-						label={__(
-							'Recipient email (for redirected emails)',
-							'update-automate'
-						)}
+						label={__('Send notifications to', 'update-automate')}
 						help={__(
-							'Used only when "Manage update notifications" is ON. Allowed native update emails are sent to this address instead of admin_email.',
+							'Update emails will go to this address instead of the default admin email.',
 							'update-automate'
 						)}
 						type="email"
@@ -126,19 +123,16 @@ export const SettingsForm = ({
 					/>
 					<div className="updateautomate-settings-checkboxes">
 						<p className="updateautomate-settings-label">
-							{__('Notify on', 'update-automate')}
+							{__('Notification types', 'update-automate')}
 						</p>
 						<p className="updateautomate-settings-help">
 							{__(
-								'Checked categories allow those native WordPress update notifications. Unchecked update categories are suppressed by this plugin.',
+								'Check the types of updates you want to receive emails about. Unchecked types will not send emails.',
 								'update-automate'
 							)}
 						</p>
 						<CheckboxControl
-							label={__(
-								'WordPress core updates',
-								'update-automate'
-							)}
+							label={__('Core updates', 'update-automate')}
 							checked={settings.notifyOn.includes('core')}
 							onChange={(checked) =>
 								setSettings((prev) => ({
@@ -195,10 +189,7 @@ export const SettingsForm = ({
 							}
 						/>
 						<CheckboxControl
-							label={__(
-								'Translation updates (via native debug email)',
-								'update-automate'
-							)}
+							label={__('Translation updates', 'update-automate')}
 							checked={settings.notifyOn.includes('translation')}
 							onChange={(checked) =>
 								setSettings((prev) => ({
@@ -217,10 +208,7 @@ export const SettingsForm = ({
 							}
 						/>
 						<CheckboxControl
-							label={__(
-								'Errors (failed plugin/theme/core update runs)',
-								'update-automate'
-							)}
+							label={__('Update errors', 'update-automate')}
 							checked={settings.notifyOn.includes('error')}
 							onChange={(checked) =>
 								setSettings((prev) => ({
@@ -240,7 +228,7 @@ export const SettingsForm = ({
 						/>
 						<CheckboxControl
 							label={__(
-								'Technical issue emails (Recovery Mode)',
+								'Technical issues (recovery mode)',
 								'update-automate'
 							)}
 							checked={settings.notifyOn.includes('technical')}

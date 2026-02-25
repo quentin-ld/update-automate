@@ -30,7 +30,11 @@ export function useLogs() {
 			setTotal(response.total ?? 0);
 		} catch (e) {
 			setError(
-				e?.message || __('Failed to load logs.', 'update-automate')
+				e?.message ||
+					__(
+						'Your update logs could not be loaded. Try refreshing the page.',
+						'update-automate'
+					)
 			);
 		} finally {
 			setLoading(false);

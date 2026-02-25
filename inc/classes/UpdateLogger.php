@@ -251,7 +251,7 @@ final class UpdateAutomate_Update_Logger {
                     $version_before,
                     $version_after,
                     $status,
-                    __('Update may have been interrupted (logged on shutdown).', 'update-automate'),
+                    __('This update may not have completed. It was logged when the process ended unexpectedly.', 'update-automate'),
                     $trace,
                     $performed_as
                 );
@@ -754,7 +754,7 @@ final class UpdateAutomate_Update_Logger {
             $process_message = $process_message !== '' ? $process_message . "\n" . $ob_message : $ob_message;
         }
         if ($process_message === '' && $type !== 'core' && $action === 'install') {
-            $process_message = __('Installed from uploaded file.', 'update-automate');
+            $process_message = __('Installed from an uploaded file.', 'update-automate');
         }
 
         $trace = UpdateAutomate_ErrorHandler::capture_trace();
@@ -890,8 +890,8 @@ final class UpdateAutomate_Update_Logger {
             array_unshift(
                 $steps,
                 sprintf(
-                    /* translators: %s: download URL */
-                    __('Downloading update from %s…', 'update-automate'),
+                    /* translators: %s: package download URL */
+                    __('Downloading the update from %s…', 'update-automate'),
                     self::$core_package_url
                 ),
                 __('Unpacking the update…', 'update-automate')
@@ -901,7 +901,7 @@ final class UpdateAutomate_Update_Logger {
         $message = self::format_note_like_wp_screen(
             sprintf(
                 /* translators: %s: WordPress version number */
-                __('Update to WordPress %s', 'update-automate'),
+                __('Core update to WordPress %s', 'update-automate'),
                 $version_after
             ),
             $steps,
@@ -1166,24 +1166,24 @@ final class UpdateAutomate_Update_Logger {
      */
     private static function format_plugin_log_title(string $action_type, string $name, string $version_after): string {
         if ($action_type === 'install') {
-            /* translators: 1: item name (plugin/theme), 2: version number */
-            return sprintf(__('Installation of %1$s %2$s', 'update-automate'), $name, $version_after ?: '');
+            /* translators: 1: item name (plugin or theme), 2: version number */
+            return sprintf(__('Installed %1$s %2$s', 'update-automate'), $name, $version_after ?: '');
         }
         if ($action_type === 'uninstall') {
-            /* translators: 1: item name (plugin/theme), 2: version number */
-            return sprintf(__('Uninstall of %1$s %2$s', 'update-automate'), $name, $version_after ?: '');
+            /* translators: 1: item name (plugin or theme), 2: version number */
+            return sprintf(__('Uninstalled %1$s %2$s', 'update-automate'), $name, $version_after ?: '');
         }
         if ($action_type === 'downgrade') {
-            /* translators: 1: item name (plugin/theme), 2: version number */
-            return sprintf(__('Downgrade to %1$s %2$s', 'update-automate'), $name, $version_after ?: '');
+            /* translators: 1: item name (plugin or theme), 2: version number */
+            return sprintf(__('Rolled back %1$s to %2$s', 'update-automate'), $name, $version_after ?: '');
         }
         if ($action_type === 'same_version') {
-            /* translators: 1: item name (plugin/theme), 2: version number */
-            return sprintf(__('Reinstall %1$s %2$s (same version)', 'update-automate'), $name, $version_after ?: '');
+            /* translators: 1: item name (plugin or theme), 2: version number */
+            return sprintf(__('Reinstalled %1$s %2$s (same version)', 'update-automate'), $name, $version_after ?: '');
         }
 
-        /* translators: 1: item name (plugin/theme), 2: version number */
-        return sprintf(__('Update to %1$s %2$s', 'update-automate'), $name, $version_after ?: '');
+        /* translators: 1: item name (plugin or theme), 2: version number */
+        return sprintf(__('Updated %1$s to %2$s', 'update-automate'), $name, $version_after ?: '');
     }
 
     /**
