@@ -107,8 +107,8 @@
 			padding: var(--wpds-dimension-padding-3xl) var(--wpds-dimension-padding-2xl);
 
 			@media screen and (max-width: 1281px) {
-				height: 600px;
-				max-height: 600px;
+				height: $tab-panel-height;
+				max-height: $tab-panel-height;
 			}
 
 			@media screen and (max-width: 960px) {
