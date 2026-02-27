@@ -11,14 +11,3 @@ define('updateautomate_PLUGIN_DIR', '');
 if (!defined('DB_NAME')) {
     define('DB_NAME', '');
 }
-
-if (!function_exists('wp_mail_smtp')) {
-    /**
-     * Stub for the WP Mail SMTP global helper (static analysis only).
-     *
-     * @return object
-     */
-    function wp_mail_smtp(): object {
-        return (object) [];
-    }
-}

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-02-25T14:11:35+00:00\n"
+"POT-Creation-Date: 2026-02-27T09:08:29+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: update-automate\n"
@@ -199,52 +199,52 @@ msgstr ""
 msgid "This update may not have completed. It was logged when the process ended unexpectedly."
 msgstr ""
 
-#: inc/classes/UpdateLogger.php:757
+#: inc/classes/UpdateLogger.php:756
 msgid "Installed from an uploaded file."
 msgstr ""
 
 #. translators: %s: package download URL
-#: inc/classes/UpdateLogger.php:894
+#: inc/classes/UpdateLogger.php:893
 #, php-format
 msgid "Downloading the update from %s…"
 msgstr ""
 
-#: inc/classes/UpdateLogger.php:897
+#: inc/classes/UpdateLogger.php:896
 msgid "Unpacking the update…"
 msgstr ""
 
 #. translators: %s: WordPress version number
-#: inc/classes/UpdateLogger.php:904
+#: inc/classes/UpdateLogger.php:903
 #, php-format
 msgid "Core update to WordPress %s"
 msgstr ""
 
 #. translators: 1: item name (plugin or theme), 2: version number
-#: inc/classes/UpdateLogger.php:1170
+#: inc/classes/UpdateLogger.php:1169
 #, php-format
 msgid "Installed %1$s %2$s"
 msgstr ""
 
 #. translators: 1: item name (plugin or theme), 2: version number
-#: inc/classes/UpdateLogger.php:1174
+#: inc/classes/UpdateLogger.php:1173
 #, php-format
 msgid "Uninstalled %1$s %2$s"
 msgstr ""
 
 #. translators: 1: item name (plugin or theme), 2: version number
-#: inc/classes/UpdateLogger.php:1178
+#: inc/classes/UpdateLogger.php:1177
 #, php-format
 msgid "Rolled back %1$s to %2$s"
 msgstr ""
 
 #. translators: 1: item name (plugin or theme), 2: version number
-#: inc/classes/UpdateLogger.php:1182
+#: inc/classes/UpdateLogger.php:1181
 #, php-format
 msgid "Reinstalled %1$s %2$s (same version)"
 msgstr ""
 
 #. translators: 1: item name (plugin or theme), 2: version number
-#: inc/classes/UpdateLogger.php:1186
+#: inc/classes/UpdateLogger.php:1185
 #, php-format
 msgid "Updated %1$s to %2$s"
 msgstr ""
@@ -410,27 +410,27 @@ msgstr ""
 msgid "Choose which parts of your site update automatically: core, plugins, themes, and translations."
 msgstr ""
 
-#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:83
+#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:84
 msgid "Themes"
 msgstr ""
 
-#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:84
+#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:85
 msgid "Theme"
 msgstr ""
 
-#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:85
+#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:86
 msgid "Search themes"
 msgstr ""
 
-#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:97
+#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:98
 msgid "Plugins"
 msgstr ""
 
-#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:98
+#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:99
 msgid "Plugin"
 msgstr ""
 
-#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:99
+#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:100
 msgid "Search plugins"
 msgstr ""
 
