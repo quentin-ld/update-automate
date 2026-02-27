@@ -6,7 +6,7 @@ import './index.scss';
 
 /**
  * Render the updateautomate settings page once the DOM is ready.
- * Notices use the default context (same as zenpress); wp-data and wp-notices are script dependencies.
+ * Notices use the default context wp-data and wp-notices are script dependencies.
  */
 domReady(() => {
 	const rootEl = document.getElementById('updateautomate-settings');

@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 
 /**
  * Hook to read and save plugin settings (from localize + REST).
- * Dispatches native Notice (success / warning / error) on save (default context, like zenpress).
+ * Dispatches native Notice (success / warning / error) on save.
  *
  * @return {Object} Settings state and save action.
  */

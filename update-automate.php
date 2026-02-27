@@ -10,8 +10,8 @@
  * @license   GPL v2 or later
  *
  * Plugin Name: Update Automate
- * Description: Log WordPress core, plugin, and theme updates with error handling, security, and optional email notifications.
- * Version: 0.1
+ * Description: Manage your WordPress updates with confidence. Control auto-updates, capture technical logs, and route alerts to the right places.
+ * Version: 1.0
  * Plugin URI: https://wordpress.org/plugins/update-automate/
  * Author: Quentin Le Duff
  * Author URI: https://profiles.wordpress.org/quentinldd/
@@ -39,7 +39,7 @@ if (!defined('ABSPATH')) {
 }
 
 /** Plugin version (must match Version header above; used for DB schema version). */
-define('UPDATEAUTOMATE_VERSION', '0.1');
+define('UPDATEAUTOMATE_VERSION', '1.0');
 
 define('updateautomate_PLUGIN_FILE', __FILE__);
 define('updateautomate_PLUGIN_DIR', plugin_dir_path(__FILE__));

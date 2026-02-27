@@ -31,7 +31,7 @@ function setTabInUrl(tabId) {
 }
 
 /**
- * Main settings page for Update Automate (Zenpress-style interface).
+ * Main settings page for Update Automate.
  * Tabs: Logs and Settings. Active tab is synced with ?tab= URL param for direct links.
  *
  * @return {JSX.Element} The settings page UI.
