@@ -222,12 +222,14 @@ export const Tab = ({
 };
 
 /**
- * TabPanel component - container for tab content
+ * TabPanel component - container for tab content.
+ * Children are always mounted but hidden when not selected, so data hooks
+ * (e.g. useAutoUpdates, useLogs) only run once and do not refetch on tab switch.
  *
  * @param {Object} props          - Component props.
  * @param {string} props.tabId    - Unique identifier matching a Tab's tabId.
  * @param {Object} props.children - Panel content.
- * @return {JSX.Element|null} The tab panel or null if not selected.
+ * @return {JSX.Element} The tab panel (hidden when not selected).
  */
 export const TabPanel = ({ tabId, children }) => {
 	const { selectedTabId } = useContext(TabsContext);
@@ -247,19 +249,6 @@ export const TabPanel = ({ tabId, children }) => {
 		}
 	}, [isSelected]);
 
-	if (!isSelected) {
-		return (
-			<div
-				className="updateautomate-tabs__panel"
-				role="tabpanel"
-				id={`updateautomate-tab-panel-${tabId}`}
-				aria-labelledby={`updateautomate-tab-${tabId}`}
-				hidden
-				aria-hidden="true"
-			/>
-		);
-	}
-
 	return (
 		<div
 			ref={panelRef}
@@ -267,6 +256,8 @@ export const TabPanel = ({ tabId, children }) => {
 			role="tabpanel"
 			id={`updateautomate-tab-panel-${tabId}`}
 			aria-labelledby={`updateautomate-tab-${tabId}`}
+			hidden={!isSelected}
+			aria-hidden={!isSelected}
 		>
 			{children}
 		</div>

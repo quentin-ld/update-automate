@@ -35,14 +35,10 @@ final class UpdateAutomate_AutoUpdates {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Read helpers — assemble all data for the REST response
-    // -------------------------------------------------------------------------
-
     /**
      * Full payload for the GET /auto-updates endpoint.
      *
-     * @return array{constants: array<string, array{defined: bool, value: mixed, affects: array<string>, locks: bool}>, dismissed_constants: array<string>, core: array{mode: string, major: string, minor: string, dev: string, overridden_by_constant: bool}, plugins: array<int, array{file: string, slug: string, name: string, description: string, version: string, author: string, plugin_uri: string, icon: string, auto_update: bool, active: bool}>, themes: array<int, array{stylesheet: string, name: string, description: string, version: string, author: string, theme_uri: string, icon: string, auto_update: bool, active: bool}>, translations: array{auto_update: bool}}
+     * @return array{constants: array<string, array{defined: bool, value: mixed, affects: array<string>, locks: bool}>, dismissed_constants: array<string>, core: array{mode: string, major: string, minor: string, dev: string, overridden_by_constant: bool}, plugins: array<int, array{file: string, slug: string, name: string, description: string, version: string, author: string, plugin_uri: string, icon: string, auto_update: bool, auto_update_available: bool, active: bool}>, themes: array<int, array{stylesheet: string, name: string, description: string, version: string, author: string, theme_uri: string, icon: string, auto_update: bool, auto_update_available: bool, active: bool}>, translations: array{auto_update: bool}}
      */
     public static function get_data(): array {
         return [
@@ -161,7 +157,7 @@ final class UpdateAutomate_AutoUpdates {
     /**
      * All installed plugins with their auto-update status and metadata.
      *
-     * @return array<int, array{file: string, slug: string, name: string, description: string, version: string, author: string, plugin_uri: string, icon: string, auto_update: bool, active: bool}>
+     * @return array<int, array{file: string, slug: string, name: string, description: string, version: string, author: string, plugin_uri: string, icon: string, auto_update: bool, auto_update_available: bool, active: bool}>
      */
     public static function get_plugins_data(): array {
         if (!function_exists('get_plugins')) {
@@ -227,7 +223,7 @@ final class UpdateAutomate_AutoUpdates {
     /**
      * All installed themes with their auto-update status and metadata.
      *
-     * @return array<int, array{stylesheet: string, name: string, description: string, version: string, author: string, theme_uri: string, icon: string, auto_update: bool, active: bool}>
+     * @return array<int, array{stylesheet: string, name: string, description: string, version: string, author: string, theme_uri: string, icon: string, auto_update: bool, auto_update_available: bool, active: bool}>
      */
     public static function get_themes_data(): array {
         $all_themes = wp_get_themes();
@@ -274,10 +270,6 @@ final class UpdateAutomate_AutoUpdates {
 
         return ['auto_update' => $settings['auto_update_translations']];
     }
-
-    // -------------------------------------------------------------------------
-    // Write helpers — mutate native options
-    // -------------------------------------------------------------------------
 
     /**
      * Set the core auto-update mode.

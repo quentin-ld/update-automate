@@ -62,7 +62,7 @@ export function ItemsDataViewSection({
 	onToggle,
 	busy,
 }) {
-	const getItemId = (item) => item[itemIdKey];
+	const getItemId = useCallback((item) => item[itemIdKey], [itemIdKey]);
 	const locked = isSectionLocked(constants, sections[0]);
 
 	const [view, setView] = useState({

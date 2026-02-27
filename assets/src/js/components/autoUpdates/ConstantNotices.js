@@ -33,17 +33,19 @@ const CONSTANT_DESCRIPTIONS = {
  * Renders warning notices for wp-config constants that affect auto-updates.
  *
  * @param {Object}                        props
- * @param {Object.<string, ConstantInfo>} props.constants     Map of constant name → info.
- * @param {string[]}                      props.sections      Sections to filter ('core', 'plugins', etc.).
- * @param {boolean}                       [props.lockingOnly] When true, only show constants with locks=true.
- * @param {string[]}                      [props.dismissed]   List of dismissed constant names.
- * @param {Function}                      [props.onDismiss]   Called with constant name when dismissed.
+ * @param {Object.<string, ConstantInfo>} props.constants         Map of constant name → info.
+ * @param {string[]}                      props.sections          Sections to filter ('core', 'plugins', etc.).
+ * @param {boolean}                       [props.lockingOnly]     When true, only show constants with locks=true.
+ * @param {boolean}                       [props.dismissibleOnly] When true, only show constants with locks=false (dismissible).
+ * @param {string[]}                      [props.dismissed]       List of dismissed constant names.
+ * @param {Function}                      [props.onDismiss]       Called with constant name when dismissed.
  * @return {JSX.Element|null}
  */
 export const ConstantNotices = memo(function ConstantNotices({
 	constants,
 	sections,
 	lockingOnly = false,
+	dismissibleOnly = false,
 	dismissed = [],
 	onDismiss,
 }) {
@@ -51,10 +53,20 @@ export const ConstantNotices = memo(function ConstantNotices({
 		return null;
 	}
 
+	const matchesFilter = (info) => {
+		if (lockingOnly) {
+			return info.locks;
+		}
+		if (dismissibleOnly) {
+			return !info.locks;
+		}
+		return true;
+	};
+
 	const relevant = Object.entries(constants).filter(
 		([name, info]) =>
 			info.affects.some((s) => sections.includes(s)) &&
-			(!lockingOnly || info.locks) &&
+			matchesFilter(info) &&
 			!dismissed.includes(name)
 	);
 

@@ -65,6 +65,7 @@ export function AutoUpdatesPanel() {
 			<ConstantNotices
 				constants={data.constants}
 				sections={['core', 'plugins', 'themes', 'translations']}
+				dismissibleOnly
 				dismissed={data.dismissed_constants || []}
 				onDismiss={dismissConstant}
 			/>

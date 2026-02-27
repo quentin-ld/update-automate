@@ -449,13 +449,12 @@ final class UpdateAutomate_Update_Logger {
      * After bulk skin flushes output (before() → flush_output), start a new buffer so we capture the real log
      * (Downloading…, Unpacking…, Installing…, success, etc.) in download_package / install_package.
      *
-     * @param bool|\WP_Error       $reply      Whether to short-circuit.
-     * @param string               $package    Package URL.
-     * @param \WP_Upgrader         $upgrader   Upgrader instance.
-     * @param array<string, mixed> $hook_extra Extra args.
+     * @param bool|\WP_Error $reply    Whether to short-circuit.
+     * @param string         $package  Package URL.
+     * @param \WP_Upgrader   $upgrader Upgrader instance.
      * @return bool|\WP_Error Unchanged.
      */
-    public static function start_bulk_post_flush_buffer(bool|\WP_Error $reply, string $package, \WP_Upgrader $upgrader, array $hook_extra = []): bool|\WP_Error {
+    public static function start_bulk_post_flush_buffer(bool|\WP_Error $reply, string $package, \WP_Upgrader $upgrader): bool|\WP_Error {
         if (self::$bulk_flush_happened && $upgrader->skin instanceof \Bulk_Upgrader_Skin) {
             self::$bulk_flush_happened = false;
             ob_start(function (string $buf): string {
