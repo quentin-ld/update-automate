@@ -27,7 +27,7 @@ function updateautomate_add_option_page(): void {
     add_submenu_page(
         'index.php',
         __('Update Automate', 'update-automate'),
-        __('Manage updates', 'update-automate'),
+        __('Updates log', 'update-automate'),
         'manage_options',
         'update-automate',
         'updateautomate_options_page'
