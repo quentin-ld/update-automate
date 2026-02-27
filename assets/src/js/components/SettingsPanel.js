@@ -67,6 +67,7 @@ export const SettingsPanel = memo(function SettingsPanel({
 					{__('Logging', 'update-automate')}
 				</h3>
 				<ToggleControl
+					__nextHasNoMarginBottom
 					label={__('Update logging', 'update-automate')}
 					help={__(
 						'Keep a record of all core, plugin, theme, and translation updates.',
@@ -85,6 +86,7 @@ export const SettingsPanel = memo(function SettingsPanel({
 					className="updateautomate-settings-fieldset"
 				>
 					<NumberControl
+						__next40pxDefaultSize
 						label={__('Keep logs for (days)', 'update-automate')}
 						help={__(
 							'Logs older than this number of days are automatically removed once a day.',
@@ -110,6 +112,7 @@ export const SettingsPanel = memo(function SettingsPanel({
 					{__('Update notifications', 'update-automate')}
 				</h3>
 				<ToggleControl
+					__nextHasNoMarginBottom
 					label={__('Manage update notifications', 'update-automate')}
 					help={__(
 						'When on, WordPress built-in update emails are sent to the address you choose below. Use the checkboxes to pick which types of updates you want to hear about.',
@@ -128,6 +131,8 @@ export const SettingsPanel = memo(function SettingsPanel({
 					className="updateautomate-settings-fieldset"
 				>
 					<TextControl
+						__nextHasNoMarginBottom
+						__next40pxDefaultSize
 						label={__('Send notifications to', 'update-automate')}
 						help={__(
 							'Update emails will go to this address instead of the default admin email.',
@@ -156,6 +161,7 @@ export const SettingsPanel = memo(function SettingsPanel({
 						{NOTIFY_TYPES.map(({ key, label }) => (
 							<CheckboxControl
 								key={key}
+								__nextHasNoMarginBottom
 								label={label}
 								checked={settings.notifyOn.includes(key)}
 								onChange={(checked) =>

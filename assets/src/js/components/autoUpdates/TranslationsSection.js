@@ -48,6 +48,7 @@ export function TranslationsSection({
 				lockingOnly
 			/>
 			<ToggleControl
+				__nextHasNoMarginBottom
 				label={__('Automatic translation updates', 'update-automate')}
 				help={__(
 					'WordPress updates translations automatically by default. Turn this off to stop automatic translation downloads.',
