@@ -11,6 +11,3 @@ parameters:
             - .config/*
             - vendor/*
             - node_modules/*
-    ignoreErrors:
-            # Ignore errors about WP Mail SMTP functions not found
-            - '#Function wp_mail_smtp not found#'

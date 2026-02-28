@@ -18,7 +18,7 @@ Update Automate provides a centralized, modern interface for managing how your W
 Unlike traditional update managers that focus solely on disabling features, Update Automate is built for the proactive administrator. It offers a comprehensive audit trail, granular notification routing, and high-level visibility into the background processes that keep your site secure. Whether you are managing a single blog or a complex multi-site network, Update Automate ensures you are never in the dark about a code change.
 
 = Why choose Update Automate? =
-* Modern Admin Standards: Built entirely with React and Gutenberg components, the interface feels like a native part of WordPress, ensuring a fast and accessible experience.
+* Modern WordPress Admin Standards: Built entirely with React and Gutenberg components, the interface feels like a native part of WordPress, ensuring a fast and accessible experience.
 * Total Audit Transparency: Keep a detailed history of core, plugin, theme, and translation updates, including version "before and after" snapshots and user triggers.
 * Native Compatibility: Settings are written directly to the native WordPress options table. Your choices remain consistent even if the plugin is deactivated.
 * Intelligent Notification Routing: Redirect system-generated emails to the right stakeholders. Send technical errors to your developer and successful update reports to your client.

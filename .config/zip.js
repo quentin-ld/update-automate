@@ -48,6 +48,7 @@ archive.glob('**/*', {
     'phpstan.neon',
     'phpstan-bootstrap.php',
     'workflow.md',
+    'docs/**'
   ],
 });
 

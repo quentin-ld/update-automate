@@ -26,7 +26,6 @@ final class UpdateAutomate_Bootstrap {
         UpdateAutomate_Update_Logger::register();
         UpdateAutomate_ErrorHandler::register();
         UpdateAutomate_Settings::register();
-        UpdateAutomate_Compat_WPMailSMTP::register();
         UpdateAutomate_Notifications::register();
         UpdateAutomate_AutoUpdates::register();
     }
@@ -41,7 +40,6 @@ final class UpdateAutomate_Bootstrap {
         $classes = [
             'Database.php',
             'Security.php',
-            'Compat_WPMailSMTP.php',
             'Logger.php',
             'Cron.php',
             'ErrorHandler.php',
